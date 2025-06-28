@@ -1,6 +1,5 @@
-package com.seohaeng.backend.savedPlace.entity;
-import com.seohaeng.backend.user.entity.User;
-import com.seohaeng.backend.place.entity.Place;
+package com.seohaeng.backend.domain.place.entity;
+import com.seohaeng.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

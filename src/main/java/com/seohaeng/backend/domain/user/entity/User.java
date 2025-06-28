@@ -1,4 +1,4 @@
-package com.seohaeng.backend.user.entity;
+package com.seohaeng.backend.domain.user.entity;
 
 import com.seohaeng.backend.domain.travelCourse.entity.Stamp;
 import jakarta.persistence.*;

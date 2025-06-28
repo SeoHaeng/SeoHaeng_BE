@@ -1,4 +1,4 @@
-package com.seohaeng.backend.user.entity;
+package com.seohaeng.backend.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
