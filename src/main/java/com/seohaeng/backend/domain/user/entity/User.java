@@ -1,5 +1,6 @@
-package com.seohaeng.backend.user.entity;
+package com.seohaeng.backend.domain.user.entity;
 
+import com.seohaeng.backend.domain.travelCourse.entity.Stamp;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,6 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private LoginInfo loginInfo;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Stamp stamp;
 }

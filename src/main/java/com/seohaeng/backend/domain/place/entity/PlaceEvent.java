@@ -1,6 +1,5 @@
-package com.seohaeng.backend.placeEvent.entity;
+package com.seohaeng.backend.domain.place.entity;
 
-import com.seohaeng.backend.place.entity.Place;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
