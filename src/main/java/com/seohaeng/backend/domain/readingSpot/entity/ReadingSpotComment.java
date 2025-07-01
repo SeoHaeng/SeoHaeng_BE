@@ -1,5 +1,6 @@
 package com.seohaeng.backend.domain.readingSpot.entity;
 
+import com.seohaeng.backend.domain.common.BaseEntity;
 import com.seohaeng.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class ReadingSpotComment {
+public class ReadingSpotComment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

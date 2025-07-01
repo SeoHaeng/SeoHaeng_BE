@@ -1,5 +1,6 @@
 package com.seohaeng.backend.domain.readingSpot.entity;
 
+import com.seohaeng.backend.domain.common.BaseEntity;
 import com.seohaeng.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class ReadingSpot {
+public class ReadingSpot extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

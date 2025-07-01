@@ -1,12 +1,13 @@
 package com.seohaeng.backend.domain.user.entity;
 
+import com.seohaeng.backend.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class LoginInfo {
+public class LoginInfo extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
 
