@@ -3,11 +3,13 @@ package com.seohaeng.backend.domain.user.entity;
 import com.seohaeng.backend.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LoginInfo extends BaseEntity {
 
     @Id
@@ -22,7 +24,6 @@ public class LoginInfo extends BaseEntity {
     private String email;
 
     @Column(length = 12, unique = true)
-    @Size(min=8, max=12)
     private String username;
 
     @Column(nullable = false)
@@ -32,4 +33,7 @@ public class LoginInfo extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public void encodePassword(String password) {
+        this.password = password;
+    }
 }

@@ -3,11 +3,13 @@ package com.seohaeng.backend.domain.user.entity;
 import com.seohaeng.backend.domain.common.BaseEntity;
 import com.seohaeng.backend.domain.travelCourse.entity.Stamp;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Builder
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
     @Id
     @GeneratedValue
