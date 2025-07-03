@@ -16,7 +16,7 @@ public class LoginInfo extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String provider;
+    private Provider provider;
 
     @Column(length = 255)
     private String email;
