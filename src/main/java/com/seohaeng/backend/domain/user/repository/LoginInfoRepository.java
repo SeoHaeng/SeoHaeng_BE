@@ -9,9 +9,6 @@ import java.util.Optional;
 
 public interface LoginInfoRepository extends JpaRepository<LoginInfo, Long> {
 
-    @Query("SELECT l FROM LoginInfo l JOIN FETCH l.user WHERE l.email = :email")
-    Optional<LoginInfo> findByEmailWithUser(@Param("email") String email);
-
     @Query("SELECT l FROM LoginInfo l JOIN FETCH l.user WHERE l.username = :username")
     Optional<LoginInfo> findByUsernameWithUser(@Param("username") String username);
 

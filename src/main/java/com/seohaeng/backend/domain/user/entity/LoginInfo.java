@@ -20,10 +20,7 @@ public class LoginInfo extends BaseEntity {
     @Column(nullable = false)
     private Provider provider;
 
-    @Column(length = 255)
-    private String email;
-
-    @Column(length = 12, unique = true)
+    @Column(length = 255, unique = true)
     private String username;
 
     @Column(nullable = false)

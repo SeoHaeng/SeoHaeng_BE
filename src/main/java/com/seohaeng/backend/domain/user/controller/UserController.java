@@ -1,24 +1,34 @@
 package com.seohaeng.backend.domain.user.controller;
 
 import com.seohaeng.backend.domain.user.dto.UserRequestDTO;
-import com.seohaeng.backend.domain.user.entity.LoginInfo;
+import com.seohaeng.backend.domain.user.dto.UserResponseDTO;
 import com.seohaeng.backend.domain.user.service.UserCommandService;
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RestController(value="/api/v1/users")
+@RestController
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserCommandService userCommandService;
 
-    @PostMapping("/signup")
+    @Operation(summary = "일반 회원가입 API",
+            description = "아이디는 4~12자이며, 비밀번호는 8~20자이고 영문, 숫자, 특수문자를 반드시 포함해야 합니다." +
+                    "비밀번호 확인란(password2)은 password1과 반드시 일치해야 합니다.")
+    @PostMapping("/auth/signup")
     public ApiResponse<String> joinService (@Valid @RequestBody UserRequestDTO.joinDTO request){
-        LoginInfo newUser = userCommandService.joinUser(request);
-        return ApiResponse.onSuccess("회원가입 성공");
+        userCommandService.joinUser(request);
+        return ApiResponse.onSuccess("회원가입이 완료되었습니다.");
+    }
+
+    @Operation(summary = "일반 로그인 API",
+            description = "아이디와 비밀번호를 정확히 입력하면 인증에 성공하며, Access Token이 발급됩니다.")
+    @PostMapping("/auth/login")
+    public ApiResponse<UserResponseDTO.LoginResultDTO> localLogin (@RequestBody UserRequestDTO.LoginDTO request){
+        return ApiResponse.onSuccess(userCommandService.loginUser(request));
     }
 }

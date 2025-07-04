@@ -1,6 +1,7 @@
 package com.seohaeng.backend.domain.user.converter;
 
 import com.seohaeng.backend.domain.user.dto.UserRequestDTO;
+import com.seohaeng.backend.domain.user.dto.UserResponseDTO;
 import com.seohaeng.backend.domain.user.entity.LoginInfo;
 import com.seohaeng.backend.domain.user.entity.Provider;
 import com.seohaeng.backend.domain.user.entity.User;
@@ -20,6 +21,13 @@ public class UserConverter {
                 .password(request.getPassword1())
                 .provider(Provider.LOCAL)
                 .user(user)
+                .build();
+    }
+
+    public static UserResponseDTO.LoginResultDTO toLoginResultDTO(Long userId,String accessToken){
+        return UserResponseDTO.LoginResultDTO.builder()
+                .UserId(userId)
+                .accessToken(accessToken)
                 .build();
     }
 }

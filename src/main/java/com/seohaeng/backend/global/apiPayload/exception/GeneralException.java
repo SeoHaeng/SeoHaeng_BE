@@ -5,7 +5,6 @@ import com.seohaeng.backend.global.apiPayload.code.ErrorReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-
 @Getter
 @AllArgsConstructor
 public class GeneralException extends RuntimeException {
