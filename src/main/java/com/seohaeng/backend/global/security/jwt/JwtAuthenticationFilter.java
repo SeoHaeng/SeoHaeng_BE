@@ -23,6 +23,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+
+        String path = request.getRequestURI();
+
+        if (isPermitAllPath(path)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String token = resolveToken(request);
 
         if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
@@ -47,5 +55,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jsonResponse = String.format("{\"isSuccess\": false, \"code\": \"%s\", \"message\": \"%s\"}", code,
                 message);
         response.getWriter().write(jsonResponse);
+    }
+
+    private boolean isPermitAllPath(String path) {
+        return path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs")
+                || path.startsWith("/swagger-resources")
+                || path.startsWith("/webjars")
+                || path.equals("/swagger-ui.html")
+
+                // 로그인/토큰발급 등등
+                || path.startsWith("/api/v1/users/auth/**")
+                || path.startsWith("/test")
+
+                // 필요하다면 다른 permitAll 경로들도 추가
+                // ...
+                ;
     }
 }

@@ -4,6 +4,8 @@ import com.seohaeng.backend.domain.travelCourse.converter.TravleCourseConverter;
 import com.seohaeng.backend.domain.travelCourse.entity.Stamp;
 import com.seohaeng.backend.domain.travelCourse.repository.StampRepository;
 import com.seohaeng.backend.domain.user.converter.UserConverter;
+import com.seohaeng.backend.domain.user.dto.KakaoProfile;
+import com.seohaeng.backend.domain.user.dto.OAuthToken;
 import com.seohaeng.backend.domain.user.dto.UserRequestDTO;
 import com.seohaeng.backend.domain.user.dto.UserResponseDTO;
 import com.seohaeng.backend.domain.user.entity.LoginInfo;
@@ -11,7 +13,9 @@ import com.seohaeng.backend.domain.user.entity.User;
 import com.seohaeng.backend.domain.user.repository.LoginInfoRepository;
 import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
+import com.seohaeng.backend.global.apiPayload.exception.handler.AuthException;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
+import com.seohaeng.backend.global.security.KakaoAuthProvider;
 import com.seohaeng.backend.global.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.seohaeng.backend.domain.user.converter.UserConverter.toLocalLoginInfo;
 
@@ -34,6 +39,7 @@ public class UserCommandService {
     private final UserRepository userRepository;
     private final StampRepository stampRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final KakaoAuthProvider kakaoAuthProvider;
 
     @Transactional
     public LoginInfo joinUser(UserRequestDTO.joinDTO joinDTO) {
@@ -48,7 +54,7 @@ public class UserCommandService {
             throw new UserHandler(ErrorStatus.DUPLICATE_USERNAME);
         }
 
-        User joinUser = UserConverter.toLocalUser(joinDTO);
+        User joinUser = UserConverter.toUser(joinDTO);
         userRepository.save(joinUser);
 
         Stamp joinUserStamp = TravleCourseConverter.toStamp(joinUser);
@@ -91,5 +97,54 @@ public class UserCommandService {
         if (!password.matches(pattern)) {
             throw new UserHandler(ErrorStatus.PASSWORD_COMPLEXITY_FAIL);
         }
+    }
+
+    @Transactional
+    public UserResponseDTO.LoginResultDTO kakaoLogin(String code) {
+        OAuthToken oAuthToken = getKakaoOauthToken(code);
+
+        KakaoProfile kakaoProfile;
+        try {
+            kakaoProfile = kakaoAuthProvider.requestKakaoProfile(oAuthToken.getAccess_token());
+        } catch (Exception e) {
+            throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_KAKAO);
+        }
+
+        Optional<LoginInfo> userLoginInfo = loginInfoRepository.findByUsername(kakaoProfile.getKakaoAccount().getEmail());
+
+        if (userLoginInfo.isPresent()) {
+            LoginInfo logininfo = userLoginInfo.get();
+            return getOauthResponseForUser(logininfo);
+        }
+
+        User user = userRepository.save(UserConverter.kakaoToUser(kakaoProfile));
+        LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toKakaoLoginInfo(kakaoProfile,user));
+        Stamp joinUserStamp = TravleCourseConverter.toStamp(user);
+        stampRepository.save(joinUserStamp);
+
+        return getOauthResponseForUser(loginInfo);
+    }
+
+    private UserResponseDTO.LoginResultDTO getOauthResponseForUser(LoginInfo logininfo) {
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                logininfo.getUsername(),
+                null,
+                Collections.emptyList());
+
+        User loginUser = logininfo.getUser();
+
+        String accessToken = jwtTokenProvider.generateToken(authentication);
+        return UserConverter.toLoginResultDTO(loginUser.getId(),accessToken);
+    }
+
+    private OAuthToken getKakaoOauthToken(String code) {
+        OAuthToken oAuthToken;
+        try {
+            oAuthToken = kakaoAuthProvider.requestToken(code);
+        } catch (Exception e) {
+            throw new AuthException(ErrorStatus.AUTH_INVALID_CODE);
+        }
+        return oAuthToken;
     }
 }
