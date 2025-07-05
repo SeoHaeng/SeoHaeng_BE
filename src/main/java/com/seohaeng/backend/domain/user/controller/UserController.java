@@ -8,7 +8,6 @@ import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,18 +33,23 @@ public class UserController {
         return ApiResponse.onSuccess(userCommandService.loginUser(request));
     }
 
-    @Operation(summary = "사용자 ID 주입 테스트",
-            description = "@AuthUser을 사용한 현사용자 ID 자동 주입 예시입니다.")
+    @Operation(summary = "카카오 로그인 API", description = "카카오 로그인 및 회원 가입을 진행하는 API입니다. 인가코드를 넘겨주세요.")
+    @GetMapping("/auth/kakao")
+    public ApiResponse<UserResponseDTO.LoginResultDTO> kakaoLogin(@RequestParam("code") String code) {
+        return ApiResponse.onSuccess(userCommandService.kakaoLogin(code));
+    }
+
+    @Operation(summary = "닉네임 중복확인 API", description = "닉네임 중복확인을 진행하는 API입니다.")
+    @GetMapping("/auth/check-nickname")
+    public ApiResponse<String> checkNickname(@RequestParam String nickname) {
+        String result = userCommandService.checkNickname(nickname);
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(summary = "사용자 ID 주입 테스트", description = "@AuthUser을 사용한 현사용자 ID 자동 주입 예시입니다.")
     @GetMapping("test")
     public ApiResponse<String> loginTest(@AuthUser Long userId){
         String result = "userID : " + userId;
         return ApiResponse.onSuccess(result);
-    }
-
-    @ResponseStatus(code = HttpStatus.OK)
-    @Operation(summary = "카카오 로그인 API", description = "카카오 로그인 및 회원 가입을 진행하는 API입니다. 인가코드를 넘겨주세요")
-    @GetMapping("/auth/kakao")
-    public ApiResponse<UserResponseDTO.LoginResultDTO> kakaoLogin(@RequestParam("code") String code) {
-        return ApiResponse.onSuccess(userCommandService.kakaoLogin(code));
     }
 }

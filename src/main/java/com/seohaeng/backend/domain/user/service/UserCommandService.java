@@ -17,6 +17,7 @@ import com.seohaeng.backend.global.apiPayload.exception.handler.AuthException;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import com.seohaeng.backend.global.security.KakaoAuthProvider;
 import com.seohaeng.backend.global.security.jwt.JwtTokenProvider;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -52,6 +53,11 @@ public class UserCommandService {
 
         if (loginInfoRepository.existsByUsername(joinDTO.getUsername())) {
             throw new UserHandler(ErrorStatus.DUPLICATE_USERNAME);
+        }
+
+        boolean exists = userRepository.existsByNickname(joinDTO.getNickname());
+        if (exists){
+            throw new AuthException(ErrorStatus.DUPLICATE_NICKNAME);
         }
 
         User joinUser = UserConverter.toUser(joinDTO);
@@ -147,4 +153,14 @@ public class UserCommandService {
         }
         return oAuthToken;
     }
+
+    public String checkNickname(String nickname) {
+        boolean exists = userRepository.existsByNickname(nickname);
+        if (!exists) {
+            return "사용 가능한 닉네임입니다.";
+        } else {
+            throw new AuthException(ErrorStatus.DUPLICATE_NICKNAME);
+        }
+    }
+
 }
