@@ -1,5 +1,6 @@
 package com.seohaeng.backend.domain.bookChallenge.entity;
 
+import com.seohaeng.backend.domain.common.BaseEntity;
 import com.seohaeng.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Builder
-public class BookChallengeProof {
+public class BookChallengeProof extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

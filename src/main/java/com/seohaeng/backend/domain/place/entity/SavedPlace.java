@@ -1,4 +1,5 @@
 package com.seohaeng.backend.domain.place.entity;
+import com.seohaeng.backend.domain.common.BaseEntity;
 import com.seohaeng.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -6,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class SavedPlace {
+public class SavedPlace extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

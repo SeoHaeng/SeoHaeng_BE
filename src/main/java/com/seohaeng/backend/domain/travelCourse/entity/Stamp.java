@@ -1,5 +1,6 @@
 package com.seohaeng.backend.domain.travelCourse.entity;
 
+import com.seohaeng.backend.domain.common.BaseEntity;
 import com.seohaeng.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Builder
-public class Stamp {
+public class Stamp extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

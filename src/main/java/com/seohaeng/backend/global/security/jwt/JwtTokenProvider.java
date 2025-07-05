@@ -1,0 +1,110 @@
+package com.seohaeng.backend.global.security.jwt;
+
+import com.seohaeng.backend.domain.user.entity.LoginInfo;
+import com.seohaeng.backend.domain.user.entity.User;
+import com.seohaeng.backend.domain.user.repository.LoginInfoRepository;
+import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
+import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
+import com.seohaeng.backend.global.security.userDetails.LocalCustomUserDetails;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.util.Date;
+
+@Component
+@RequiredArgsConstructor
+public class JwtTokenProvider {
+
+    private final LoginInfoRepository loginInfoRepository;
+
+    @Value("${JWT_SECRET_KEY}")
+    private String signingKey;
+
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(signingKey.getBytes(StandardCharsets.UTF_8));
+    }
+
+    @Value("${jwt.token.expiration.access}")
+    private long accessTokenExpiration;
+
+    public String generateToken(Authentication authentication) {
+        String username = authentication.getName();
+
+        LoginInfo loginUserLoginInfo = loginInfoRepository.findByUsernameWithUser(username)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.LOGIN_INFO_NOT_FOUND));
+
+        com.seohaeng.backend.domain.user.entity.User loginUser = loginUserLoginInfo.getUser();
+
+        Long UserId = loginUser.getId();
+
+        return Jwts.builder()
+                .setSubject(username)
+                .claim("id",UserId)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public boolean validateToken(String token) {
+        try{
+            Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        }catch(JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    public Authentication getAuthentication(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        String username = claims.getSubject();
+
+        LoginInfo loginInfo = loginInfoRepository.findByUsernameWithUser(username)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        com.seohaeng.backend.domain.user.entity.User user = loginInfo.getUser();
+        LocalCustomUserDetails principal = new LocalCustomUserDetails(user, loginInfo);
+
+        return new UsernamePasswordAuthenticationToken(
+                principal,
+                token,
+                principal.getAuthorities()
+        );
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring("Bearer " .length());
+        }
+        return null;
+    }
+
+    public Authentication extractAuthentication(HttpServletRequest request){
+        String accessToken = resolveToken(request);
+        if(accessToken == null || !validateToken(accessToken)) {
+            throw new UserHandler(ErrorStatus.INVALID_TOKEN);
+        }
+        return getAuthentication(accessToken);
+    }
+}
