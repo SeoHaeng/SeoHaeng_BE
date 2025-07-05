@@ -4,6 +4,7 @@ import com.seohaeng.backend.domain.user.dto.UserRequestDTO;
 import com.seohaeng.backend.domain.user.dto.UserResponseDTO;
 import com.seohaeng.backend.domain.user.service.UserCommandService;
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
+import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,13 @@ public class UserController {
     @PostMapping("/auth/login")
     public ApiResponse<UserResponseDTO.LoginResultDTO> localLogin (@RequestBody UserRequestDTO.LoginDTO request){
         return ApiResponse.onSuccess(userCommandService.loginUser(request));
+    }
+
+    @Operation(summary = "사용자 ID 주입 테스트",
+            description = "@AuthUser을 사용한 현사용자 ID 자동 주입 예시입니다.")
+    @GetMapping("test")
+    public ApiResponse<String> loginTest(@AuthUser Long userId){
+        String result = "userID : " + userId;
+        return ApiResponse.onSuccess(result);
     }
 }
