@@ -39,3 +39,17 @@ jwt:
     secretKey: ${JWT_SECRET_KEY}
     expiration:
       access: 14400000
+
+cloud:
+  aws:
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+      path:
+        bookchallenge: bookchallenges
+    region:
+      static: ${AWS_REGION}
+    stack:
+      auto: false
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY_ID}
+      secretKey: ${AWS_SECRET_ACCESS_KEY}
