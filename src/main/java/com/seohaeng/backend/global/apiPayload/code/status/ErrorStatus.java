@@ -30,7 +30,10 @@ public enum ErrorStatus implements BaseErrorCode {
     AUTH_INVALID_CODE(HttpStatus.UNAUTHORIZED, "", "코드가 유효하지 않습니다."),
 
     // 장소 관련
-    PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "PLACE_4001", "존재하지 않는 시설입니다.");
+    PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "PLACE_4001", "존재하지 않는 시설입니다."),
+
+    // 북챌린지 관련
+    BOOK_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK_CHALLENGE_4001", "존재하지 않는 게시글입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

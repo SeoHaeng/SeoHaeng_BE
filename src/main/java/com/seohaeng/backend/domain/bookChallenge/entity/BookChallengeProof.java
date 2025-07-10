@@ -58,9 +58,11 @@ public class BookChallengeProof extends BaseEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "bookChallengeProof", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("createdAt ASC")
     private List<BookChallengeProofImage> bookChallengeProofImageList = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "bookChallengeProof", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("createdAt ASC")
     private List<BookChallengeProofComment> bookChallengeProofComment = new ArrayList<>();
 }

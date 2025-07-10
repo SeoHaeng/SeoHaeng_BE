@@ -1,9 +1,10 @@
 package com.seohaeng.backend.domain.bookChallenge.controller;
 
 import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeRequestDTO;
+import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeResponseDTO;
 import com.seohaeng.backend.domain.bookChallenge.service.BookChallengeCommandService;
+import com.seohaeng.backend.domain.bookChallenge.service.BookChallengeQueryService;
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
-import com.seohaeng.backend.global.aws.s3.AmazonS3Manager;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -14,13 +15,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/book-challenge")
+@RequestMapping("/api/v1/book-challenges")
 
 @RequiredArgsConstructor
 public class BookChallengeController {
 
     private final BookChallengeCommandService bookChallengeCommandService;
-    private final AmazonS3Manager amazonS3Manager;
+    private final BookChallengeQueryService bookChallengeQueryService;
 
     @Operation(
             summary = "북챌린지 인증 게시글 생성 API",
@@ -36,5 +37,14 @@ public class BookChallengeController {
         }
         bookChallengeCommandService.createBookChallengeProof(request,userId,images);
         return ApiResponse.onSuccess("북챌린지 인증이 등록되었습니다.");
+    }
+
+    @Operation(
+            summary = "북챌린지 인증 게시글 개별 조회 API",
+            description = "북챌린지 인증 게시글을 개별 상세 조회합니다. 조회하고자 하는 북챌린지 게시글의 ID를 넘겨주세요")
+    @GetMapping("/{bookChallengeProofId}")
+    public ApiResponse<BookChallengeResponseDTO.getBookChallenge> getBookChallengeProof (@PathVariable Long bookChallengeProofId){
+        BookChallengeResponseDTO.getBookChallenge result = bookChallengeQueryService.getBookChallenge(bookChallengeProofId);
+        return ApiResponse.onSuccess(result);
     }
 }
