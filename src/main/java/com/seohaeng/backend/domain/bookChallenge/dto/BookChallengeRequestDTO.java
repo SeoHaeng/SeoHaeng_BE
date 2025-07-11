@@ -25,4 +25,12 @@ public class BookChallengeRequestDTO {
         String givenBookAuthor;
         String givenBookImage;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class createBookChallengeProofComment{
+        String commentContent;
+    }
 }

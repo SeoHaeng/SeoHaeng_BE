@@ -79,4 +79,37 @@ public class BookChallengeController {
         bookChallengeCommandService.deleteBookChallengeProof(userId, bookChallengeProofId);
         return ApiResponse.onSuccess("북챌린지 인증 게시글 삭제가 왼료되었습니다.");
     }
+
+    @Operation(
+            summary = "북챌린지 인증 댓글 생성 API",
+            description = "특정 북챌린지 인증 게시글에 댓글을 작성합니다. 댓글을 작성할 게시글 ID를 전달해주세요."
+    )
+    @PostMapping("/{bookChallengeProofId}/comments")
+    public ApiResponse<String> registerBookChallengeComment(
+            @AuthUser Long userId,
+            @PathVariable Long bookChallengeProofId,
+            @RequestBody BookChallengeRequestDTO.createBookChallengeProofComment request
+    ) {
+        bookChallengeCommandService.createBookChallengeProofComment(userId, bookChallengeProofId, request);
+        return ApiResponse.onSuccess("북챌린지 댓글 작성이 완료되었습니다.");
+    }
+
+    @Operation(
+            summary = "특정 북챌린지 인증 게시글 댓글 전체 조회 API",
+            description = """
+        북챌린지 인증 게시글의 댓글 목록을 페이징 처리하여 조회합니다.
+        Parameter:
+        - `page`: 페이지 번호 (1부터 시작)
+        - `size`: 한 페이지당 게시글 개수 (기본값: 20)
+    """
+    )
+    @GetMapping("/{bookChallengeProofId}/comments")
+    public ApiResponse<BookChallengeResponseDTO.getBookChallenge> getBookChallengeProofComments (
+            @PathVariable Long bookChallengeProofId,
+            @RequestParam(name = "page", defaultValue = "1") @Min(1)Integer page,
+            @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size
+            ){
+        // TODO 서비스 로직
+        return null;
+    }
 }

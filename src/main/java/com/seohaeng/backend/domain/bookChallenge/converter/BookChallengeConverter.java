@@ -3,6 +3,7 @@ package com.seohaeng.backend.domain.bookChallenge.converter;
 import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeRequestDTO;
 import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeResponseDTO;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProof;
+import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofComment;
 import com.seohaeng.backend.domain.place.entity.Place;
 import com.seohaeng.backend.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +58,16 @@ public class BookChallengeConverter {
                 .isFirst(bookChallengeProofPage.isFirst())
                 .isLast(bookChallengeProofPage.isLast())
                 .getBookChallengeList(list)
+                .build();
+    }
+
+    public static BookChallengeProofComment toBookChallengeProofComment(User user,
+                                                                        BookChallengeProof bookChallengeProof,
+                                                                        BookChallengeRequestDTO.createBookChallengeProofComment request){
+        return BookChallengeProofComment.builder()
+                .bookChallengeProofCommentContent(request.getCommentContent())
+                .bookChallengeProof(bookChallengeProof)
+                .user(user)
                 .build();
     }
 }
