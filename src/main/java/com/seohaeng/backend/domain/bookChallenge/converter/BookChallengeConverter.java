@@ -70,4 +70,28 @@ public class BookChallengeConverter {
                 .user(user)
                 .build();
     }
+
+    public static BookChallengeResponseDTO.getBookChallengeCommentDTO toGetBookChallengeCommentDTO(BookChallengeProofComment comment) {
+        User user = comment.getUser();
+        return BookChallengeResponseDTO.getBookChallengeCommentDTO.builder()
+                .createdAt(comment.getCreatedAt())
+                .userId(user.getId())
+                .nickname(user.getNickname())
+                .userProfileImageUrl(user.getImageUrl())
+                .comment(comment.getBookChallengeProofCommentContent())
+                .build();
+    }
+
+    public static BookChallengeResponseDTO.getBookChallengeCommentListDTO toGetBookChallengeCommentListDTO (
+            List<BookChallengeResponseDTO.getBookChallengeCommentDTO> getBookChallengeCommentList,
+            Page<BookChallengeProofComment> bookChallengeProofCommentPage){
+        return BookChallengeResponseDTO.getBookChallengeCommentListDTO.builder()
+                .listSize(getBookChallengeCommentList.size())
+                .totalPage(bookChallengeProofCommentPage.getTotalPages())
+                .totalElements(bookChallengeProofCommentPage.getTotalElements())
+                .isFirst(bookChallengeProofCommentPage.isFirst())
+                .isLast(bookChallengeProofCommentPage.isLast())
+                .getBookChallengeCommentList(getBookChallengeCommentList)
+                .build();
+    }
 }

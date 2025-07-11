@@ -14,6 +14,9 @@ public interface BookChallengeProofRepository extends JpaRepository<BookChalleng
     @Query("SELECT b FROM BookChallengeProof b LEFT JOIN FETCH b.bookChallengeProofImageList WHERE b.id = :id")
     Optional<BookChallengeProof> findWithImagesById(Long id);
 
+    @Query("SELECT b FROM BookChallengeProof b LEFT JOIN FETCH b.bookChallengeProofComment WHERE b.id = :id")
+    Optional<BookChallengeProof> findWithBookChallengeProofCommentById(Long id);
+
     @EntityGraph(attributePaths = "bookChallengeProofImageList")
     Page<BookChallengeProof> findAll(Pageable pageable);
 

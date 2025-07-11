@@ -3,7 +3,9 @@ package com.seohaeng.backend.domain.bookChallenge.service;
 import com.seohaeng.backend.domain.bookChallenge.converter.BookChallengeConverter;
 import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeResponseDTO;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProof;
+import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofComment;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofImage;
+import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofCommentRepository;
 import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
 import com.seohaeng.backend.global.apiPayload.exception.handler.BookChallengeHandler;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 public class BookChallengeQueryService {
 
     private final BookChallengeProofRepository bookChallengeProofRepository;
+    private final BookChallengeProofCommentRepository bookChallengeProofCommentRepository;
 
     public BookChallengeResponseDTO.getBookChallenge getBookChallenge(Long bookChallengeProofId) {
         BookChallengeProof bookChallengeProof = bookChallengeProofRepository.findWithImagesById(bookChallengeProofId)
@@ -42,6 +45,19 @@ public class BookChallengeQueryService {
         List<BookChallengeResponseDTO.getBookChallenge> toGetBookChallengeDTOList = bookChallengeProofPage.getContent().stream()
                 .map(this::convertToDTO).collect(Collectors.toList());
         return BookChallengeConverter.toGetBookChallengeListDTO(toGetBookChallengeDTOList, bookChallengeProofPage);
+    }
+
+    public BookChallengeResponseDTO.getBookChallengeCommentListDTO getBookChallengeCommentList(Integer page, Integer size, Long bookChallengeProofId) {
+        BookChallengeProof bookChallengeProof = bookChallengeProofRepository.findById(bookChallengeProofId)
+                .orElseThrow(() -> new BookChallengeHandler(ErrorStatus.BOOK_CHALLENGE_NOT_FOUND));
+
+        PageRequest pageRequest = PageRequest.of(page-1, size);
+        Page<BookChallengeProofComment> bookChallengeProofCommentPage = bookChallengeProofCommentRepository.findAllByBookChallengeProof(pageRequest,bookChallengeProof);
+
+        List<BookChallengeResponseDTO.getBookChallengeCommentDTO> bookChallengeCommentDTOList = bookChallengeProofCommentPage.getContent()
+                .stream().map(BookChallengeConverter::toGetBookChallengeCommentDTO).collect(Collectors.toList());
+
+        return BookChallengeConverter.toGetBookChallengeCommentListDTO(bookChallengeCommentDTOList,bookChallengeProofCommentPage);
     }
 
     private BookChallengeResponseDTO.getBookChallenge convertToDTO (BookChallengeProof bookChallengeProof){

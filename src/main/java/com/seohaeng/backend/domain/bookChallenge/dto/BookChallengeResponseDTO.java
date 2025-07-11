@@ -3,6 +3,7 @@ package com.seohaeng.backend.domain.bookChallenge.dto;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class BookChallengeResponseDTO {
@@ -44,5 +45,32 @@ public class BookChallengeResponseDTO {
         Boolean isFirst;
         Boolean isLast;
         List<getBookChallenge> getBookChallengeList;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class getBookChallengeCommentDTO {
+        LocalDateTime createdAt;
+        Long userId;
+        String nickname;
+        String userProfileImageUrl;
+        String comment;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class getBookChallengeCommentListDTO {
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+        List<getBookChallengeCommentDTO> getBookChallengeCommentList;
     }
 }

@@ -104,12 +104,13 @@ public class BookChallengeController {
     """
     )
     @GetMapping("/{bookChallengeProofId}/comments")
-    public ApiResponse<BookChallengeResponseDTO.getBookChallenge> getBookChallengeProofComments (
+    public ApiResponse<BookChallengeResponseDTO.getBookChallengeCommentListDTO> getBookChallengeProofComments (
             @PathVariable Long bookChallengeProofId,
             @RequestParam(name = "page", defaultValue = "1") @Min(1)Integer page,
-            @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size
+            @RequestParam(name = "size", defaultValue = "20") @Min(1)Integer size
             ){
-        // TODO 서비스 로직
-        return null;
+        BookChallengeResponseDTO.getBookChallengeCommentListDTO result =
+                bookChallengeQueryService.getBookChallengeCommentList(page, size, bookChallengeProofId);
+        return ApiResponse.onSuccess(result);
     }
 }
