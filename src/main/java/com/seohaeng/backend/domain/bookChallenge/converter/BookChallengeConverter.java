@@ -6,6 +6,7 @@ import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProof;
 import com.seohaeng.backend.domain.place.entity.Place;
 import com.seohaeng.backend.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class BookChallengeConverter {
         return BookChallengeResponseDTO.getBookChallenge.builder()
                 .createdAt(proof.getCreatedAt().toLocalDate())
                 .creatorId(proof.getUser().getId())
+                .bookChallengeId(proof.getId())
                 .presentMessage(proof.getPresentMessage())
                 .proofContent(proof.getBookChallengeProofContent())
                 .likes(proof.getBookChallengeProofLikes())
@@ -43,6 +45,18 @@ public class BookChallengeConverter {
                 .givenBookAuthor(proof.getGivenBookAuthor())
                 .givenBookImage(proof.getGivenBookImage())
                 .proofImageUrls(images)
+                .build();
+    }
+
+    public static BookChallengeResponseDTO.getBookChallengeListDTO toGetBookChallengeListDTO(List<BookChallengeResponseDTO.getBookChallenge> list,
+                                                                                             Page<BookChallengeProof> bookChallengeProofPage){
+        return BookChallengeResponseDTO.getBookChallengeListDTO.builder()
+                .listSize(list.size())
+                .totalPage(bookChallengeProofPage.getTotalPages())
+                .totalElements(bookChallengeProofPage.getTotalElements())
+                .isFirst(bookChallengeProofPage.isFirst())
+                .isLast(bookChallengeProofPage.isLast())
+                .getBookChallengeList(list)
                 .build();
     }
 }

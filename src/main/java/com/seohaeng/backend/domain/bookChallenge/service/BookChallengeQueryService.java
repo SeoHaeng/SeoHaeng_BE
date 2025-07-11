@@ -8,6 +8,9 @@ import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofRe
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
 import com.seohaeng.backend.global.apiPayload.exception.handler.BookChallengeHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +25,28 @@ public class BookChallengeQueryService {
     private final BookChallengeProofRepository bookChallengeProofRepository;
 
     public BookChallengeResponseDTO.getBookChallenge getBookChallenge(Long bookChallengeProofId) {
-
         BookChallengeProof bookChallengeProof = bookChallengeProofRepository.findWithImagesById(bookChallengeProofId)
                 .orElseThrow(() -> new BookChallengeHandler(ErrorStatus.BOOK_CHALLENGE_NOT_FOUND));
+        return convertToDTO(bookChallengeProof);
+    }
 
+    public BookChallengeResponseDTO.getBookChallengeListDTO getBookChallengeList(Integer page, Integer size, String sort){
+        Sort sortOption;
+        switch (sort) {
+            case "popular" -> sortOption = Sort.by(Sort.Direction.DESC, "likeCount");
+            case "recent" -> sortOption = Sort.by(Sort.Direction.DESC, "createdAt");
+            default -> sortOption = Sort.by(Sort.Direction.DESC, "createdAt");
+        }
+        PageRequest pageRequest = PageRequest.of(page-1, size, sortOption);
+        Page<BookChallengeProof> bookChallengeProofPage = bookChallengeProofRepository.findAll(pageRequest);
+        List<BookChallengeResponseDTO.getBookChallenge> toGetBookChallengeDTOList = bookChallengeProofPage.getContent().stream()
+                .map(this::convertToDTO).collect(Collectors.toList());
+        return BookChallengeConverter.toGetBookChallengeListDTO(toGetBookChallengeDTOList, bookChallengeProofPage);
+    }
+
+    private BookChallengeResponseDTO.getBookChallenge convertToDTO (BookChallengeProof bookChallengeProof){
         List<BookChallengeProofImage> imageList = bookChallengeProof.getBookChallengeProofImageList();
         List<String> imageUrls = imageList.stream().map(BookChallengeProofImage::getImageUrl).collect(Collectors.toList());
-
         return BookChallengeConverter.toGetBookChallengeDTO(bookChallengeProof, imageUrls);
     }
 }

@@ -7,16 +7,18 @@ import com.seohaeng.backend.domain.bookChallenge.service.BookChallengeQueryServi
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/api/v1/book-challenges")
-
 @RequiredArgsConstructor
 public class BookChallengeController {
 
@@ -45,6 +47,26 @@ public class BookChallengeController {
     @GetMapping("/{bookChallengeProofId}")
     public ApiResponse<BookChallengeResponseDTO.getBookChallenge> getBookChallengeProof (@PathVariable Long bookChallengeProofId){
         BookChallengeResponseDTO.getBookChallenge result = bookChallengeQueryService.getBookChallenge(bookChallengeProofId);
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(
+            summary = "북챌린지 인증 게시글 전체 조회 API",
+            description = """
+        북챌린지 인증 게시글 목록을 페이징 처리하여 조회합니다.
+        Parameter:
+        - `page`: 페이지 번호 (1부터 시작)
+        - `size`: 한 페이지당 게시글 개수 (기본값: 10)
+        - `sort`: 정렬 기준 (`latest`: 최신순, `popular`: 인기순) 정확히 입력해야합니다.
+    """
+    )
+    @GetMapping
+    public ApiResponse<BookChallengeResponseDTO.getBookChallengeListDTO> getBookChallengeProofs (
+            @RequestParam(name = "page", defaultValue = "1") @Min(1)Integer page,
+            @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size,
+            @RequestParam(name = "sort", defaultValue = "latest") String sort
+    ){
+        BookChallengeResponseDTO.getBookChallengeListDTO result = bookChallengeQueryService.getBookChallengeList(page, size, sort);
         return ApiResponse.onSuccess(result);
     }
 }

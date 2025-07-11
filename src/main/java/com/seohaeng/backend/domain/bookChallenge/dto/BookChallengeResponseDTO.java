@@ -15,6 +15,7 @@ public class BookChallengeResponseDTO {
     public static class getBookChallenge {
         LocalDate createdAt;
         Long creatorId;
+        Long bookChallengeId;
 
         String presentMessage;
         String proofContent;
@@ -29,5 +30,19 @@ public class BookChallengeResponseDTO {
         String givenBookImage;
 
         List<String> proofImageUrls;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class getBookChallengeListDTO {
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+        List<getBookChallenge> getBookChallengeList;
     }
 }
