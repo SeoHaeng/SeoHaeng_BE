@@ -69,4 +69,14 @@ public class BookChallengeController {
         BookChallengeResponseDTO.getBookChallengeListDTO result = bookChallengeQueryService.getBookChallengeList(page, size, sort);
         return ApiResponse.onSuccess(result);
     }
+
+    @Operation(
+            summary = "북챌린지 인증 게시글 삭제 API",
+            description = "북챌린지 인증 게시글을 삭제합니다. 본인이 작성한 글만 삭제가 가능하며, 삭제하고자 하는 북챌린지 게시글의 ID를 넘겨주세요."
+    )
+    @DeleteMapping("/{bookChallengeProofId}")
+    public ApiResponse<String> deleteChallengeProof (@AuthUser Long userId, @PathVariable Long bookChallengeProofId){
+        bookChallengeCommandService.deleteBookChallengeProof(userId, bookChallengeProofId);
+        return ApiResponse.onSuccess("북챌린지 인증 게시글 삭제가 왼료되었습니다.");
+    }
 }

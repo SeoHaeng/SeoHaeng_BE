@@ -11,6 +11,7 @@ import com.seohaeng.backend.domain.place.entity.repository.PlaceRepository;
 import com.seohaeng.backend.domain.user.entity.User;
 import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
+import com.seohaeng.backend.global.apiPayload.exception.handler.BookChallengeHandler;
 import com.seohaeng.backend.global.apiPayload.exception.handler.PlaceHandler;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import com.seohaeng.backend.global.aws.s3.AmazonS3Manager;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,5 +67,19 @@ public class BookChallengeCommandService {
                 }
             }
         }
+    }
+
+    @Transactional
+    public void deleteBookChallengeProof(Long userId, Long bookChallengeProofId) {
+        BookChallengeProof bookChallengeProof = bookChallengeProofRepository.findWithImagesById(bookChallengeProofId)
+                .orElseThrow(() -> new BookChallengeHandler(ErrorStatus.BOOK_CHALLENGE_NOT_FOUND));
+        if (!bookChallengeProof.getUser().getId().equals(userId)) {
+            throw new BookChallengeHandler(ErrorStatus._FORBIDDEN);
+        }
+        List<String> images = bookChallengeProof.getBookChallengeProofImageList()
+                .stream().map(BookChallengeProofImage::getImageUrl)
+                .collect(Collectors.toList());
+        bookChallengeProofRepository.delete(bookChallengeProof);
+        images.forEach(amazonS3Manager::deleteFile);
     }
 }

@@ -16,4 +16,6 @@ public interface BookChallengeProofRepository extends JpaRepository<BookChalleng
 
     @EntityGraph(attributePaths = "bookChallengeProofImageList")
     Page<BookChallengeProof> findAll(Pageable pageable);
+
+    Optional<BookChallengeProof> findById(Long id);
 }

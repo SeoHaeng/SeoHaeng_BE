@@ -24,7 +24,6 @@ public class AmazonS3Manager {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(file.getSize());
         objectMetadata.setContentType(file.getContentType());
-
         try {
             amazonS3.putObject(
                     new PutObjectRequest(amazonConfig.getBucket(), keyName, file.getInputStream(), objectMetadata));
@@ -32,6 +31,23 @@ public class AmazonS3Manager {
             log.error("error at AmazonS3Manager uploadFile : {}", (Object) e.getStackTrace());
         }
         return amazonS3.getUrl(amazonConfig.getBucket(), keyName).toString();
+    }
+
+    public String deleteFile(String uploadFilePath) {
+        String result = "success";
+        try {
+            String bucketUrl = "https://" + amazonConfig.getBucket() + ".s3." + amazonConfig.getRegion() + ".amazonaws.com/";
+            String keyName = uploadFilePath.replace(bucketUrl, "");
+            boolean isObjectExist = amazonS3.doesObjectExist(amazonConfig.getBucket(), keyName);
+            if (isObjectExist) {
+                amazonS3.deleteObject(amazonConfig.getBucket(), keyName);
+            } else {
+                result = "file not found";
+            }
+        } catch (Exception e) {
+            log.debug("Delete File failed", e);
+        }
+        return result;
     }
 
     public String generateBookChallengeProofKeyName(String uuid) {
