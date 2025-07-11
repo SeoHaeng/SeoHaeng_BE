@@ -73,4 +73,13 @@ public class BookChallengeResponseDTO {
         Boolean isLast;
         List<getBookChallengeCommentDTO> getBookChallengeCommentList;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class getBookChallengeLikeInfoDTO {
+        Integer nowLikeCount;
+    }
 }

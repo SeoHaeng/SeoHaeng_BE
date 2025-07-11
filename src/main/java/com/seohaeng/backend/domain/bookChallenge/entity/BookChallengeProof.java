@@ -65,4 +65,12 @@ public class BookChallengeProof extends BaseEntity {
     @OneToMany(mappedBy = "bookChallengeProof", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("createdAt ASC")
     private List<BookChallengeProofComment> bookChallengeProofComment = new ArrayList<>();
+
+    public void increaseBookChallengeProofLikes(){
+        this.bookChallengeProofLikes++;
+    }
+
+    public void decreaseBookChallengeProofLikes(){
+        this.bookChallengeProofLikes--;
+    }
 }

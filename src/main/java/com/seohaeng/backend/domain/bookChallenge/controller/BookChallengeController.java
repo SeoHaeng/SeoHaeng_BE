@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static com.seohaeng.backend.global.apiPayload.code.status.SuccessStatus.BOOK_CHALLENGE_PROOF_LIKE_TOGGLED;
+
 @Validated
 @RestController
 @RequestMapping("/api/v1/book-challenges")
@@ -112,5 +114,17 @@ public class BookChallengeController {
         BookChallengeResponseDTO.getBookChallengeCommentListDTO result =
                 bookChallengeQueryService.getBookChallengeCommentList(page, size, bookChallengeProofId);
         return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(
+            summary = "북챌린지 인증 게시글 좋아요 토글 API",
+            description = "특정 북챌린지 인증 게시글에 좋아요를 추가하거나 취소하고, 현재 좋아요 수를 반환합니다." +
+                    "누르면 좋아요가 없으면 +1, 이미 눌러져 있으면 취소되어 좋아요 수가 -1 됩니다. 좋아요를 토글할 게시글 ID를 전달해주세요."
+    )
+    @PostMapping("/{bookChallengeProofId}/like")
+    public ApiResponse<BookChallengeResponseDTO.getBookChallengeLikeInfoDTO> toggleLikeBookChallengeProof(@AuthUser Long userId, @PathVariable Long bookChallengeProofId) {
+        BookChallengeResponseDTO.getBookChallengeLikeInfoDTO result =
+                bookChallengeCommandService.toggleBookChallengeProofLike(userId, bookChallengeProofId);
+        return ApiResponse.of(BOOK_CHALLENGE_PROOF_LIKE_TOGGLED,result);
     }
 }

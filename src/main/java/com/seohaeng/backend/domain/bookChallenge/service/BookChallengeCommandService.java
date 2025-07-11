@@ -2,11 +2,14 @@ package com.seohaeng.backend.domain.bookChallenge.service;
 
 import com.seohaeng.backend.domain.bookChallenge.converter.BookChallengeConverter;
 import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeRequestDTO;
+import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeResponseDTO;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProof;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofComment;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofImage;
+import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofLike;
 import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofCommentRepository;
 import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofImageRepository;
+import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofLikeRepository;
 import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofRepository;
 import com.seohaeng.backend.domain.place.entity.Place;
 import com.seohaeng.backend.domain.place.entity.repository.PlaceRepository;
@@ -23,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -36,6 +40,8 @@ public class BookChallengeCommandService {
     private final BookChallengeProofRepository bookChallengeProofRepository;
     private final BookChallengeProofImageRepository bookChallengeProofImageRepository;
     private final BookChallengeProofCommentRepository bookChallengeProofCommentRepository;
+    private final BookChallengeProofLikeRepository bookChallengeProofLikeRepository;
+
     private final AmazonS3Manager amazonS3Manager;
 
     public void createBookChallengeProof(
@@ -89,5 +95,28 @@ public class BookChallengeCommandService {
                 .orElseThrow(() -> new BookChallengeHandler(ErrorStatus.BOOK_CHALLENGE_NOT_FOUND));
         BookChallengeProofComment bookChallengeProofComment = BookChallengeConverter.toBookChallengeProofComment(user, bookChallengeProof, request);
         bookChallengeProofCommentRepository.save(bookChallengeProofComment);
+    }
+
+    public BookChallengeResponseDTO.getBookChallengeLikeInfoDTO toggleBookChallengeProofLike(Long userId, Long bookChallengeProofId) {
+
+        BookChallengeProof bookChallengeProof = bookChallengeProofRepository.findById(bookChallengeProofId)
+                .orElseThrow(() -> new BookChallengeHandler(ErrorStatus.BOOK_CHALLENGE_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        Optional<BookChallengeProofLike> userLike = bookChallengeProofLikeRepository.findByUserAndBookChallengeProof(user,bookChallengeProof);
+
+        if (userLike.isPresent()) {
+            bookChallengeProofLikeRepository.delete(userLike.get());
+            bookChallengeProof.decreaseBookChallengeProofLikes();
+        } else {
+            BookChallengeProofLike newLike = BookChallengeProofLike.builder()
+                    .user(user)
+                    .bookChallengeProof(bookChallengeProof)
+                    .build();
+            bookChallengeProofLikeRepository.save(newLike);
+            bookChallengeProof.increaseBookChallengeProofLikes();
+        }
+        return BookChallengeConverter.togetBookChallengeLikeInfoDTO(bookChallengeProof.getBookChallengeProofLikes());
     }
 }

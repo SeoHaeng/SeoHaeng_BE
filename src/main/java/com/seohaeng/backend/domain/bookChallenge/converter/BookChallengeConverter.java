@@ -94,4 +94,9 @@ public class BookChallengeConverter {
                 .getBookChallengeCommentList(getBookChallengeCommentList)
                 .build();
     }
+
+    public static BookChallengeResponseDTO.getBookChallengeLikeInfoDTO togetBookChallengeLikeInfoDTO(Integer count){
+        return BookChallengeResponseDTO.getBookChallengeLikeInfoDTO.builder()
+                .nowLikeCount(count).build();
+    }
 }
