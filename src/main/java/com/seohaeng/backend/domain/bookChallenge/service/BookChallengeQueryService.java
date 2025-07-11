@@ -36,7 +36,7 @@ public class BookChallengeQueryService {
     public BookChallengeResponseDTO.getBookChallengeListDTO getBookChallengeList(Integer page, Integer size, String sort){
         Sort sortOption;
         switch (sort) {
-            case "popular" -> sortOption = Sort.by(Sort.Direction.DESC, "likeCount");
+            case "popular" -> sortOption = Sort.by(Sort.Direction.DESC, "bookChallengeProofLikes");
             case "recent" -> sortOption = Sort.by(Sort.Direction.DESC, "createdAt");
             default -> sortOption = Sort.by(Sort.Direction.DESC, "createdAt");
         }
