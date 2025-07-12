@@ -22,4 +22,6 @@ public class Place extends BaseEntity {
 
     private String websiteUrl;
 
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    private boolean bookChallengeStatus = false;
 }

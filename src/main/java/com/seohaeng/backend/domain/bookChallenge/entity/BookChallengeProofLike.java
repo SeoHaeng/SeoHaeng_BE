@@ -1,6 +1,7 @@
 package com.seohaeng.backend.domain.bookChallenge.entity;
 
 import com.seohaeng.backend.domain.common.BaseEntity;
+import com.seohaeng.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,14 +10,14 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Builder
-public class BookChallengrProofImage extends BaseEntity {
-
+public class BookChallengeProofLike extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 2048)
-    private String imageUrl;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_challenge_proof_id", nullable = false)
