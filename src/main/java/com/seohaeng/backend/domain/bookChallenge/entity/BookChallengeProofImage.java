@@ -1,6 +1,6 @@
 package com.seohaeng.backend.domain.bookChallenge.entity;
 
-import com.seohaeng.backend.domain.common.BaseEntity;
+import com.seohaeng.backend.domain.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

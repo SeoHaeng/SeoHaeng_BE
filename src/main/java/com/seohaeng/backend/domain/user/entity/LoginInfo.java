@@ -1,8 +1,7 @@
 package com.seohaeng.backend.domain.user.entity;
 
-import com.seohaeng.backend.domain.common.BaseEntity;
+import com.seohaeng.backend.domain.common.entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Entity
