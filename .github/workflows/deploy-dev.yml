@@ -1,0 +1,88 @@
+name: Deploy to Development Server
+
+on:
+  push:
+    branches: [ "develop" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+
+      - name: Run MySQL image for test
+        run: docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=seohaeng_db mysql:8.0.31
+
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
+
+      - name: Prepare deploy folder
+        run: |
+          mkdir deploy
+          cp build/libs/*.jar deploy/
+          cp Dockerfile docker-compose.yml deploy/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: deploy/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      APP_PATH: ${{ secrets.APP_PATH }}
+
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: deploy/
+
+      - name: SCP files to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          source: "deploy/*"
+          target: ${{ env.APP_PATH }}
+
+      - name: SSH deploy on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            cd ${{ env.APP_PATH }}
+            docker compose down --rmi local
+            docker image prune -f
+            docker compose up --build -d
+
+      - name: Notify Discord - ✅ Success
+        if: ${{ success() }}
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST -d '{"content":"✅ [CD] 배포 성공! 브랜치: '${{ github.ref_name }}'"}' \
+            ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Notify Discord - ❌ Failure
+        if: ${{ failure() }}
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST -d '{"content":"❌ [CD] 배포 실패... 브랜치: '${{ github.ref_name }}' 확인 필요!"}' \
+            ${{ secrets.DISCORD_WEBHOOK }}
