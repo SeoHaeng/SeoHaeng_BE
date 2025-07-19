@@ -1,4 +1,4 @@
-package com.seohaeng.backend.domain.common;
+package com.seohaeng.backend.domain.common.entity;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

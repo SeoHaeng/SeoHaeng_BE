@@ -12,7 +12,7 @@ import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofIm
 import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofLikeRepository;
 import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofRepository;
 import com.seohaeng.backend.domain.place.entity.Place;
-import com.seohaeng.backend.domain.place.entity.repository.PlaceRepository;
+import com.seohaeng.backend.domain.place.repository.PlaceRepository;
 import com.seohaeng.backend.domain.user.entity.User;
 import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
