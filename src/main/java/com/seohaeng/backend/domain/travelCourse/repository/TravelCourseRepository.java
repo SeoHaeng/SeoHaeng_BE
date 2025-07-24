@@ -14,7 +14,7 @@ public interface TravelCourseRepository extends JpaRepository<TravelCourse, Long
     Optional<TravelCourse> findWithRegionById(Long id);
 
     @EntityGraph(attributePaths = {"travelCourseScheduleList"})
-    Optional<TravelCourse> findWithCourseById(Long id);
+    Optional<TravelCourse> findWithCourseScheduleById(Long id);
 
     List<TravelCourse> findAllByUser(User user);
 }

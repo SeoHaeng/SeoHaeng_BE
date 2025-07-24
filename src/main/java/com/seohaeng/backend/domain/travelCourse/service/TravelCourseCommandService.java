@@ -17,6 +17,7 @@ import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
 import com.seohaeng.backend.global.apiPayload.exception.handler.PlaceHandler;
 import com.seohaeng.backend.global.apiPayload.exception.handler.RegionHandler;
+import com.seohaeng.backend.global.apiPayload.exception.handler.TravelCourseHandler;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -66,5 +67,21 @@ public class TravelCourseCommandService {
         travelCourseRegionRepository.saveAll(regions);
 
         return travelCourse.getId();
+    }
+
+    @Transactional
+    public void deleteTravelCourse (Long userId, Long travelCourseId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        TravelCourse travelCourse = travelCourseRepository.findById(travelCourseId)
+                .orElseThrow(() -> new TravelCourseHandler(ErrorStatus.TRAVEL_COURSE_NOT_FOUND));
+
+        User travelCourseUser = travelCourse.getUser();
+
+        if(!travelCourseUser.equals(user)) {
+            throw new UserHandler(ErrorStatus._FORBIDDEN);
+        }
+        travelCourseRepository.delete(travelCourse);
     }
 }

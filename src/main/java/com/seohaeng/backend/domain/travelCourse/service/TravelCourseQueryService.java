@@ -35,7 +35,7 @@ public class TravelCourseQueryService {
 
         Long userId = travelCourse.getUser().getId();
 
-        List<TravelCourseSchedule> scheduleList = travelCourseRepository.findWithCourseById(travelCourseId)
+        List<TravelCourseSchedule> scheduleList = travelCourseRepository.findWithCourseScheduleById(travelCourseId)
                 .map(TravelCourse::getTravelCourseScheduleList)
                 .orElse(Collections.emptyList());
 

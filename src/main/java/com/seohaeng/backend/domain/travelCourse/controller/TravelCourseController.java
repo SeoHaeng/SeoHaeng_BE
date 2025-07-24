@@ -69,4 +69,16 @@ public class TravelCourseController {
         List<TravelCourseResponseDTO.GetTravelCourseListItemDTO> result = travelCourseQueryService.getTravelCourseList(userId);
         return ApiResponse.onSuccess(result);
     }
+
+    @Operation(
+            summary = "여행 일정 삭제 API",
+            description = "여행 일정을 삭제합니다. 본인의 여행 일정에만 삭제 권한이 있습니다. 삭제하고자 하는 여행일정의 Id를 전달해주세요."
+    )
+    @DeleteMapping("/{TravelCourseId}")
+    public ApiResponse<String> deleteTravelCourse (
+            @AuthUser Long userId,
+            @PathVariable Long TravelCourseId) {
+        travelCourseCommandService.deleteTravelCourse(userId, TravelCourseId);
+        return ApiResponse.onSuccess("여행 일정 삭제가 완료되었습니다.");
+    }
 }
