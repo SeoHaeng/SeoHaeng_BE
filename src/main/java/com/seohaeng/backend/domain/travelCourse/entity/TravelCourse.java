@@ -28,9 +28,6 @@ public class TravelCourse extends BaseEntity {
     @Column(nullable = false, length = 20)
     private LocalDate travelCourseEndDate;
 
-    @Column(nullable = false, length = 100)
-    private String travleLocation;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

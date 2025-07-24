@@ -1,6 +1,6 @@
 package com.seohaeng.backend.domain.user.service;
 
-import com.seohaeng.backend.domain.travelCourse.converter.TravleCourseConverter;
+import com.seohaeng.backend.domain.travelCourse.converter.TravelCourseConverter;
 import com.seohaeng.backend.domain.travelCourse.entity.Stamp;
 import com.seohaeng.backend.domain.travelCourse.repository.StampRepository;
 import com.seohaeng.backend.domain.user.converter.UserConverter;
@@ -17,7 +17,6 @@ import com.seohaeng.backend.global.apiPayload.exception.handler.AuthException;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import com.seohaeng.backend.global.security.KakaoAuthProvider;
 import com.seohaeng.backend.global.security.jwt.JwtTokenProvider;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -63,7 +62,7 @@ public class UserCommandService {
         User joinUser = UserConverter.toUser(joinDTO);
         userRepository.save(joinUser);
 
-        Stamp joinUserStamp = TravleCourseConverter.toStamp(joinUser);
+        Stamp joinUserStamp = TravelCourseConverter.toStamp(joinUser);
         stampRepository.save(joinUserStamp);
 
         String encodedPassword = passwordEncoder.encode(joinDTO.getPassword1());
@@ -125,7 +124,7 @@ public class UserCommandService {
 
         User user = userRepository.save(UserConverter.kakaoToUser(kakaoProfile));
         LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toKakaoLoginInfo(kakaoProfile,user));
-        Stamp joinUserStamp = TravleCourseConverter.toStamp(user);
+        Stamp joinUserStamp = TravelCourseConverter.toStamp(user);
         stampRepository.save(joinUserStamp);
 
         return getOauthResponseForUser(loginInfo);
