@@ -1,6 +1,6 @@
 package com.seohaeng.backend.domain.travelCourse.entity;
 
-import com.seohaeng.backend.domain.common.BaseEntity;
+import com.seohaeng.backend.domain.common.entity.BaseEntity;
 import com.seohaeng.backend.domain.place.entity.Place;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Getter
 @Builder
-public class TravelCourseSchedule extends BaseEntity {
+public class TravelCourseSchedule  extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
