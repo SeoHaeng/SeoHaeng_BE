@@ -1,7 +1,9 @@
 package com.seohaeng.backend.domain.travelCourse.controller;
 
 import com.seohaeng.backend.domain.travelCourse.dto.TravelCourseRequestDTO;
+import com.seohaeng.backend.domain.travelCourse.dto.TravelCourseResponseDTO;
 import com.seohaeng.backend.domain.travelCourse.service.TravelCourseCommandService;
+import com.seohaeng.backend.domain.travelCourse.service.TravelCourseQueryService;
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class TravelCourseController {
 
     private final TravelCourseCommandService travelCourseCommandService;
+    private final TravelCourseQueryService travelCourseQueryService;
 
     @Operation(
             summary = "여행 일정 생성 (일정짜기) API",
@@ -40,5 +43,17 @@ public class TravelCourseController {
             @RequestBody TravelCourseRequestDTO.CreateTravelCourseDTO request) {
         Long travelCourseId = travelCourseCommandService.createTravelCourse(userId, request);
         return ApiResponse.onSuccess("여행 일정 생성이 완료되었습니다. " + "TravelCourse ID: " + travelCourseId);
+    }
+
+    @Operation(
+            summary = "여행 일정 개별 상세 조회 API",
+            description = "개별 여행 일정을 조회하는 API입니다. 조회 하고자 하는 여행 일정의 Id를 넘겨주세요"
+    )
+    @GetMapping("/{TravelCourseId}")
+    public ApiResponse<TravelCourseResponseDTO.GetTravelCourseResponseDTO> getTravelCourse (
+            @PathVariable Long TravelCourseId) {
+        TravelCourseResponseDTO.GetTravelCourseResponseDTO result
+                = travelCourseQueryService.getTravelCourse(TravelCourseId);
+        return ApiResponse.onSuccess(result);
     }
 }
