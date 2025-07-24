@@ -1,6 +1,6 @@
 package com.seohaeng.backend.domain.travelCourse.controller;
 
-import com.seohaeng.backend.domain.travelCourse.dto.travelCourseRequestDTO;
+import com.seohaeng.backend.domain.travelCourse.dto.TravelCourseRequestDTO;
 import com.seohaeng.backend.domain.travelCourse.service.TravelCourseCommandService;
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
 import com.seohaeng.backend.global.security.handler.AuthUser;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/travel-courses")
-public class travelCourseController {
+public class TravelCourseController {
 
     private final TravelCourseCommandService travelCourseCommandService;
 
@@ -37,7 +37,7 @@ public class travelCourseController {
     @PostMapping
     public ApiResponse<String> createTravelCourse (
             @AuthUser Long userId,
-            @RequestBody travelCourseRequestDTO.CreateTravelCourseDTO request) {
+            @RequestBody TravelCourseRequestDTO.CreateTravelCourseDTO request) {
         Long travelCourseId = travelCourseCommandService.createTravelCourse(userId, request);
         return ApiResponse.onSuccess("여행 일정 생성이 완료되었습니다. " + "TravelCourse ID: " + travelCourseId);
     }

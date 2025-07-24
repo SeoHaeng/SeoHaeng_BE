@@ -1,7 +1,7 @@
 package com.seohaeng.backend.domain.travelCourse.converter;
 
 import com.seohaeng.backend.domain.place.entity.Place;
-import com.seohaeng.backend.domain.travelCourse.dto.travelCourseRequestDTO;
+import com.seohaeng.backend.domain.travelCourse.dto.TravelCourseRequestDTO;
 import com.seohaeng.backend.domain.travelCourse.entity.*;
 import com.seohaeng.backend.domain.user.entity.User;
 
@@ -32,7 +32,7 @@ public class TravelCourseConverter {
     }
 
     public static TravelCourse toTravelCourse(
-            travelCourseRequestDTO.CreateTravelCourseDTO travelCourseDTO,
+            TravelCourseRequestDTO.CreateTravelCourseDTO travelCourseDTO,
             User user
     ){
         return TravelCourse.builder()
@@ -44,7 +44,7 @@ public class TravelCourseConverter {
     }
 
     public static TravelCourseSchedule toTravelCourseSchedule(
-            travelCourseRequestDTO.travelCourseScheduleDTO travelCourseScheduleDTO,
+            TravelCourseRequestDTO.travelCourseScheduleDTO travelCourseScheduleDTO,
             Place place,
             TravelCourse travelCourse){
         return TravelCourseSchedule.builder()

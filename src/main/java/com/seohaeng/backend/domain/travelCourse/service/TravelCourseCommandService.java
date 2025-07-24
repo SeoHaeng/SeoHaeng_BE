@@ -3,7 +3,7 @@ package com.seohaeng.backend.domain.travelCourse.service;
 import com.seohaeng.backend.domain.place.entity.Place;
 import com.seohaeng.backend.domain.place.entity.repository.PlaceRepository;
 import com.seohaeng.backend.domain.travelCourse.converter.TravelCourseConverter;
-import com.seohaeng.backend.domain.travelCourse.dto.travelCourseRequestDTO;
+import com.seohaeng.backend.domain.travelCourse.dto.TravelCourseRequestDTO;
 import com.seohaeng.backend.domain.travelCourse.entity.Region;
 import com.seohaeng.backend.domain.travelCourse.entity.TravelCourse;
 import com.seohaeng.backend.domain.travelCourse.entity.TravelCourseRegion;
@@ -39,18 +39,18 @@ public class TravelCourseCommandService {
     private final PlaceRepository placeRepository;
 
     @Transactional
-    public Long createTravelCourse (Long userId, travelCourseRequestDTO.CreateTravelCourseDTO request) {
+    public Long createTravelCourse (Long userId, TravelCourseRequestDTO.CreateTravelCourseDTO request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
         TravelCourse travelCourse = TravelCourseConverter.toTravelCourse(request, user);
         travelCourseRepository.save(travelCourse);
 
-        List<travelCourseRequestDTO.travelCourseScheduleDTO> travelCourseScheduleDTOList
+        List<TravelCourseRequestDTO.travelCourseScheduleDTO> travelCourseScheduleDTOList
                 = request.getTravelCourseScheduleList();
 
         List<TravelCourseSchedule> schedules = new ArrayList<>();
-        for (travelCourseRequestDTO.travelCourseScheduleDTO scheduleDTO : travelCourseScheduleDTOList) {
+        for (TravelCourseRequestDTO.travelCourseScheduleDTO scheduleDTO : travelCourseScheduleDTOList) {
             Place travlePlace = placeRepository.findById(scheduleDTO.getPlaceId())
                     .orElseThrow(() -> new PlaceHandler(ErrorStatus.PLACE_NOT_FOUND));
             schedules.add(TravelCourseConverter.toTravelCourseSchedule(scheduleDTO, travlePlace, travelCourse));
