@@ -37,7 +37,6 @@ public class UserCommandService {
     private final PasswordEncoder passwordEncoder;
     private final LoginInfoRepository loginInfoRepository;
     private final UserRepository userRepository;
-    private final StampRepository stampRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final KakaoAuthProvider kakaoAuthProvider;
 
@@ -61,9 +60,6 @@ public class UserCommandService {
 
         User joinUser = UserConverter.toUser(joinDTO);
         userRepository.save(joinUser);
-
-        Stamp joinUserStamp = TravelCourseConverter.toStamp(joinUser);
-        stampRepository.save(joinUserStamp);
 
         String encodedPassword = passwordEncoder.encode(joinDTO.getPassword1());
         LoginInfo joinLoginInfo = toLocalLoginInfo(joinDTO, joinUser);
@@ -124,8 +120,6 @@ public class UserCommandService {
 
         User user = userRepository.save(UserConverter.kakaoToUser(kakaoProfile));
         LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toKakaoLoginInfo(kakaoProfile,user));
-        Stamp joinUserStamp = TravelCourseConverter.toStamp(user);
-        stampRepository.save(joinUserStamp);
 
         return getOauthResponseForUser(loginInfo);
     }
@@ -161,5 +155,4 @@ public class UserCommandService {
             throw new AuthException(ErrorStatus.DUPLICATE_NICKNAME);
         }
     }
-
 }
