@@ -84,5 +84,5 @@ jobs:
         if: ${{ failure() }}
         run: |
           curl -H "Content-Type: application/json" \
-            -X POST -d '{"content":"❌ [CD] 배포 실패: '${{ github.ref_name }}' 확인 필요!"}' \
+            -X POST -d '{"content":"❌ [CD] 배포 실패: '${{ github.ref_name }}'"}' \
             ${{ secrets.DISCORD_WEBHOOK }}
