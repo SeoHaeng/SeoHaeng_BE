@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/travel-courses")
@@ -19,7 +21,7 @@ public class TravelCourseController {
     private final TravelCourseQueryService travelCourseQueryService;
 
     @Operation(
-            summary = "여행 일정 생성 (일정짜기) API",
+            summary = "여행 일정 생성 API",
             description = """
     여행 일정을 생성하는 API입니다.
     여행의 시작/종료일, 여행 일정 제목, 여행할 강원도 지역들의 ID 리스트와
@@ -47,13 +49,24 @@ public class TravelCourseController {
 
     @Operation(
             summary = "여행 일정 개별 상세 조회 API",
-            description = "개별 여행 일정을 조회하는 API입니다. 조회 하고자 하는 여행 일정의 Id를 넘겨주세요"
+            description = "개별 여행 일정을 조회하는 API입니다. 조회하고자 하는 여행 일정의 Id를 넘겨주세요."
     )
     @GetMapping("/{TravelCourseId}")
     public ApiResponse<TravelCourseResponseDTO.GetTravelCourseResponseDTO> getTravelCourse (
             @PathVariable Long TravelCourseId) {
         TravelCourseResponseDTO.GetTravelCourseResponseDTO result
                 = travelCourseQueryService.getTravelCourse(TravelCourseId);
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(
+            summary = "나의 여행 일정 전체 조회 API",
+            description = "본인이 생성한 여행 일정들을 전체 조회하는 API입니다."
+    )
+    @GetMapping("/mine")
+    public ApiResponse<List<TravelCourseResponseDTO.GetTravelCourseListItemDTO>> getMyTravelCourse (
+            @AuthUser Long userId) {
+        List<TravelCourseResponseDTO.GetTravelCourseListItemDTO> result = travelCourseQueryService.getTravelCourseList(userId);
         return ApiResponse.onSuccess(result);
     }
 }

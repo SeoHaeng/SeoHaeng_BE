@@ -42,4 +42,20 @@ public class TravelCourseResponseDTO {
         private LocalDate date;
         private List<GetTravelCourseScheduleResponseDTO> schedules;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class GetTravelCourseListItemDTO {
+        private String title;
+        private Long travelCourseId;
+        private Long memberId;
+        private String imageUrl;
+        private LocalDate startDate;
+        private LocalDate endDate;
+        private String duration;
+        private List<String> travelRegions;
+    }
 }

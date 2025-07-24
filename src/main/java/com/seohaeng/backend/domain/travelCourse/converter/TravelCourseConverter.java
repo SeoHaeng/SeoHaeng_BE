@@ -104,4 +104,18 @@ public class TravelCourseConverter {
                 .schedules(schedules)
                 .build();
     }
+
+    public static TravelCourseResponseDTO.GetTravelCourseListItemDTO toGetTravelCourseListItemDTO(
+            TravelCourse travelCourse, String image, String duration, List<String> travelRegions){
+        return TravelCourseResponseDTO.GetTravelCourseListItemDTO.builder()
+                .title(travelCourse.getTravelCourseTitle())
+                .travelCourseId(travelCourse.getId())
+                .memberId(travelCourse.getUser().getId())
+                .imageUrl(image)
+                .startDate(travelCourse.getTravelCourseStartDate())
+                .endDate(travelCourse.getTravelCourseEndDate())
+                .duration(duration)
+                .travelRegions(travelRegions)
+                .build();
+    }
 }
