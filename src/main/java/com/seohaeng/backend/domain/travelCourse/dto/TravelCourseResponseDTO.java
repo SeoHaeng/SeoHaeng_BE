@@ -58,4 +58,15 @@ public class TravelCourseResponseDTO {
         private String duration;
         private List<String> travelRegions;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class LastVisitDTO {
+        private Long userId;
+        private LocalDate lastVisitDate;
+        private Long daysAgo;
+    }
 }
