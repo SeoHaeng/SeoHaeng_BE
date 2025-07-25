@@ -1,7 +1,6 @@
 package com.seohaeng.backend.domain.travelCourse.entity;
 
-import com.seohaeng.backend.domain.common.entity.BaseEntity;
-import com.seohaeng.backend.domain.user.entity.User;
+import com.seohaeng.backend.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,17 +9,16 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Builder
-public class Stamp extends BaseEntity {
-
+public class TravelCourseRegion extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "travelCourse_id", nullable = false)
+    private TravelCourse travelCourse;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "region_id", nullable = false)
+    @JoinColumn(name = "reigon_id", nullable = false)
     private Region region;
 }

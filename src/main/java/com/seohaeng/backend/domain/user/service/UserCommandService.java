@@ -1,6 +1,6 @@
 package com.seohaeng.backend.domain.user.service;
 
-import com.seohaeng.backend.domain.travelCourse.converter.TravleCourseConverter;
+import com.seohaeng.backend.domain.travelCourse.converter.TravelCourseConverter;
 import com.seohaeng.backend.domain.travelCourse.entity.Stamp;
 import com.seohaeng.backend.domain.travelCourse.repository.StampRepository;
 import com.seohaeng.backend.domain.user.converter.UserConverter;
@@ -17,7 +17,6 @@ import com.seohaeng.backend.global.apiPayload.exception.handler.AuthException;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import com.seohaeng.backend.global.security.KakaoAuthProvider;
 import com.seohaeng.backend.global.security.jwt.JwtTokenProvider;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,7 +37,6 @@ public class UserCommandService {
     private final PasswordEncoder passwordEncoder;
     private final LoginInfoRepository loginInfoRepository;
     private final UserRepository userRepository;
-    private final StampRepository stampRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final KakaoAuthProvider kakaoAuthProvider;
 
@@ -62,9 +60,6 @@ public class UserCommandService {
 
         User joinUser = UserConverter.toUser(joinDTO);
         userRepository.save(joinUser);
-
-        Stamp joinUserStamp = TravleCourseConverter.toStamp(joinUser);
-        stampRepository.save(joinUserStamp);
 
         String encodedPassword = passwordEncoder.encode(joinDTO.getPassword1());
         LoginInfo joinLoginInfo = toLocalLoginInfo(joinDTO, joinUser);
@@ -125,8 +120,6 @@ public class UserCommandService {
 
         User user = userRepository.save(UserConverter.kakaoToUser(kakaoProfile));
         LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toKakaoLoginInfo(kakaoProfile,user));
-        Stamp joinUserStamp = TravleCourseConverter.toStamp(user);
-        stampRepository.save(joinUserStamp);
 
         return getOauthResponseForUser(loginInfo);
     }
@@ -162,5 +155,4 @@ public class UserCommandService {
             throw new AuthException(ErrorStatus.DUPLICATE_NICKNAME);
         }
     }
-
 }

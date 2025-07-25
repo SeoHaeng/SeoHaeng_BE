@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,10 +28,13 @@ public class TravelCourse extends BaseEntity {
     @Column(nullable = false, length = 20)
     private LocalDate travelCourseEndDate;
 
-    @Column(nullable = false, length = 100)
-    private String travleLocation;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "travelCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TravelCourseRegion> travelCourseRegionList;
+
+    @OneToMany(mappedBy = "travelCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TravelCourseSchedule> travelCourseScheduleList;
 }
