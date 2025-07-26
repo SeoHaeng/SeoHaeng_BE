@@ -75,8 +75,12 @@ public class TravelCourseQueryService {
                 .findTopByUserAndTravelCourseStartDateLessThanEqualOrderByTravelCourseStartDateDesc(user, today)
                 .orElse(null);
 
+        if (travelCourse == null) {
+            return TravelCourseConverter.toLastVisitDTO(user.getId(), null, null);
+        }
+
         LocalDate lastVisitDate = travelCourse.getTravelCourseStartDate();
-        long daysAgo = ChronoUnit.DAYS.between(lastVisitDate, LocalDate.now());
+        long daysAgo = ChronoUnit.DAYS.between(lastVisitDate, today);
 
         return TravelCourseConverter.toLastVisitDTO(user.getId(), lastVisitDate, daysAgo);
     }
