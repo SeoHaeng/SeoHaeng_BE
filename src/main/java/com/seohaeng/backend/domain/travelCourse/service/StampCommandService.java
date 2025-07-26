@@ -24,6 +24,11 @@ public class StampCommandService {
                     .region(travelRegion)
                     .build();
             stampRepository.save(newStamp);
+        }else{
+            LocalDate stampDate = stamp.getStampedDate();
+            if (stampDate.isBefore(stampedDate)) {
+                stamp.setStampedDate(stampedDate);
+            }
         }
     }
 }

@@ -27,4 +27,8 @@ public class Stamp extends BaseEntity {
     private Region region;
 
     private LocalDate stampedDate;
+
+    public void setStampedDate(LocalDate stampedDate) {
+        this.stampedDate = stampedDate;
+    }
 }
