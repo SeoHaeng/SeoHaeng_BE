@@ -66,6 +66,25 @@ public class TravelCourseQueryService {
                 .collect(Collectors.toList());
     }
 
+    public TravelCourseResponseDTO.LastVisitDTO getLastVisit(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        LocalDate today = LocalDate.now();
+        TravelCourse travelCourse = travelCourseRepository
+                .findTopByUserAndTravelCourseStartDateLessThanEqualOrderByTravelCourseStartDateDesc(user, today)
+                .orElse(null);
+
+        if (travelCourse == null) {
+            return TravelCourseConverter.toLastVisitDTO(user.getId(), null, null);
+        }
+
+        LocalDate lastVisitDate = travelCourse.getTravelCourseStartDate();
+        long daysAgo = ChronoUnit.DAYS.between(lastVisitDate, today);
+
+        return TravelCourseConverter.toLastVisitDTO(user.getId(), lastVisitDate, daysAgo);
+    }
+
     private TravelCourseResponseDTO.GetTravelCourseListItemDTO getTravelCourseListItem(TravelCourse travelCourse) {
         long days = ChronoUnit.DAYS.between(
                 travelCourse.getTravelCourseStartDate(),

@@ -81,4 +81,14 @@ public class TravelCourseController {
         travelCourseCommandService.deleteTravelCourse(userId, TravelCourseId);
         return ApiResponse.onSuccess("여행 일정 삭제가 완료되었습니다.");
     }
+
+    @Operation(
+            summary = "마지막 강원도 여행 날짜 조회 API",
+            description = "마지막 강원도 여행 날짜를 조회하는 API입니다."
+    )
+    @GetMapping("/last-visit")
+    public ApiResponse<TravelCourseResponseDTO.LastVisitDTO> getLastVisitDay(@AuthUser Long userId) {
+        TravelCourseResponseDTO.LastVisitDTO result = travelCourseQueryService.getLastVisit(userId);
+        return ApiResponse.onSuccess(result);
+    }
 }

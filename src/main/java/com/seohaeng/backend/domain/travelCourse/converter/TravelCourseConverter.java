@@ -94,4 +94,12 @@ public class TravelCourseConverter {
                 .travelRegions(travelRegions)
                 .build();
     }
+
+    public static TravelCourseResponseDTO.LastVisitDTO toLastVisitDTO(Long userId, LocalDate date, Long daysAgo){
+        return TravelCourseResponseDTO.LastVisitDTO.builder()
+                .userId(userId)
+                .lastVisitDate(date)
+                .daysAgo(daysAgo)
+                .build();
+    }
 }
