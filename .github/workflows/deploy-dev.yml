@@ -69,6 +69,6 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             cd ${{ env.APP_PATH }}
-            docker compose down --rmi local
+            docker compose down --volumes
             docker image prune -f
             SPRING_PROFILES_ACTIVE=dev docker compose up --build -d
