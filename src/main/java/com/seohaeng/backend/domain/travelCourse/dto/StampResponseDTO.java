@@ -2,6 +2,8 @@ package com.seohaeng.backend.domain.travelCourse.dto;
 
 import lombok.*;
 
+import java.time.LocalDate;
+
 public class StampResponseDTO {
 
     @Getter
@@ -20,23 +22,23 @@ public class StampResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetMyStampListDTO {
-        private Boolean chuncheon = false;
-        private Boolean wonju = false;
-        private Boolean gangneung = false;
-        private Boolean donghae = false;
-        private Boolean taebaek = false;
-        private Boolean sokcho = false;
-        private Boolean samcheok = false;
-        private Boolean hongcheon = false;
-        private Boolean hoengseong = false;
-        private Boolean yeongwol = false;
-        private Boolean pyeongchang = false;
-        private Boolean jeongseon = false;
-        private Boolean cheorwon = false;
-        private Boolean hwacheon = false;
-        private Boolean yanggu = false;
-        private Boolean inje = false;
-        private Boolean goseong = false;
-        private Boolean yangyang = false;
+        private LocalDate chuncheon = null;
+        private LocalDate wonju = null;
+        private LocalDate gangneung = null;
+        private LocalDate donghae = null;
+        private LocalDate taebaek = null;
+        private LocalDate sokcho = null;
+        private LocalDate samcheok = null;
+        private LocalDate hongcheon = null;
+        private LocalDate hoengseong = null;
+        private LocalDate yeongwol = null;
+        private LocalDate pyeongchang = null;
+        private LocalDate jeongseon = null;
+        private LocalDate cheorwon = null;
+        private LocalDate hwacheon = null;
+        private LocalDate yanggu = null;
+        private LocalDate inje = null;
+        private LocalDate goseong = null;
+        private LocalDate yangyang = null;
     }
 }
