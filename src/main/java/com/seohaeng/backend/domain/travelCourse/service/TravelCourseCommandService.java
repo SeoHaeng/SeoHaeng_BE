@@ -4,14 +4,8 @@ import com.seohaeng.backend.domain.place.entity.Place;
 import com.seohaeng.backend.domain.place.repository.PlaceRepository;
 import com.seohaeng.backend.domain.travelCourse.converter.TravelCourseConverter;
 import com.seohaeng.backend.domain.travelCourse.dto.TravelCourseRequestDTO;
-import com.seohaeng.backend.domain.travelCourse.entity.Region;
-import com.seohaeng.backend.domain.travelCourse.entity.TravelCourse;
-import com.seohaeng.backend.domain.travelCourse.entity.TravelCourseRegion;
-import com.seohaeng.backend.domain.travelCourse.entity.TravelCourseSchedule;
-import com.seohaeng.backend.domain.travelCourse.repository.RegionRepository;
-import com.seohaeng.backend.domain.travelCourse.repository.TravelCourseRegionRepository;
-import com.seohaeng.backend.domain.travelCourse.repository.TravelCourseRepository;
-import com.seohaeng.backend.domain.travelCourse.repository.TravelCourseScheduleRepository;
+import com.seohaeng.backend.domain.travelCourse.entity.*;
+import com.seohaeng.backend.domain.travelCourse.repository.*;
 import com.seohaeng.backend.domain.user.entity.User;
 import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
@@ -39,6 +33,8 @@ public class TravelCourseCommandService {
     private final RegionRepository regionRepository;
     private final PlaceRepository placeRepository;
 
+    private final StampCommandService stampCommandService;
+
     @Transactional
     public Long createTravelCourse (Long userId, TravelCourseRequestDTO.CreateTravelCourseDTO request) {
         User user = userRepository.findById(userId)
@@ -63,9 +59,9 @@ public class TravelCourseCommandService {
             Region travelRegion = regionRepository.findById(regionId)
                     .orElseThrow(() -> new RegionHandler(ErrorStatus.REGION_NOT_FOUND));
             regions.add(TravelCourseConverter.toTravelCourseRegion(travelRegion, travelCourse));
+            stampCommandService.makeStamp(user, travelRegion, travelCourse.getTravelCourseStartDate());
         }
         travelCourseRegionRepository.saveAll(regions);
-
         return travelCourse.getId();
     }
 
