@@ -23,6 +23,8 @@ public class Place extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
+    private Long contentId;
+
     private String description;
 
     private LocalTime openingTime;
