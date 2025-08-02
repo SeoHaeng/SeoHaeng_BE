@@ -1,6 +1,6 @@
 package com.seohaeng.backend.domain.place.repository;
 
-import com.seohaeng.backend.domain.place.entity.Place;
+import com.seohaeng.backend.domain.place.entity.place.Place;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

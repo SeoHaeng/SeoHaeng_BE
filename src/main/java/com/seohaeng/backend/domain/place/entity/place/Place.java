@@ -1,12 +1,15 @@
-package com.seohaeng.backend.domain.place.entity;
+package com.seohaeng.backend.domain.place.entity.place;
 
 import com.seohaeng.backend.domain.common.entity.BaseEntity;
+import com.seohaeng.backend.domain.place.entity.enums.PlaceType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -19,6 +22,8 @@ public class Place extends BaseEntity {
 
     @Column(nullable = false)
     private String name;
+
+    private String description;
 
     private LocalTime openingTime;
 
@@ -33,6 +38,12 @@ public class Place extends BaseEntity {
     private Double latitude;
 
     private Double longitude;
+
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<PlaceImage> placeImages = new ArrayList<>();
+
+    @OneToOne(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private BookStoreAttribute bookStoreAttribute; // placeType이 BOOKSTORE일때만 사용
 
     @Enumerated(EnumType.STRING)
     private PlaceType placeType;

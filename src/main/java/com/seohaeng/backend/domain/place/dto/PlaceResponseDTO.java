@@ -1,6 +1,6 @@
 package com.seohaeng.backend.domain.place.dto;
 
-import com.seohaeng.backend.domain.place.entity.PlaceType;
+import com.seohaeng.backend.domain.place.entity.enums.PlaceType;
 import lombok.*;
 
 import java.util.List;
@@ -17,6 +17,7 @@ public class PlaceResponseDTO {
         private String name;
         private PlaceType placeType;
         private String address;
+        private String description;
         private String introduction;
         private String websiteUrl;
         private Double latitude;

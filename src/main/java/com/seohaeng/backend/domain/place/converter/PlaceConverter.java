@@ -1,7 +1,7 @@
 package com.seohaeng.backend.domain.place.converter;
 
 import com.seohaeng.backend.domain.place.dto.PlaceResponseDTO;
-import com.seohaeng.backend.domain.place.entity.Place;
+import com.seohaeng.backend.domain.place.entity.place.Place;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -17,6 +17,7 @@ public class PlaceConverter {
              .address(place.getAddress())
              .websiteUrl(place.getWebsiteUrl())
              .latitude(place.getLatitude())
+             .description(place.getDescription())
              .longitude(place.getLongitude())
              .build();
     }

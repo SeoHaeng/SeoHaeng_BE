@@ -1,6 +1,6 @@
 package com.seohaeng.backend.domain.travelCourse.service;
 
-import com.seohaeng.backend.domain.place.entity.Place;
+import com.seohaeng.backend.domain.place.entity.place.Place;
 import com.seohaeng.backend.domain.place.repository.PlaceRepository;
 import com.seohaeng.backend.domain.travelCourse.converter.TravelCourseConverter;
 import com.seohaeng.backend.domain.travelCourse.dto.TravelCourseRequestDTO;
