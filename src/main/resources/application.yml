@@ -46,6 +46,7 @@ cloud:
       bucket: ${AWS_S3_BUCKET}
       path:
         bookchallenge: bookchallenges
+        review: reviews
     region:
       static: ${AWS_REGION}
     stack:

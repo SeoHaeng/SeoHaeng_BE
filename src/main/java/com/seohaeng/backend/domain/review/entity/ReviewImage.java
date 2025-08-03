@@ -1,14 +1,14 @@
-package com.seohaeng.backend.domain.place.entity.review;
+package com.seohaeng.backend.domain.review.entity;
 
 import com.seohaeng.backend.domain.common.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
+@Builder
 public class ReviewImage extends BaseEntity {
 
     @Id

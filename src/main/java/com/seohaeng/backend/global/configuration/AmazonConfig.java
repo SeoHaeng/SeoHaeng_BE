@@ -33,6 +33,9 @@ public class AmazonConfig {
     @Value("${cloud.aws.s3.path.bookchallenge}")
     private String bookChallengePath;
 
+    @Value("${cloud.aws.s3.path.review}")
+    private String reviewPath;
+
     @PostConstruct
     public void init() {
         this.awsCredentials = new BasicAWSCredentials(accessKey, secretKey);

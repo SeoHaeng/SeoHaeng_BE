@@ -29,6 +29,7 @@ public class AmazonS3Manager {
                     new PutObjectRequest(amazonConfig.getBucket(), keyName, file.getInputStream(), objectMetadata));
         } catch (IOException e) {
             log.error("error at AmazonS3Manager uploadFile : {}", (Object) e.getStackTrace());
+            throw new RuntimeException("S3 업로드 오류 발생", e);
         }
         return amazonS3.getUrl(amazonConfig.getBucket(), keyName).toString();
     }
@@ -52,5 +53,9 @@ public class AmazonS3Manager {
 
     public String generateBookChallengeProofKeyName(String uuid) {
         return amazonConfig.getBookChallengePath() + '/' + uuid;
+    }
+
+    public String generateReviewKeyName(String uuid) {
+        return amazonConfig.getReviewPath() + '/' + uuid;
     }
 }
