@@ -2,6 +2,7 @@ package com.seohaeng.backend.domain.place.entity.place;
 
 import com.seohaeng.backend.domain.common.entity.BaseEntity;
 import com.seohaeng.backend.domain.place.entity.enums.PlaceType;
+import com.seohaeng.backend.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

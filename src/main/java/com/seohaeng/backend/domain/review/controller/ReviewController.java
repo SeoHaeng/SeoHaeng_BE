@@ -1,13 +1,16 @@
 package com.seohaeng.backend.domain.review.controller;
 
+import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeResponseDTO;
 import com.seohaeng.backend.domain.review.dto.ReviewRequestDTO;
 import com.seohaeng.backend.domain.review.dto.ReviewResponseDTO;
 import com.seohaeng.backend.domain.review.service.ReviewCommandService;
+import com.seohaeng.backend.domain.review.service.ReviewQueryService;
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
 import com.seohaeng.backend.global.apiPayload.code.status.SuccessStatus;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +26,7 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewCommandService reviewCommandService;
+    private final ReviewQueryService reviewQueryService;
 
     @Operation(
             summary = "리뷰 작성 API",
@@ -45,5 +49,21 @@ public class ReviewController {
         }
         ReviewResponseDTO.CreateReviewResponseDTO result = reviewCommandService.createReview(request, userId, placeId, images);
         return ApiResponse.of(SuccessStatus.REVIEW_CREATE_SUCCESS, result);
+    }
+
+    @Operation(
+            summary = "리뷰 목록 조회 API",
+            description = """
+    특정 장소에 대한 리뷰 목록을 조회합니다 API"
+    - placeId를 통해 리뷰 목록을 조회할 장소를 지정합니다.
+    """
+    )
+    @GetMapping(value = "/{placeId}")
+    public ApiResponse<ReviewResponseDTO.GetReviewListResponseDTO> getReviews(
+            @PathVariable("placeId") Long placeId,
+            @RequestParam(name = "page", defaultValue = "1") @Min(1)Integer page,
+            @RequestParam(name = "size", defaultValue = "20") @Min(1)Integer size
+    ){
+        return ApiResponse.onSuccess(reviewQueryService.getReviewList(page, size, placeId));
     }
 }
