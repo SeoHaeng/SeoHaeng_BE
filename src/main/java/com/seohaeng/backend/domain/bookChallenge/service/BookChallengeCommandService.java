@@ -11,7 +11,7 @@ import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofCo
 import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofImageRepository;
 import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofLikeRepository;
 import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofRepository;
-import com.seohaeng.backend.domain.place.entity.Place;
+import com.seohaeng.backend.domain.place.entity.place.Place;
 import com.seohaeng.backend.domain.place.repository.PlaceRepository;
 import com.seohaeng.backend.domain.user.entity.User;
 import com.seohaeng.backend.domain.user.repository.UserRepository;

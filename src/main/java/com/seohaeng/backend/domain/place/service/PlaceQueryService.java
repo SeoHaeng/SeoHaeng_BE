@@ -2,7 +2,7 @@ package com.seohaeng.backend.domain.place.service;
 
 import com.seohaeng.backend.domain.place.converter.PlaceConverter;
 import com.seohaeng.backend.domain.place.dto.PlaceResponseDTO;
-import com.seohaeng.backend.domain.place.entity.Place;
+import com.seohaeng.backend.domain.place.entity.place.Place;
 import com.seohaeng.backend.domain.place.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

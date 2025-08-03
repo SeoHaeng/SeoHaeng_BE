@@ -4,7 +4,7 @@ import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeRequestDTO;
 import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeResponseDTO;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProof;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofComment;
-import com.seohaeng.backend.domain.place.entity.Place;
+import com.seohaeng.backend.domain.place.entity.place.Place;
 import com.seohaeng.backend.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

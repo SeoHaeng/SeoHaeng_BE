@@ -39,7 +39,11 @@ public enum ErrorStatus implements BaseErrorCode {
     TRAVEL_COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "TRAVEL_COURSE_4001", "존재하지 않는 여행 일정입니다. 여행 일정 ID를 다시 확인해주세요"),
 
     // 북챌린지 관련
-    BOOK_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK_CHALLENGE_4001", "존재하지 않는 게시글입니다.");
+    BOOK_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK_CHALLENGE_4001", "존재하지 않는 게시글입니다."),
+
+    // 리뷰 관련
+    REVIEW_INVALID_ISSUE(HttpStatus.BAD_REQUEST, "REVIEW_4001", "리뷰 별점은 0.5점 단위로 입력해야합니다."),
+    ;
 
     private final HttpStatus httpStatus;
     private final String code;
