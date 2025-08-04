@@ -99,7 +99,7 @@ public class BookChallengeController {
     @Operation(
             summary = "특정 북챌린지 인증 게시글 댓글 전체 조회 API",
             description = """
-        북챌린지 인증 게시글의 댓글 목록을 페이징 처리하여 조회합니다.
+        북챌린지 인증 게시글의 댓글 목록을 페이징 처리하여 조회합니다. 기본으로 최신순 조회됩니다.
         Parameter:
         - `page`: 페이지 번호 (1부터 시작)
         - `size`: 한 페이지당 게시글 개수 (기본값: 20)

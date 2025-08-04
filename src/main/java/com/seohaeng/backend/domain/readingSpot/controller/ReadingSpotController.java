@@ -9,6 +9,7 @@ import com.seohaeng.backend.global.apiPayload.code.status.SuccessStatus;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -75,6 +76,26 @@ public class ReadingSpotController {
             @RequestBody @Valid ReadingSpotRequestDTO.ReadingSpotCommentCreateRequestDTO request) {
         ReadingSpotResponseDTO.CreateReadingSpotCommentResponseDTO result
                 = readingSpotCommandService.createReadingSpotComment(userId, readingSpotId, request);
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(
+            summary = "공간책갈피 댓글 리스트 조회 API",
+            description = """
+    특정 공간책갈피의 댓글 목록을 페이징 처리하여 조회합니다. 기본으로 최신순 조회됩니다.
+    - ReadingSpotId를 통해 댓글 목록을 조회할 공간책갈피를 지정합니다.
+    - Parameter:
+       - `page`: 페이지 번호 (1부터 시작)
+       - `size`: 한 페이지당 게시글 개수 (기본값: 20)
+    """
+    )
+    @GetMapping("/{ReadingSpotId}/comments")
+    public ApiResponse<ReadingSpotResponseDTO.GetReadingSpotCommentListResponseDTO> getReadingSpotComments(
+            @PathVariable("ReadingSpotId") Long readingSpotId,
+            @RequestParam(name = "page", defaultValue = "1") @Min(1)Integer page,
+            @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size) {
+        ReadingSpotResponseDTO.GetReadingSpotCommentListResponseDTO result
+                = readingSpotQueryService.getReadingSpotCommentList(readingSpotId, page, size);
         return ApiResponse.onSuccess(result);
     }
 }

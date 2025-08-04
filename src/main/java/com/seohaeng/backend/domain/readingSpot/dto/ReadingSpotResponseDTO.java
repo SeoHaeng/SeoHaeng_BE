@@ -21,10 +21,34 @@ public class ReadingSpotResponseDTO {
         private Long commentId;
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
     @Getter
+    @Builder
+    public static class GetReadingSpotCommentListResponseDTO{
+        private Integer listSize;
+        private Integer totalPage;
+        private Long totalElements;
+        private Boolean isFirst;
+        private Boolean isLast;
+        private List<GetReadingSpotCommentResponseDTO> comments;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Getter
+    public static class GetReadingSpotCommentResponseDTO{
+        private Long commentId;
+        private LocalDate createdAt;
+        private Long userId;
+        private String commentContent;
+    }
+
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    @Getter
     public static class GetReadingSpotResponseDTO{
         private Long readingSpotId;
         private String address;

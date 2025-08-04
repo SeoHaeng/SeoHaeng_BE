@@ -1,13 +1,18 @@
 package com.seohaeng.backend.domain.readingSpot.service;
 
+import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.ReadingSpotCommentRepository;
 import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.ReadingSpotRepository;
 import com.seohaeng.backend.domain.readingSpot.converter.ReadingSpotConverter;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotResponseDTO;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpot;
+import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotComment;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotImage;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
 import com.seohaeng.backend.global.apiPayload.exception.handler.ReadingSpotHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,15 +25,31 @@ import java.util.stream.Collectors;
 public class ReadingSpotQueryService {
 
     private final ReadingSpotRepository readingSpotRepository;
+    private final ReadingSpotCommentRepository readingSpotCommentRepository;
 
     public ReadingSpotResponseDTO.GetReadingSpotResponseDTO getReadingSpot(Long readingSpotId) {
 
         ReadingSpot readingSpot = readingSpotRepository.findWithReadingSpotImagesById(readingSpotId)
                 .orElseThrow(() -> new ReadingSpotHandler(ErrorStatus.READING_SPOT_NOT_FOUND));
-
         List<String> imageList = readingSpot.getReadingSpotImageList()
                 .stream().map(ReadingSpotImage::getImageUrl).collect(Collectors.toList());
 
         return ReadingSpotConverter.toGetReadingSpotResponseDTO(readingSpot, imageList);
+    }
+
+    public ReadingSpotResponseDTO.GetReadingSpotCommentListResponseDTO getReadingSpotCommentList(
+            Long readingSpotId, Integer page, Integer size) {
+
+        ReadingSpot readingSpot = readingSpotRepository.findWithReadingSpotImagesById(readingSpotId)
+                .orElseThrow(() -> new ReadingSpotHandler(ErrorStatus.READING_SPOT_NOT_FOUND));
+
+        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<ReadingSpotComment> readingSpotCommentPage = readingSpotCommentRepository.findAllByReadingSpot(readingSpot, pageRequest);
+
+        List<ReadingSpotResponseDTO.GetReadingSpotCommentResponseDTO> result =
+                readingSpotCommentPage.getContent().stream()
+                        .map(ReadingSpotConverter::toGetReadingSpotCommentResponseDTO)
+                        .collect(Collectors.toList());
+        return ReadingSpotConverter.toGetReadingSpotCommentListResponseDTO(result, readingSpotCommentPage);
     }
 }

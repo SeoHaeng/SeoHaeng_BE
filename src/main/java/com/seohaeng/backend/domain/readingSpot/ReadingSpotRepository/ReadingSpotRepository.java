@@ -10,5 +10,4 @@ public interface ReadingSpotRepository extends JpaRepository<ReadingSpot, Long> 
 
     @EntityGraph(attributePaths = {"readingSpotImageList"})
     Optional<ReadingSpot> findWithReadingSpotImagesById(Long id);
-
 }

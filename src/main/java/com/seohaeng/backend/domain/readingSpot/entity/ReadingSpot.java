@@ -47,4 +47,7 @@ public class ReadingSpot extends BaseEntity {
 
     @OneToMany(mappedBy = "readingSpot", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ReadingSpotImage> readingSpotImageList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "readingSpot", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ReadingSpotComment> readingSpotCommentList = new ArrayList<>();
 }

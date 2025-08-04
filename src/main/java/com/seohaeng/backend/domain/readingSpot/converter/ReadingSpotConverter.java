@@ -5,6 +5,7 @@ import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotResponseDTO;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpot;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotComment;
 import com.seohaeng.backend.domain.user.entity.User;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -56,6 +57,27 @@ public class ReadingSpotConverter {
                 .content(request.getContent())
                 .user(user)
                 .readingSpot(readingSpot)
+                .build();
+    }
+
+    public static ReadingSpotResponseDTO.GetReadingSpotCommentResponseDTO toGetReadingSpotCommentResponseDTO(ReadingSpotComment readingSpotComment) {
+        return ReadingSpotResponseDTO.GetReadingSpotCommentResponseDTO.builder()
+                .commentId(readingSpotComment.getId())
+                .commentContent(readingSpotComment.getContent())
+                .createdAt(readingSpotComment.getCreatedAt().toLocalDate())
+                .userId(readingSpotComment.getUser().getId())
+                .build();
+    }
+
+    public static ReadingSpotResponseDTO.GetReadingSpotCommentListResponseDTO toGetReadingSpotCommentListResponseDTO(
+            List<ReadingSpotResponseDTO.GetReadingSpotCommentResponseDTO> readingSpotCommentResponseDTOs, Page<ReadingSpotComment> readingSpotCommentPage) {
+        return ReadingSpotResponseDTO.GetReadingSpotCommentListResponseDTO.builder()
+                .listSize(readingSpotCommentResponseDTOs.size())
+                .totalElements(readingSpotCommentPage.getTotalElements())
+                .totalPage(readingSpotCommentPage.getTotalPages())
+                .isFirst(readingSpotCommentPage.isFirst())
+                .isLast(readingSpotCommentPage.isLast())
+                .comments(readingSpotCommentResponseDTOs)
                 .build();
     }
 }
