@@ -58,4 +58,8 @@ public class AmazonS3Manager {
     public String generateReviewKeyName(String uuid) {
         return amazonConfig.getReviewPath() + '/' + uuid;
     }
+
+    public String generateReadingSpotKeyName(String uuid) {
+        return amazonConfig.getReadingSpotPath() + '/' + uuid;
+    }
 }

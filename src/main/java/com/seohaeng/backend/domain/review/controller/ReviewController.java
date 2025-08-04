@@ -1,6 +1,5 @@
 package com.seohaeng.backend.domain.review.controller;
 
-import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeResponseDTO;
 import com.seohaeng.backend.domain.review.dto.ReviewRequestDTO;
 import com.seohaeng.backend.domain.review.dto.ReviewResponseDTO;
 import com.seohaeng.backend.domain.review.service.ReviewCommandService;
@@ -34,7 +33,6 @@ public class ReviewController {
     특정 장소에 대한 리뷰를 작성합니다.
 
     - placeId를 통해 리뷰할 장소를 지정합니다.
-    - 텍스트 리뷰 내용은 request 필드로 전송되며, JSON 형식의 리뷰 정보가 포함되어야 합니다.
     - 최대 10장의 리뷰 이미지를 함께 업로드할 수 있습니다.
     """
     )

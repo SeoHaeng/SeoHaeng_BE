@@ -47,6 +47,7 @@ cloud:
       path:
         bookchallenge: bookchallenges
         review: reviews
+        readingspot : readingspots
     region:
       static: ${AWS_REGION}
     stack:
