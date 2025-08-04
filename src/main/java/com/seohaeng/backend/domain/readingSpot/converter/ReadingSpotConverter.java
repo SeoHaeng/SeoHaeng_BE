@@ -1,8 +1,11 @@
 package com.seohaeng.backend.domain.readingSpot.converter;
 
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotRequestDTO;
+import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotResponseDTO;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpot;
 import com.seohaeng.backend.domain.user.entity.User;
+
+import java.util.List;
 
 public class ReadingSpotConverter {
 
@@ -22,6 +25,27 @@ public class ReadingSpotConverter {
                 .bookPubDate(request.getBookPubDate())
                 .bookImageUrl(request.getBookImage())
                 .opened(request.isOpened())
+                .build();
+    }
+
+    public static ReadingSpotResponseDTO.GetReadingSpotResponseDTO toGetReadingSpotResponseDTO(
+            ReadingSpot readingSpot, List<String> readingSpotImages) {
+        return ReadingSpotResponseDTO.GetReadingSpotResponseDTO.builder()
+                .readingSpotId(readingSpot.getId())
+                .address(readingSpot.getAddress())
+                .latitude(readingSpot.getLatitude())
+                .longitude(readingSpot.getLongitude())
+                .templateId(readingSpot.getTemplateId())
+                .title(readingSpot.getTitle())
+                .content(readingSpot.getContent())
+                .bookTitle(readingSpot.getBookTitle())
+                .bookAuthor(readingSpot.getBookAuthor())
+                .bookImage(readingSpot.getBookImageUrl())
+                .bookPubDate(readingSpot.getBookPubDate())
+                .likes(readingSpot.getLikes())
+                .scraps(readingSpot.getScraps())
+                .opened(readingSpot.isOpened())
+                .readingSpotImages(readingSpotImages)
                 .build();
     }
 }

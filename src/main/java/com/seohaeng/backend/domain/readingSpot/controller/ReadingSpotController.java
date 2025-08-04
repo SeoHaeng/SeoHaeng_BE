@@ -3,6 +3,7 @@ package com.seohaeng.backend.domain.readingSpot.controller;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotRequestDTO;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotResponseDTO;
 import com.seohaeng.backend.domain.readingSpot.service.ReadingSpotCommandService;
+import com.seohaeng.backend.domain.readingSpot.service.ReadingSpotQueryService;
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
 import com.seohaeng.backend.global.apiPayload.code.status.SuccessStatus;
 import com.seohaeng.backend.global.security.handler.AuthUser;
@@ -23,6 +24,7 @@ import java.util.List;
 public class ReadingSpotController {
 
     private final ReadingSpotCommandService readingSpotCommandService;
+    private final ReadingSpotQueryService readingSpotQueryService;
 
     @Operation(
             summary = "공간책갈피 생성 API",
@@ -43,5 +45,19 @@ public class ReadingSpotController {
         ReadingSpotResponseDTO.CreateReadingSpotResponseDTO result
                 = readingSpotCommandService.createReadingSpot(userId, images, request);
         return ApiResponse.of(SuccessStatus.READING_SPOT_CREATE_SUCCESS, result);
+    }
+
+    @Operation(
+            summary = "공간책갈피 상세 조회 API",
+            description = """
+    특정 공간책갈피를 상세 조회합니다.
+    - ReadingSpotId를 통해 상세 조회할 공간책갈피를 지정합니다.
+    """
+    )
+    @GetMapping("/{ReadingSpotId}")
+    public ApiResponse<ReadingSpotResponseDTO.GetReadingSpotResponseDTO> getReadingSpots(
+            @PathVariable("ReadingSpotId") Long readingSpotId) {
+        ReadingSpotResponseDTO.GetReadingSpotResponseDTO result = readingSpotQueryService.getReadingSpot(readingSpotId);
+        return ApiResponse.onSuccess(result);
     }
 }

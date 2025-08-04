@@ -1,10 +1,7 @@
 package com.seohaeng.backend.domain.readingSpot.dto;
 
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -13,7 +10,6 @@ public class ReadingSpotRequestDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
     public static class ReadingSpotCreateRequestDTO {
         @NotBlank(message = "주소는 필수 입력값입니다.")
         private String address;
@@ -53,5 +49,12 @@ public class ReadingSpotRequestDTO {
         private LocalDate bookPubDate;
 
         private boolean opened;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReadingSpotCommentCreateRequestDTO {
+        private String content;
     }
 }

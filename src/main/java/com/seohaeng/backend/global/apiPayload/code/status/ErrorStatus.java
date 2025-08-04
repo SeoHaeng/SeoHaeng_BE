@@ -43,6 +43,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 리뷰 관련
     REVIEW_INVALID_ISSUE(HttpStatus.BAD_REQUEST, "REVIEW_4001", "리뷰 별점은 0.5점 단위로 입력해야합니다."),
+
+    // 공간 책갈피 관련
+    READING_SPOT_NOT_FOUND(HttpStatus.NOT_FOUND, "READING_SPOT_4001", "공간 책갈피가 존재하지 않습니다."),
     ;
 
     private final HttpStatus httpStatus;
