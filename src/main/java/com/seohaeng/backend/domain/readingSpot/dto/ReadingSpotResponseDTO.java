@@ -14,8 +14,14 @@ public class ReadingSpotResponseDTO {
         private Long readingSpotId;
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
     @Getter
-    @Setter
+    public static class CreateReadingSpotCommentResponseDTO{
+        private Long commentId;
+    }
+
+    @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder

@@ -1,15 +1,18 @@
 package com.seohaeng.backend.domain.readingSpot.service;
 
+import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.ReadingSpotCommentRepository;
 import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.ReadingSpotImageRepository;
 import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.ReadingSpotRepository;
 import com.seohaeng.backend.domain.readingSpot.converter.ReadingSpotConverter;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotRequestDTO;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotResponseDTO;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpot;
+import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotComment;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotImage;
 import com.seohaeng.backend.domain.user.entity.User;
 import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
+import com.seohaeng.backend.global.apiPayload.exception.handler.ReadingSpotHandler;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import com.seohaeng.backend.global.aws.s3.AmazonS3Manager;
 import com.seohaeng.backend.global.security.handler.AuthUser;
@@ -30,6 +33,7 @@ public class ReadingSpotCommandService {
     private final AmazonS3Manager amazonS3Manager;
     private final ReadingSpotRepository readingSpotRepository;
     private final ReadingSpotImageRepository readingSpotImageRepository;
+    private final ReadingSpotCommentRepository readingSpotCommentRepository;
 
     @Transactional
     public ReadingSpotResponseDTO.CreateReadingSpotResponseDTO createReadingSpot(
@@ -58,5 +62,22 @@ public class ReadingSpotCommandService {
             readingSpotImageRepository.saveAll(readingSpotImageList);
         }
         return new ReadingSpotResponseDTO.CreateReadingSpotResponseDTO(newReadingSpot.getId());
+    }
+
+    @Transactional
+    public ReadingSpotResponseDTO.CreateReadingSpotCommentResponseDTO createReadingSpotComment(
+            @AuthUser Long userId, Long readingSpotId,
+            ReadingSpotRequestDTO.ReadingSpotCommentCreateRequestDTO request
+    ){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        ReadingSpot readingSpot = readingSpotRepository.findWithReadingSpotImagesById(readingSpotId)
+                .orElseThrow(() -> new ReadingSpotHandler(ErrorStatus.READING_SPOT_NOT_FOUND));
+
+        ReadingSpotComment newReadingSpotComment = ReadingSpotConverter.toReadingSpotComment(request, user, readingSpot);
+        readingSpotCommentRepository.save(newReadingSpotComment);
+
+        return new ReadingSpotResponseDTO.CreateReadingSpotCommentResponseDTO(newReadingSpotComment.getId());
     }
 }

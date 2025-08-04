@@ -55,9 +55,26 @@ public class ReadingSpotController {
     """
     )
     @GetMapping("/{ReadingSpotId}")
-    public ApiResponse<ReadingSpotResponseDTO.GetReadingSpotResponseDTO> getReadingSpots(
+    public ApiResponse<ReadingSpotResponseDTO.GetReadingSpotResponseDTO> getReadingSpot(
             @PathVariable("ReadingSpotId") Long readingSpotId) {
         ReadingSpotResponseDTO.GetReadingSpotResponseDTO result = readingSpotQueryService.getReadingSpot(readingSpotId);
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(
+            summary = "공간책갈피 댓글 작성 API",
+            description = """
+    특정 공간책갈피에 댓글을 작성합니다.
+    - ReadingSpotId를 통해 댓글을 달 공간책갈피를 지정합니다.
+    """
+    )
+    @PostMapping("/{ReadingSpotId}/comments")
+    public ApiResponse<ReadingSpotResponseDTO.CreateReadingSpotCommentResponseDTO> createReadingSpotComment(
+            @AuthUser Long userId,
+            @PathVariable("ReadingSpotId") Long readingSpotId,
+            @RequestBody @Valid ReadingSpotRequestDTO.ReadingSpotCommentCreateRequestDTO request) {
+        ReadingSpotResponseDTO.CreateReadingSpotCommentResponseDTO result
+                = readingSpotCommandService.createReadingSpotComment(userId, readingSpotId, request);
         return ApiResponse.onSuccess(result);
     }
 }

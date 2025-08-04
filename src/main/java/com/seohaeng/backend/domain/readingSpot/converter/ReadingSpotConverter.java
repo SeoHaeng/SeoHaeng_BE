@@ -3,6 +3,7 @@ package com.seohaeng.backend.domain.readingSpot.converter;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotRequestDTO;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotResponseDTO;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpot;
+import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotComment;
 import com.seohaeng.backend.domain.user.entity.User;
 
 import java.util.List;
@@ -46,6 +47,15 @@ public class ReadingSpotConverter {
                 .scraps(readingSpot.getScraps())
                 .opened(readingSpot.isOpened())
                 .readingSpotImages(readingSpotImages)
+                .build();
+    }
+
+    public static ReadingSpotComment toReadingSpotComment (
+            ReadingSpotRequestDTO.ReadingSpotCommentCreateRequestDTO request, User user, ReadingSpot readingSpot) {
+        return ReadingSpotComment.builder()
+                .content(request.getContent())
+                .user(user)
+                .readingSpot(readingSpot)
                 .build();
     }
 }
