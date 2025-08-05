@@ -75,4 +75,13 @@ public class ReadingSpotResponseDTO {
     public static class GetReadingSpotLikeInfoDTO {
         Integer nowLikeCount;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class GetReadingSpotScrapInfoDTO {
+        Integer nowScrapCount;
+    }
 }

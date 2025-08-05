@@ -15,6 +15,8 @@ public enum SuccessStatus implements BaseCode {
     REVIEW_CREATE_SUCCESS(HttpStatus.OK, "REVIEW_2001", "리뷰 작성이 완료되었습니다."),
     READING_SPOT_CREATE_SUCCESS(HttpStatus.OK, "READING_SPOT_2001", "공간책갈피 생성이 완료되었습니다."),
     READING_SPOT_LIKE_TOGGLED(HttpStatus.OK, "READING_SPOT2002", "공간책갈피 좋아요 토글이 완료되었습니다."),
+    READING_SPOT_SCRAP_TOGGLED(HttpStatus.OK, "READING_SPOT2003", "공간책갈피 스크랩 토글이 완료되었습니다."),
+
     ;
 
     private final HttpStatus httpStatus;

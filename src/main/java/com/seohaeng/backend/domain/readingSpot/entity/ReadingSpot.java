@@ -61,4 +61,12 @@ public class ReadingSpot extends BaseEntity {
     public void decreaseReadingSpotLikes(){
         this.likes--;
     }
+
+    public void increaseReadingSpotScraps(){
+        this.scraps++;
+    }
+
+    public void decreaseReadingSpotScraps(){
+        this.scraps--;
+    }
 }

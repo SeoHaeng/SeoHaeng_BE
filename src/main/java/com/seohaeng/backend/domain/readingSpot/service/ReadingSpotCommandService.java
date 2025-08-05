@@ -4,17 +4,11 @@ import com.seohaeng.backend.domain.bookChallenge.converter.BookChallengeConverte
 import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeResponseDTO;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProof;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofLike;
-import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.ReadingSpotCommentRepository;
-import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.ReadingSpotImageRepository;
-import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.ReadingSpotLikeRepository;
-import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.ReadingSpotRepository;
+import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.*;
 import com.seohaeng.backend.domain.readingSpot.converter.ReadingSpotConverter;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotRequestDTO;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotResponseDTO;
-import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpot;
-import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotComment;
-import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotImage;
-import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotLike;
+import com.seohaeng.backend.domain.readingSpot.entity.*;
 import com.seohaeng.backend.domain.user.entity.User;
 import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
@@ -43,6 +37,7 @@ public class ReadingSpotCommandService {
     private final ReadingSpotImageRepository readingSpotImageRepository;
     private final ReadingSpotCommentRepository readingSpotCommentRepository;
     private final ReadingSpotLikeRepository readingSpotLikeRepository;
+    private final ReadingSpotScrapRepository readingSpotScrapRepository;
 
     @Transactional
     public ReadingSpotResponseDTO.CreateReadingSpotResponseDTO createReadingSpot(
@@ -114,5 +109,31 @@ public class ReadingSpotCommandService {
             readingSpot.increaseReadingSpotLikes();
         }
         return new ReadingSpotResponseDTO.GetReadingSpotLikeInfoDTO(readingSpot.getLikes());
+    }
+
+    @Transactional
+    public ReadingSpotResponseDTO.GetReadingSpotScrapInfoDTO toggleReadingSpotScraps(Long userId, Long readingSpotId) {
+
+        ReadingSpot readingSpot = readingSpotRepository.findById(readingSpotId)
+                .orElseThrow(() -> new ReadingSpotHandler(ErrorStatus.READING_SPOT_NOT_FOUND));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        Optional<ReadingSpotScrap> userScrap
+                = readingSpotScrapRepository.findByUserAndReadingSpot(user,readingSpot);
+
+        if (userScrap.isPresent()) {
+            readingSpotScrapRepository.delete(userScrap.get());
+            readingSpot.decreaseReadingSpotScraps();
+        } else {
+            ReadingSpotScrap newScrap = ReadingSpotScrap.builder()
+                    .user(user)
+                    .readingSpot(readingSpot)
+                    .build();
+            readingSpotScrapRepository.save(newScrap);
+            readingSpot.increaseReadingSpotScraps();
+        }
+        return new ReadingSpotResponseDTO.GetReadingSpotScrapInfoDTO(readingSpot.getScraps());
     }
 }
