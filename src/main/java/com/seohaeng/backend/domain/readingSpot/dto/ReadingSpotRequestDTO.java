@@ -48,9 +48,11 @@ public class ReadingSpotRequestDTO {
         @NotNull(message = "책 출간일은 필수입니다.")
         private LocalDate bookPubDate;
 
-        private boolean opened;
+        @NotNull(message = "공개 여부(opened)는 필수입니다.")
+        private Boolean opened;
 
-        private int mainImageIndex;
+        @NotNull(message = "대표 이미지 인덱스는 필수입니다.")
+        private Integer mainImageIndex;
     }
 
     @Getter

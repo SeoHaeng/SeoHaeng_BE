@@ -131,7 +131,7 @@ public class ReadingSpotController {
     내가 스크랩한(저장한) 공간책갈피 목록을 조회합니다. 기본 최신순으로 조회됩니다.
     - Parameter:
       - `page`: 페이지 번호 (1부터 시작)
-      - `size`: 한 페이지당 게시글 개수 (기본값: 20)
+      - `size`: 한 페이지당 게시글 개수 (기본값: 10)
     """
     )
     @GetMapping("/scraps/my")
@@ -141,6 +141,25 @@ public class ReadingSpotController {
             @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size) {
         ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO result
                 = readingSpotQueryService.getMyScrapReadingSpotListResponseDTO(userId, page, size);
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(
+            summary = "내가 등록한 공간책갈피 리스트 조회 API",
+            description = """
+    내가 등록한 공간책갈피 목록을 조회합니다. 기본 최신순으로 조회됩니다.
+    - Parameter:
+      - `page`: 페이지 번호 (1부터 시작)
+      - `size`: 한 페이지당 게시글 개수 (기본값: 10)
+    """
+    )
+    @GetMapping("/my")
+    public ApiResponse<ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO> getMyReadingSpot(
+            @AuthUser Long userId,
+            @RequestParam(name = "page", defaultValue = "1") @Min(1)Integer page,
+            @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size) {
+        ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO result
+                = readingSpotQueryService.getMyReadingSpotListResponseDTO(userId, page, size);
         return ApiResponse.onSuccess(result);
     }
 }

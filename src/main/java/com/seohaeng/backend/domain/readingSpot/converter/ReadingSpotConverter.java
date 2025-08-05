@@ -27,7 +27,7 @@ public class ReadingSpotConverter {
                 .bookAuthor(request.getBookAuthor())
                 .bookPubDate(request.getBookPubDate())
                 .bookImageUrl(request.getBookImage())
-                .opened(request.isOpened())
+                .opened(request.getOpened())
                 .build();
     }
 
@@ -97,6 +97,18 @@ public class ReadingSpotConverter {
     }
 
     public static ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO toGetReadingSpotItemListResponseDTO(
+            List<ReadingSpotResponseDTO.GetReadingSpotItemResponseDTO> readingSpotItemResponseDTOs, Page<ReadingSpot> readingSpotPage) {
+        return ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO.builder()
+                .listSize(readingSpotItemResponseDTOs.size())
+                .totalElements(readingSpotPage.getTotalElements())
+                .totalPage(readingSpotPage.getTotalPages())
+                .isFirst(readingSpotPage.isFirst())
+                .isLast(readingSpotPage.isLast())
+                .scrapList(readingSpotItemResponseDTOs)
+                .build();
+    }
+
+    public static ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO toGetReadingSpotScrapItemListResponseDTO(
             List<ReadingSpotResponseDTO.GetReadingSpotItemResponseDTO> readingSpotItemResponseDTOs, Page<ReadingSpotScrap> readingSpotScrapPage) {
         return ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO.builder()
                 .listSize(readingSpotItemResponseDTOs.size())

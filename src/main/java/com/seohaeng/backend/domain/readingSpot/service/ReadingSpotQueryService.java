@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.seohaeng.backend.domain.readingSpot.converter.ReadingSpotConverter.toGetReadingSpotItemListResponseDTO;
+import static com.seohaeng.backend.domain.readingSpot.converter.ReadingSpotConverter.toGetReadingSpotScrapItemListResponseDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -86,6 +87,28 @@ public class ReadingSpotQueryService {
                     (readingSpot, mainImage.getImageUrl());
             readingSpotItemResponseDTOS.add(dto);
         }
-        return toGetReadingSpotItemListResponseDTO(readingSpotItemResponseDTOS,readingSpotScrapPage);
+        return toGetReadingSpotScrapItemListResponseDTO(readingSpotItemResponseDTOS,readingSpotScrapPage);
+    }
+
+    public ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO getMyReadingSpotListResponseDTO(Long userId, Integer page, Integer size) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<ReadingSpot> readingSpotPage = readingSpotRepository.findAllByUser(user, pageRequest);
+        List<ReadingSpot> readingSpotList = readingSpotPage.getContent();
+
+        List<ReadingSpotResponseDTO.GetReadingSpotItemResponseDTO> readingSpotItemResponseDTOS = new ArrayList<>();
+
+        for(ReadingSpot readingSpot : readingSpotList) {
+            ReadingSpotImage mainImage = readingSpotImageRepository.findByReadingSpotAndIsMainTrue(readingSpot)
+                    .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+            ReadingSpotResponseDTO.GetReadingSpotItemResponseDTO dto = ReadingSpotConverter.toGetReadingSpotItemResponseDTO
+                    (readingSpot, mainImage.getImageUrl());
+            readingSpotItemResponseDTOS.add(dto);
+        }
+        return toGetReadingSpotItemListResponseDTO(readingSpotItemResponseDTOS,readingSpotPage);
     }
 }
