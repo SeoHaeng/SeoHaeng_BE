@@ -1,4 +1,4 @@
-package com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository;
+package com.seohaeng.backend.domain.readingSpot.repository;
 
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpot;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotImage;

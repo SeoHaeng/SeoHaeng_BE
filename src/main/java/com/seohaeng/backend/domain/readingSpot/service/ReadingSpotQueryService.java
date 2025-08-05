@@ -1,6 +1,6 @@
 package com.seohaeng.backend.domain.readingSpot.service;
 
-import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.*;
+import com.seohaeng.backend.domain.readingSpot.repository.*;
 import com.seohaeng.backend.domain.readingSpot.converter.ReadingSpotConverter;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotResponseDTO;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpot;
@@ -12,7 +12,6 @@ import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
 import com.seohaeng.backend.global.apiPayload.exception.handler.ReadingSpotHandler;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
-import com.seohaeng.backend.global.aws.s3.AmazonS3Manager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.seohaeng.backend.domain.readingSpot.converter.ReadingSpotConverter.toGetReadingSpotItemListResponseDTO;
@@ -34,11 +32,9 @@ import static com.seohaeng.backend.domain.readingSpot.converter.ReadingSpotConve
 public class ReadingSpotQueryService {
 
     private final UserRepository userRepository;
-    private final AmazonS3Manager amazonS3Manager;
     private final ReadingSpotRepository readingSpotRepository;
     private final ReadingSpotImageRepository readingSpotImageRepository;
     private final ReadingSpotCommentRepository readingSpotCommentRepository;
-    private final ReadingSpotLikeRepository readingSpotLikeRepository;
     private final ReadingSpotScrapRepository readingSpotScrapRepository;
 
     public ReadingSpotResponseDTO.GetReadingSpotResponseDTO getReadingSpot(Long readingSpotId) {
@@ -81,10 +77,11 @@ public class ReadingSpotQueryService {
 
         for(ReadingSpotScrap readingSpotScrap : readingSpotScrapList) {
             ReadingSpot readingSpot = readingSpotScrap.getReadingSpot();
-            ReadingSpotImage mainImage = readingSpotImageRepository.findByReadingSpotAndIsMainTrue(readingSpot)
-                    .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+            String imageUrl = readingSpotImageRepository.findByReadingSpotAndIsMainTrue(readingSpot)
+                    .map(ReadingSpotImage::getImageUrl)
+                    .orElse("");
             ReadingSpotResponseDTO.GetReadingSpotItemResponseDTO dto = ReadingSpotConverter.toGetReadingSpotItemResponseDTO
-                    (readingSpot, mainImage.getImageUrl());
+                    (readingSpot, imageUrl);
             readingSpotItemResponseDTOS.add(dto);
         }
         return toGetReadingSpotScrapItemListResponseDTO(readingSpotItemResponseDTOS,readingSpotScrapPage);
@@ -103,10 +100,11 @@ public class ReadingSpotQueryService {
         List<ReadingSpotResponseDTO.GetReadingSpotItemResponseDTO> readingSpotItemResponseDTOS = new ArrayList<>();
 
         for(ReadingSpot readingSpot : readingSpotList) {
-            ReadingSpotImage mainImage = readingSpotImageRepository.findByReadingSpotAndIsMainTrue(readingSpot)
-                    .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+            String imageUrl = readingSpotImageRepository.findByReadingSpotAndIsMainTrue(readingSpot)
+                    .map(ReadingSpotImage::getImageUrl)
+                    .orElse("");
             ReadingSpotResponseDTO.GetReadingSpotItemResponseDTO dto = ReadingSpotConverter.toGetReadingSpotItemResponseDTO
-                    (readingSpot, mainImage.getImageUrl());
+                    (readingSpot, imageUrl);
             readingSpotItemResponseDTOS.add(dto);
         }
         return toGetReadingSpotItemListResponseDTO(readingSpotItemResponseDTOS,readingSpotPage);

@@ -1,10 +1,6 @@
 package com.seohaeng.backend.domain.readingSpot.service;
 
-import com.seohaeng.backend.domain.bookChallenge.converter.BookChallengeConverter;
-import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeResponseDTO;
-import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProof;
-import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofLike;
-import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.*;
+import com.seohaeng.backend.domain.readingSpot.repository.*;
 import com.seohaeng.backend.domain.readingSpot.converter.ReadingSpotConverter;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotRequestDTO;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotResponseDTO;
@@ -12,7 +8,6 @@ import com.seohaeng.backend.domain.readingSpot.entity.*;
 import com.seohaeng.backend.domain.user.entity.User;
 import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
-import com.seohaeng.backend.global.apiPayload.exception.handler.BookChallengeHandler;
 import com.seohaeng.backend.global.apiPayload.exception.handler.ReadingSpotHandler;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import com.seohaeng.backend.global.aws.s3.AmazonS3Manager;

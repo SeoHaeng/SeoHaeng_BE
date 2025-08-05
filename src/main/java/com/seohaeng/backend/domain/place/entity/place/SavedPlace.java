@@ -2,11 +2,13 @@ package com.seohaeng.backend.domain.place.entity.place;
 import com.seohaeng.backend.domain.common.entity.BaseEntity;
 import com.seohaeng.backend.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Getter
+@Builder
 public class SavedPlace extends BaseEntity {
 
     @Id
