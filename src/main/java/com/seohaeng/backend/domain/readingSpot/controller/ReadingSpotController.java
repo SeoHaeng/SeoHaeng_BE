@@ -98,4 +98,17 @@ public class ReadingSpotController {
                 = readingSpotQueryService.getReadingSpotCommentList(readingSpotId, page, size);
         return ApiResponse.onSuccess(result);
     }
+
+    @Operation(
+            summary = "공간책갈피 좋아요 토글 API",
+            description = "특정 공간책갈피에 좋아요를 추가하거나 취소하고, 현재 좋아요 수를 반환합니다." +
+                    "누르면 좋아요가 없으면 +1, 이미 눌러져 있으면 취소되어 좋아요 수가 -1 됩니다. 좋아요를 토글할 공간책갈피 ID를 전달해주세요."
+    )
+    @PostMapping("/{ReadingSpotId}/likes")
+    public ApiResponse<ReadingSpotResponseDTO.GetReadingSpotLikeInfoDTO> toggleLikeReadingSpot(
+            @AuthUser Long userId, @PathVariable("ReadingSpotId") Long readingSpotId) {
+        ReadingSpotResponseDTO.GetReadingSpotLikeInfoDTO result =
+                readingSpotCommandService.toggleReadingSpotLikes(userId, readingSpotId);
+        return ApiResponse.of(SuccessStatus.READING_SPOT_LIKE_TOGGLED,result);
+    }
 }

@@ -14,6 +14,7 @@ public enum SuccessStatus implements BaseCode {
     BOOK_CHALLENGE_PROOF_LIKE_TOGGLED(HttpStatus.OK, "BOOK_CHALLENGE2001", "북챌린지 게시글 좋아요 토글이 완료되었습니다."),
     REVIEW_CREATE_SUCCESS(HttpStatus.OK, "REVIEW_2001", "리뷰 작성이 완료되었습니다."),
     READING_SPOT_CREATE_SUCCESS(HttpStatus.OK, "READING_SPOT_2001", "공간책갈피 생성이 완료되었습니다."),
+    READING_SPOT_LIKE_TOGGLED(HttpStatus.OK, "READING_SPOT2002", "공간책갈피 좋아요 토글이 완료되었습니다."),
     ;
 
     private final HttpStatus httpStatus;

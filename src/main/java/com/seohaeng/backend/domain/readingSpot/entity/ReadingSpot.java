@@ -50,4 +50,15 @@ public class ReadingSpot extends BaseEntity {
 
     @OneToMany(mappedBy = "readingSpot", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ReadingSpotComment> readingSpotCommentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "readingSpot", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ReadingSpotLike> readingSpotLikeList = new ArrayList<>();
+
+    public void increaseReadingSpotLikes(){
+        this.likes++;
+    }
+
+    public void decreaseReadingSpotLikes(){
+        this.likes--;
+    }
 }

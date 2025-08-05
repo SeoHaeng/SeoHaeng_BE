@@ -1,7 +1,12 @@
 package com.seohaeng.backend.domain.readingSpot.service;
 
+import com.seohaeng.backend.domain.bookChallenge.converter.BookChallengeConverter;
+import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeResponseDTO;
+import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProof;
+import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofLike;
 import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.ReadingSpotCommentRepository;
 import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.ReadingSpotImageRepository;
+import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.ReadingSpotLikeRepository;
 import com.seohaeng.backend.domain.readingSpot.ReadingSpotRepository.ReadingSpotRepository;
 import com.seohaeng.backend.domain.readingSpot.converter.ReadingSpotConverter;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotRequestDTO;
@@ -9,9 +14,11 @@ import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotResponseDTO;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpot;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotComment;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotImage;
+import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotLike;
 import com.seohaeng.backend.domain.user.entity.User;
 import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
+import com.seohaeng.backend.global.apiPayload.exception.handler.BookChallengeHandler;
 import com.seohaeng.backend.global.apiPayload.exception.handler.ReadingSpotHandler;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import com.seohaeng.backend.global.aws.s3.AmazonS3Manager;
@@ -23,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -34,6 +42,7 @@ public class ReadingSpotCommandService {
     private final ReadingSpotRepository readingSpotRepository;
     private final ReadingSpotImageRepository readingSpotImageRepository;
     private final ReadingSpotCommentRepository readingSpotCommentRepository;
+    private final ReadingSpotLikeRepository readingSpotLikeRepository;
 
     @Transactional
     public ReadingSpotResponseDTO.CreateReadingSpotResponseDTO createReadingSpot(
@@ -79,5 +88,31 @@ public class ReadingSpotCommandService {
         readingSpotCommentRepository.save(newReadingSpotComment);
 
         return new ReadingSpotResponseDTO.CreateReadingSpotCommentResponseDTO(newReadingSpotComment.getId());
+    }
+
+    @Transactional
+    public ReadingSpotResponseDTO.GetReadingSpotLikeInfoDTO toggleReadingSpotLikes(Long userId, Long readingSpotId) {
+
+        ReadingSpot readingSpot = readingSpotRepository.findById(readingSpotId)
+                .orElseThrow(() -> new ReadingSpotHandler(ErrorStatus.READING_SPOT_NOT_FOUND));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        Optional<ReadingSpotLike> userLike
+                = readingSpotLikeRepository.findByUserAndReadingSpot(user,readingSpot);
+
+        if (userLike.isPresent()) {
+            readingSpotLikeRepository.delete(userLike.get());
+            readingSpot.decreaseReadingSpotLikes();
+        } else {
+            ReadingSpotLike newLike = ReadingSpotLike.builder()
+                    .user(user)
+                    .readingSpot(readingSpot)
+                    .build();
+            readingSpotLikeRepository.save(newLike);
+            readingSpot.increaseReadingSpotLikes();
+        }
+        return new ReadingSpotResponseDTO.GetReadingSpotLikeInfoDTO(readingSpot.getLikes());
     }
 }

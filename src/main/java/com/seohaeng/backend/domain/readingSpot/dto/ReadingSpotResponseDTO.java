@@ -66,4 +66,13 @@ public class ReadingSpotResponseDTO {
         private int scraps;
         private boolean opened;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class GetReadingSpotLikeInfoDTO {
+        Integer nowLikeCount;
+    }
 }
