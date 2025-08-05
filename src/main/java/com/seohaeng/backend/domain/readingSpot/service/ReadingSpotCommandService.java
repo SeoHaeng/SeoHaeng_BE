@@ -47,12 +47,15 @@ public class ReadingSpotCommandService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        ReadingSpot newReadingSpot = ReadingSpotConverter.toReadingSpot(request,user);
+        ReadingSpot newReadingSpot = ReadingSpotConverter.toReadingSpot(request, user);
         readingSpotRepository.save(newReadingSpot);
 
+        int mainImageIndex = request.getMainImageIndex();
+
         List<ReadingSpotImage> readingSpotImageList = new ArrayList<>();
-        if(images != null && !images.isEmpty()){
-            for (MultipartFile image : images) {
+        if (images != null && !images.isEmpty()) {
+            for (int i = 0; i < images.size(); i++) {
+                MultipartFile image = images.get(i);
                 final String uuid = UUID.randomUUID().toString();
                 final String keyName = amazonS3Manager.generateReadingSpotKeyName(uuid);
                 final String imageUrl = amazonS3Manager.uploadFile(keyName, image);
@@ -60,7 +63,9 @@ public class ReadingSpotCommandService {
                 ReadingSpotImage newReadingSpotImage = ReadingSpotImage.builder()
                         .imageUrl(imageUrl)
                         .readingSpot(newReadingSpot)
+                        .isMain(i == mainImageIndex)
                         .build();
+
                 readingSpotImageList.add(newReadingSpotImage);
             }
             readingSpotImageRepository.saveAll(readingSpotImageList);

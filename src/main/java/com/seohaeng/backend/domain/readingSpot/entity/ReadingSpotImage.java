@@ -17,6 +17,9 @@ public class ReadingSpotImage extends BaseEntity {
 
     private String imageUrl;
 
+    @Builder.Default
+    private boolean isMain = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="reading_spot_id", nullable=false)
     private ReadingSpot readingSpot;

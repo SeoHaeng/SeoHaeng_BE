@@ -49,6 +49,8 @@ public class ReadingSpotRequestDTO {
         private LocalDate bookPubDate;
 
         private boolean opened;
+
+        private int mainImageIndex;
     }
 
     @Getter

@@ -84,4 +84,34 @@ public class ReadingSpotResponseDTO {
     public static class GetReadingSpotScrapInfoDTO {
         Integer nowScrapCount;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class GetReadingSpotItemResponseDTO{
+        private String title;
+        private String imageUrl;
+        private String address;
+        private Double latitude;
+        private Double longitude;
+        private int templateId;
+        private Long readingSpotId;
+        private LocalDate createdAt;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class GetReadingSpotItemListResponseDTO{
+        private Integer listSize;
+        private Integer totalPage;
+        private Long totalElements;
+        private Boolean isFirst;
+        private Boolean isLast;
+        private List<GetReadingSpotItemResponseDTO> scrapList;
+    }
 }

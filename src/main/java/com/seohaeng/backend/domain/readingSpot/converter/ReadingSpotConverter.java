@@ -4,6 +4,7 @@ import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotRequestDTO;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotResponseDTO;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpot;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotComment;
+import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotScrap;
 import com.seohaeng.backend.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 
@@ -78,6 +79,32 @@ public class ReadingSpotConverter {
                 .isFirst(readingSpotCommentPage.isFirst())
                 .isLast(readingSpotCommentPage.isLast())
                 .comments(readingSpotCommentResponseDTOs)
+                .build();
+    }
+
+    public static ReadingSpotResponseDTO.GetReadingSpotItemResponseDTO toGetReadingSpotItemResponseDTO(
+            ReadingSpot readingSpot, String mainImage) {
+        return ReadingSpotResponseDTO.GetReadingSpotItemResponseDTO.builder()
+                .title(readingSpot.getTitle())
+                .templateId(readingSpot.getTemplateId())
+                .imageUrl(mainImage)
+                .readingSpotId(readingSpot.getId())
+                .createdAt(readingSpot.getCreatedAt().toLocalDate())
+                .address(readingSpot.getAddress())
+                .latitude(readingSpot.getLatitude())
+                .longitude(readingSpot.getLongitude())
+                .build();
+    }
+
+    public static ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO toGetReadingSpotItemListResponseDTO(
+            List<ReadingSpotResponseDTO.GetReadingSpotItemResponseDTO> readingSpotItemResponseDTOs, Page<ReadingSpotScrap> readingSpotScrapPage) {
+        return ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO.builder()
+                .listSize(readingSpotItemResponseDTOs.size())
+                .totalElements(readingSpotScrapPage.getTotalElements())
+                .totalPage(readingSpotScrapPage.getTotalPages())
+                .isFirst(readingSpotScrapPage.isFirst())
+                .isLast(readingSpotScrapPage.isLast())
+                .scrapList(readingSpotItemResponseDTOs)
                 .build();
     }
 }

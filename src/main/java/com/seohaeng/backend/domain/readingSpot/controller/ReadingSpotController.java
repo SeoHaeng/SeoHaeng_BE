@@ -113,7 +113,7 @@ public class ReadingSpotController {
     }
 
     @Operation(
-            summary = "공간책갈피 스크랩 토글 API",
+            summary = "공간책갈피 스크랩(저장) 토글 API",
             description = "특정 공간책갈피를 스크랩하거나 스크랩을 취소하고, 현재 스크랩 수를 반환합니다. 스크랩을 토글할 공간책갈피 ID를 전달해주세요."
             +"스크랩이 되어있지 않은 공간책갈피라면 새로 스크랩을 하며, 이미 스크랩이 되어있다면 기존의 스크랩이 취소됩니다."
     )
@@ -123,5 +123,24 @@ public class ReadingSpotController {
         ReadingSpotResponseDTO.GetReadingSpotScrapInfoDTO result =
                 readingSpotCommandService.toggleReadingSpotScraps(userId, readingSpotId);
         return ApiResponse.of(SuccessStatus.READING_SPOT_SCRAP_TOGGLED,result);
+    }
+
+    @Operation(
+            summary = "내가 스크랩한(저장) 공간책갈피 리스트 조회 API",
+            description = """
+    내가 스크랩한(저장한) 공간책갈피 목록을 조회합니다. 기본 최신순으로 조회됩니다.
+    - Parameter:
+      - `page`: 페이지 번호 (1부터 시작)
+      - `size`: 한 페이지당 게시글 개수 (기본값: 20)
+    """
+    )
+    @GetMapping("/scraps/my")
+    public ApiResponse<ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO> getMyScrapReadingSpot(
+            @AuthUser Long userId,
+            @RequestParam(name = "page", defaultValue = "1") @Min(1)Integer page,
+            @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size) {
+        ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO result
+                = readingSpotQueryService.getMyScrapReadingSpotListResponseDTO(userId, page, size);
+        return ApiResponse.onSuccess(result);
     }
 }

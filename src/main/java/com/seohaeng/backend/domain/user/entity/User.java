@@ -1,6 +1,7 @@
 package com.seohaeng.backend.domain.user.entity;
 
 import com.seohaeng.backend.domain.common.entity.BaseEntity;
+import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotScrap;
 import com.seohaeng.backend.domain.travelCourse.entity.Stamp;
 import com.seohaeng.backend.domain.travelCourse.entity.TravelCourse;
 import jakarta.persistence.*;
@@ -32,4 +33,7 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<TravelCourse> travelCourses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ReadingSpotScrap> readingSpotScrapList = new ArrayList<>();
 }
