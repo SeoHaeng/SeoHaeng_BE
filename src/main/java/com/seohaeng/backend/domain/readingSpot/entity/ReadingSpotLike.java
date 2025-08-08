@@ -1,4 +1,6 @@
-package com.seohaeng.backend.domain.place.entity.place;
+package com.seohaeng.backend.domain.readingSpot.entity;
+
+import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProof;
 import com.seohaeng.backend.domain.common.entity.BaseEntity;
 import com.seohaeng.backend.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -9,8 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Builder
-public class SavedPlace extends BaseEntity {
-
+public class ReadingSpotLike extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,7 +21,6 @@ public class SavedPlace extends BaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_id", nullable = false)
-    private Place place;
-
+    @JoinColumn(name = "reading_spot__id", nullable = false)
+    private ReadingSpot readingSpot;
 }

@@ -37,4 +37,12 @@ public class PlaceResponseDTO {
         private Boolean isLast;
         private List<placeDto> placeList;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PlaceBookmarkToggleResponse{
+        private boolean bookmarked;
+    }
 }

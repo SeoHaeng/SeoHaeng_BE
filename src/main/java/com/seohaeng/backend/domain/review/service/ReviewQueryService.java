@@ -13,6 +13,7 @@ import com.seohaeng.backend.global.apiPayload.exception.handler.PlaceHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +36,7 @@ public class ReviewQueryService {
         Double averageRating = Optional.ofNullable(reviewRepository.getAverageRatingByPlace(place))
                 .orElse(0.0);
 
-        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Review> reviewPage = reviewRepository.findAllByPlace(place, pageRequest);
 
         List<ReviewResponseDTO.GetReviewResponseDTO> getReviewList = reviewPage.getContent().stream()
