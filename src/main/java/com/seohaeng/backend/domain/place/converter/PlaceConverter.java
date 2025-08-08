@@ -13,23 +13,21 @@ public class PlaceConverter {
              .id(place.getId())
              .name(place.getName())
              .placeType(place.getPlaceType())
-             .introduction(place.getIntroduction())
              .address(place.getAddress())
-             .websiteUrl(place.getWebsiteUrl())
+             .region(place.getRegion().getRegionName())
              .latitude(place.getLatitude())
-             .description(place.getDescription())
              .longitude(place.getLongitude())
              .build();
     }
 
-    public static PlaceResponseDTO.placeListDto toplaceListDto (Page<Place> placePage,
+    public static PlaceResponseDTO.placeListDto toplaceListDto (Page<?> page,
                                                                 List<PlaceResponseDTO.placeDto> placeDtoList) {
         return PlaceResponseDTO.placeListDto.builder()
                 .listSize(placeDtoList.size())
-                .totalPage(placePage.getTotalPages())
-                .totalElements(placePage.getTotalElements())
-                .isFirst(placePage.isFirst())
-                .isLast(placePage.isLast())
+                .totalPage(page.getTotalPages())
+                .totalElements(page.getTotalElements())
+                .isFirst(page.isFirst())
+                .isLast(page.isLast())
                 .placeList(placeDtoList)
                 .build();
     }

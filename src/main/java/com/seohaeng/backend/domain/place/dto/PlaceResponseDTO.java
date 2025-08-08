@@ -16,10 +16,8 @@ public class PlaceResponseDTO {
         private Long id;
         private String name;
         private PlaceType placeType;
+        private String region;
         private String address;
-        private String description;
-        private String introduction;
-        private String websiteUrl;
         private Double latitude;
         private Double longitude;
     }

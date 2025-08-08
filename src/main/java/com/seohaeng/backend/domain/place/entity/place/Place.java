@@ -2,13 +2,16 @@ package com.seohaeng.backend.domain.place.entity.place;
 
 import com.seohaeng.backend.domain.common.entity.BaseEntity;
 import com.seohaeng.backend.domain.place.entity.enums.PlaceType;
-import com.seohaeng.backend.domain.review.entity.Review;
+import com.seohaeng.backend.domain.place.entity.placeAttribute.BookStoreAttribute;
+import com.seohaeng.backend.domain.place.entity.placeAttribute.FestivalAttribute;
+import com.seohaeng.backend.domain.place.entity.placeAttribute.RestaurantAttribute;
+import com.seohaeng.backend.domain.place.entity.placeAttribute.TouristSpotAttribute;
+import com.seohaeng.backend.domain.travelCourse.entity.Region;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,17 +27,15 @@ public class Place extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    private PlaceType placeType;
+
+    @Column(nullable = false)
     private Long contentId;
 
-    private String description;
-
-    private LocalTime openingTime;
-
-    private LocalTime closingTime;
+    private String openingTime;
 
     private String address;
-
-    private String introduction;
 
     private String websiteUrl;
 
@@ -42,15 +43,19 @@ public class Place extends BaseEntity {
 
     private Double longitude;
 
-    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<PlaceImage> placeImages = new ArrayList<>();
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id", nullable = false)
+    private Region region;
 
     @OneToOne(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private BookStoreAttribute bookStoreAttribute; // placeType이 BOOKSTORE일때만 사용
+    private BookStoreAttribute bookStoreAttribute;
+    @OneToOne(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private RestaurantAttribute restaurantAttribute;
+    @OneToOne(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private FestivalAttribute festivalAttribute;
+    @OneToOne(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private TouristSpotAttribute touristSpotAttribute;
 
-    @Enumerated(EnumType.STRING)
-    private PlaceType placeType;
-
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
-    private boolean bookChallengeStatus = false;
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<PlaceImage> placeImages = new ArrayList<>();
 }
