@@ -21,6 +21,7 @@ jobs:
 
       - name: Copy application.yml from Secrets
         run: |
+          mkdir -p deploy
           echo "${{ secrets.APPLICATION_YML }}" > deploy/application.yml
 
       - name: Run MySQL image for test
@@ -33,7 +34,6 @@ jobs:
 
       - name: Prepare deploy folder
         run: |
-          mkdir -p deploy
           cp build/libs/*.jar deploy/
           cp Dockerfile docker-compose.yml deploy/
 
