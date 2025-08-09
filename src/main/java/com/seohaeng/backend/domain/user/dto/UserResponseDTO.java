@@ -15,4 +15,14 @@ public class UserResponseDTO {
         Long UserId;
         String accessToken;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetUserInfoResponseDTO {
+        Long userId;
+        String nickName;
+        String profileImageUrl;
+    }
 }

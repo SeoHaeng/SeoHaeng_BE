@@ -3,6 +3,7 @@ package com.seohaeng.backend.domain.user.controller;
 import com.seohaeng.backend.domain.user.dto.UserRequestDTO;
 import com.seohaeng.backend.domain.user.dto.UserResponseDTO;
 import com.seohaeng.backend.domain.user.service.UserCommandService;
+import com.seohaeng.backend.domain.user.service.UserQueryService;
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserCommandService userCommandService;
+    private final UserQueryService userQueryService;
 
     @Operation(summary = "일반 회원가입 API",
             description = "아이디는 4~12자이며, 비밀번호는 8~20자이고 영문, 숫자, 특수문자를 반드시 포함해야 합니다." +
@@ -50,6 +52,13 @@ public class UserController {
     @GetMapping("test")
     public ApiResponse<String> loginTest(@AuthUser Long userId){
         String result = "userID : " + userId;
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(summary = "ID로 회원정보 조회", description = "정보(닉네임, 프로필사진 등)을 조회하고자 하는 사용자의 ID를 넘겨주세요")
+    @GetMapping("/{userId}")
+    public ApiResponse<UserResponseDTO.GetUserInfoResponseDTO> getUserInfo(@PathVariable("userId") Long userId){
+        UserResponseDTO.GetUserInfoResponseDTO result = userQueryService.getUserInfo(userId);
         return ApiResponse.onSuccess(result);
     }
 }
