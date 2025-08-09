@@ -28,9 +28,7 @@ jobs:
         run: docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=seohaeng_db mysql:8.0.31
 
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build -x test
+        run: ./gradlew clean build -x test
 
       - name: Prepare deploy folder
         run: |
