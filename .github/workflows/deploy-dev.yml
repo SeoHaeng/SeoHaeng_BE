@@ -19,6 +19,10 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
 
+      - name: Copy application.yml from Secrets
+        run: |
+          echo "${{ secrets.APPLICATION_YML }}" > deploy/application.yml
+
       - name: Run MySQL image for test
         run: docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=seohaeng_db mysql:8.0.31
 
@@ -29,7 +33,7 @@ jobs:
 
       - name: Prepare deploy folder
         run: |
-          mkdir deploy
+          mkdir -p deploy
           cp build/libs/*.jar deploy/
           cp Dockerfile docker-compose.yml deploy/
 
@@ -71,4 +75,4 @@ jobs:
             cd ${{ env.APP_PATH }}
             docker compose down --volumes
             docker image prune -f
-            SPRING_PROFILES_ACTIVE=dev docker compose up --build -d
+            docker compose up --build -d
