@@ -1,6 +1,7 @@
-package com.seohaeng.backend.domain.place.entity.place;
+package com.seohaeng.backend.domain.place.entity.placeAttribute;
 
 import com.seohaeng.backend.domain.common.entity.BaseEntity;
+import com.seohaeng.backend.domain.place.entity.place.Place;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,7 +23,9 @@ public class BookStoreAttribute extends BaseEntity{
     // 북카페, 북스테이
     private boolean bookCafe;
     private boolean bookStay;
-    // 나중에 북챌린지 여부 이쪽으로 이동
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    private boolean bookChallengeStatus = false;
 
     // 북살롱
     private boolean salonAll;
