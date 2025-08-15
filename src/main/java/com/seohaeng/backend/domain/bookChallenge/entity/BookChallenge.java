@@ -33,5 +33,6 @@ public class BookChallenge extends BaseEntity {
     private String givenBookImage;
 
     @Builder.Default
+    @Setter
     private boolean accepted = false; // 북챌린지 인증 글이 작성 되었는지에 대한 여뷰
 }

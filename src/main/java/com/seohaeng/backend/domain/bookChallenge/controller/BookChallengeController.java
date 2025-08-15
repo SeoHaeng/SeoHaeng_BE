@@ -48,13 +48,14 @@ public class BookChallengeController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<String> registerBookChallenge (
             @AuthUser Long userId,
+            @RequestParam Long bookChallengeId,
             @RequestPart("request") BookChallengeRequestDTO.createBookChallengeProof request,
             @RequestPart(value = "images", required = false) List<MultipartFile> images){
 
         if (images != null && images.size() > 10) {
             throw new IllegalArgumentException("이미지는 최대 10장까지 업로드할 수 있습니다.");
         }
-        bookChallengeCommandService.createBookChallengeProof(request,userId,images);
+        bookChallengeCommandService.createBookChallengeProof(bookChallengeId,request,userId,images);
         return ApiResponse.onSuccess("북챌린지 인증이 등록되었습니다.");
     }
 

@@ -15,20 +15,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookChallengeConverter {
 
-    public static BookChallengeProof toBookChallengeProof(BookChallengeRequestDTO.createBookChallengeProof request,
+    public static BookChallengeProof toBookChallengeProof(BookChallenge bookChallenge,
                                                           User user,
-                                                          Place place) {
+                                                          BookChallengeRequestDTO.createBookChallengeProof request) {
         return BookChallengeProof.builder()
+                .user(user)
                 .bookChallengeProofContent(request.getProofContent())
                 .presentMessage(request.getPresentMessage())
-                .user(user)
-                .place(place)
-                .receivedBookTitle(request.getReceivedBookTitle())
-                .receivedBookAuthor(request.getReceivedBookAuthor())
-                .receivedBookImage(request.getReceivedBookImage())
-                .givenBookTitle(request.getGivenBookTitle())
-                .givenBookAuthor(request.getGivenBookAuthor())
-                .givenBookImage(request.getGivenBookImage())
+                .bookStoreName(bookChallenge.getBookStoreName())
+                .receivedBookTitle(bookChallenge.getReceivedBookTitle())
+                .receivedBookAuthor(bookChallenge.getReceivedBookAuthor())
+                .receivedBookImage(bookChallenge.getReceivedBookImage())
+                .givenBookTitle(bookChallenge.getGivenBookTitle())
+                .givenBookAuthor(bookChallenge.getGivenBookAuthor())
+                .givenBookImage(bookChallenge.getGivenBookImage())
                 .build();
     }
 

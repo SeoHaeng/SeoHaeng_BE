@@ -7,12 +7,12 @@ import com.seohaeng.backend.domain.bookChallenge.entity.*;
 import com.seohaeng.backend.domain.bookChallenge.repository.*;
 import com.seohaeng.backend.domain.place.entity.place.Place;
 import com.seohaeng.backend.domain.place.repository.PlaceRepository;
+import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotImage;
 import com.seohaeng.backend.domain.user.entity.Owner;
 import com.seohaeng.backend.domain.user.entity.User;
 import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
 import com.seohaeng.backend.global.apiPayload.exception.handler.BookChallengeHandler;
-import com.seohaeng.backend.global.apiPayload.exception.handler.PlaceHandler;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import com.seohaeng.backend.global.aws.s3.AmazonS3Manager;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,7 +34,6 @@ import static com.seohaeng.backend.domain.bookChallenge.converter.BookChallengeC
 public class BookChallengeCommandService {
 
     private final UserRepository userRepository;
-    private final PlaceRepository placeRepository;
     private final BookChallengeProofRepository bookChallengeProofRepository;
     private final BookChallengeProofImageRepository bookChallengeProofImageRepository;
     private final BookChallengeProofCommentRepository bookChallengeProofCommentRepository;
@@ -42,32 +42,46 @@ public class BookChallengeCommandService {
 
     private final AmazonS3Manager amazonS3Manager;
 
+    // 북챌린지 인증 글 생성
     public void createBookChallengeProof(
+            Long bookChallengeId,
             BookChallengeRequestDTO.createBookChallengeProof request,
             Long userId,
             List<MultipartFile> images) {
 
+        BookChallenge bookChallenge = bookChallengeRepository.findById(bookChallengeId)
+                .orElseThrow(() -> new BookChallengeHandler(ErrorStatus.BOOK_CHALLENGE_NOT_FOUND));
+
+        if(bookChallenge.isAccepted()){
+            throw new BookChallengeHandler(ErrorStatus.BOOK_CHALLENGE_ALREADY_DONE);
+        }
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        Place place = placeRepository.findById(request.getBookStoreId()).
-                orElseThrow(() -> new PlaceHandler(ErrorStatus.PLACE_NOT_FOUND));
-
-        BookChallengeProof bookChallengeProof = BookChallengeConverter.toBookChallengeProof(request, user, place);
+        BookChallengeProof bookChallengeProof = BookChallengeConverter.toBookChallengeProof(bookChallenge, user, request);
         bookChallengeProofRepository.save(bookChallengeProof);
 
-        if(images != null && !images.isEmpty()){
-            for (MultipartFile image : images) {
+        int mainImageIndex = request.getMainImageIndex();
+
+        List<BookChallengeProofImage> bookChallengeProofImageList = new ArrayList<>();
+        if (images != null && !images.isEmpty()) {
+            for (int i = 0; i < images.size(); i++) {
+                MultipartFile image = images.get(i);
                 final String uuid = UUID.randomUUID().toString();
                 final String keyName = amazonS3Manager.generateBookChallengeProofKeyName(uuid);
                 final String imageUrl = amazonS3Manager.uploadFile(keyName, image);
 
-                BookChallengeProofImage bookChallengeProofImage = BookChallengeProofImage.builder()
+                BookChallengeProofImage newBookChallengeImage = BookChallengeProofImage.builder()
                         .imageUrl(imageUrl)
+                        .isMain(i == mainImageIndex)
                         .bookChallengeProof(bookChallengeProof)
                         .build();
-                bookChallengeProofImageRepository.save(bookChallengeProofImage);
+
+                bookChallengeProofImageList.add(newBookChallengeImage);
             }
+            bookChallenge.setAccepted(true);
+            bookChallengeProofImageRepository.saveAll(bookChallengeProofImageList);
         }
     }
 

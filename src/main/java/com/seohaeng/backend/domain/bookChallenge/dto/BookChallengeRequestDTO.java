@@ -1,5 +1,6 @@
 package com.seohaeng.backend.domain.bookChallenge.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,20 +13,11 @@ public class BookChallengeRequestDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class createBookChallengeProof{
-        Long bookStoreId;
-
         String presentMessage;
         String proofContent;
 
-        // 선물 받은 책
-        String receivedBookTitle;
-        String receivedBookAuthor;
-        String receivedBookImage;
-
-        // 선물 할 책
-        String givenBookTitle;
-        String givenBookAuthor;
-        String givenBookImage;
+        @NotNull(message = "대표 이미지 인덱스는 필수입니다.")
+        private Integer mainImageIndex;
     }
 
     @Getter

@@ -18,6 +18,9 @@ public class BookChallengeProofImage extends BaseEntity {
     @Column(nullable = false, length = 2048)
     private String imageUrl;
 
+    @Builder.Default
+    private boolean isMain = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_challenge_proof_id", nullable = false)
     private BookChallengeProof bookChallengeProof;
