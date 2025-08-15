@@ -117,6 +117,7 @@ public class BookChallengeConverter {
 
     public static BookChallengeResponseDTO.saveBookChallenge toSaveBookChallenge(BookChallenge bookChallenge, User user){
         return BookChallengeResponseDTO.saveBookChallenge.builder()
+                .bookChallengeId(bookChallenge.getId())
                 .userNickName(user.getNickname())
                 .bookStoreName(bookChallenge.getBookStoreName())
                 .receivedBookTitle(bookChallenge.getReceivedBookTitle())

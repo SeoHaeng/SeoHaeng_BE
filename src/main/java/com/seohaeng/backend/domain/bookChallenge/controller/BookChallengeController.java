@@ -27,10 +27,10 @@ public class BookChallengeController {
     private final BookChallengeQueryService bookChallengeQueryService;
 
     @Operation(
-            summary = "북 챌린지 도서 정보 불러오기 API",
+            summary = "북챌린지 인증글 생성을 위한 참여 중인 북챌린지 정보 불러오기 API",
             description = """
         현재 사용자의 북챌린지 인증 글 작성을 위해, 현재 사용자가 진행 중인 북챌린지의 도서 정보를 불러오는 API입니다.
-        - "북챌린지 인증 글 작성시" 도서 정보를 불러오는데 사용됩니다.
+        - "북챌린지 인증 글 작성시" 도서 정보와 서점 이름을 불러오는데 사용됩니다.
         - "사용자가 현재 참여 중인 북 챌린지"의 선물받은 / 선물한 책 정보를 불러옵니다.
     """
     )

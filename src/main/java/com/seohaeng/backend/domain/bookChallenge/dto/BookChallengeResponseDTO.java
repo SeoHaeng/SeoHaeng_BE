@@ -65,6 +65,7 @@ public class BookChallengeResponseDTO {
     @AllArgsConstructor
     @Builder
     public static class saveBookChallenge{
+        Long bookChallengeId;
         String userNickName;
         String bookStoreName;
         // 선물 받은 책
