@@ -61,6 +61,24 @@ public class BookChallengeResponseDTO {
     }
 
     @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class saveBookChallenge{
+        String userNickName;
+        String bookStoreName;
+        // 선물 받은 책
+        String receivedBookTitle;
+        String receivedBookAuthor;
+        String receivedBookImage;
+
+        // 선물 할 책
+        String givenBookTitle;
+        String givenBookAuthor;
+        String givenBookImage;
+    }
+
+    @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor

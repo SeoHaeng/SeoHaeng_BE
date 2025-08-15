@@ -5,6 +5,7 @@ import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeResponseDTO;
 import com.seohaeng.backend.domain.bookChallenge.service.BookChallengeCommandService;
 import com.seohaeng.backend.domain.bookChallenge.service.BookChallengeQueryService;
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
+import com.seohaeng.backend.global.apiPayload.code.status.SuccessStatus;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.Min;
@@ -16,8 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.seohaeng.backend.global.apiPayload.code.status.SuccessStatus.BOOK_CHALLENGE_PROOF_LIKE_TOGGLED;
-
 @Validated
 @RestController
 @RequestMapping("/api/v1/book-challenges")
@@ -26,6 +25,22 @@ public class BookChallengeController {
 
     private final BookChallengeCommandService bookChallengeCommandService;
     private final BookChallengeQueryService bookChallengeQueryService;
+
+    @Operation(
+            summary = "북 챌린지 도서 정보 불러오기 API",
+            description = """
+        현재 사용자의 북챌린지 인증 글 작성을 위해, 현재 사용자가 진행 중인 북챌린지의 도서 정보를 불러오는 API입니다.
+        - "북챌린지 인증 글 작성시" 도서 정보를 불러오는데 사용됩니다.
+        - "사용자가 현재 참여 중인 북 챌린지"의 선물받은 / 선물한 책 정보를 불러옵니다.
+    """
+    )
+    @GetMapping("/inprogress-info")
+    public ApiResponse<BookChallengeResponseDTO.saveBookChallenge> getInprogressBookChallengeInfo (
+            @AuthUser Long userId){
+        BookChallengeResponseDTO.saveBookChallenge result
+                = bookChallengeQueryService.getInprogressBookChallengeInfo(userId);
+        return ApiResponse.onSuccess(result);
+    }
 
     @Operation(
             summary = "북챌린지 인증 게시글 생성 API",
@@ -125,6 +140,6 @@ public class BookChallengeController {
     public ApiResponse<BookChallengeResponseDTO.getBookChallengeLikeInfoDTO> toggleLikeBookChallengeProof(@AuthUser Long userId, @PathVariable Long bookChallengeProofId) {
         BookChallengeResponseDTO.getBookChallengeLikeInfoDTO result =
                 bookChallengeCommandService.toggleBookChallengeProofLike(userId, bookChallengeProofId);
-        return ApiResponse.of(BOOK_CHALLENGE_PROOF_LIKE_TOGGLED,result);
+        return ApiResponse.of(SuccessStatus.BOOK_CHALLENGE_PROOF_LIKE_TOGGLED,result);
     }
 }

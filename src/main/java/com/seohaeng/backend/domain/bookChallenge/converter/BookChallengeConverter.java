@@ -2,6 +2,7 @@ package com.seohaeng.backend.domain.bookChallenge.converter;
 
 import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeRequestDTO;
 import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeResponseDTO;
+import com.seohaeng.backend.domain.bookChallenge.entity.BookChallenge;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProof;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofComment;
 import com.seohaeng.backend.domain.place.entity.place.Place;
@@ -98,5 +99,32 @@ public class BookChallengeConverter {
     public static BookChallengeResponseDTO.getBookChallengeLikeInfoDTO togetBookChallengeLikeInfoDTO(Integer count){
         return BookChallengeResponseDTO.getBookChallengeLikeInfoDTO.builder()
                 .nowLikeCount(count).build();
+    }
+
+    public static BookChallenge toBookChallengeBooks (BookChallengeRequestDTO.saveBookChallenge request
+            , User user, String bookStoreName){
+        return BookChallenge.builder()
+                .user(user)
+                .bookStoreName(bookStoreName)
+                .receivedBookTitle(request.getReceivedBookTitle())
+                .receivedBookAuthor(request.getReceivedBookAuthor())
+                .receivedBookImage(request.getReceivedBookImage())
+                .givenBookTitle(request.getGivenBookTitle())
+                .givenBookAuthor(request.getGivenBookAuthor())
+                .givenBookImage(request.getGivenBookImage())
+                .build();
+    }
+
+    public static BookChallengeResponseDTO.saveBookChallenge toSaveBookChallenge(BookChallenge bookChallenge, User user){
+        return BookChallengeResponseDTO.saveBookChallenge.builder()
+                .userNickName(user.getNickname())
+                .bookStoreName(bookChallenge.getBookStoreName())
+                .receivedBookTitle(bookChallenge.getReceivedBookTitle())
+                .receivedBookAuthor(bookChallenge.getReceivedBookAuthor())
+                .receivedBookImage(bookChallenge.getReceivedBookImage())
+                .givenBookTitle(bookChallenge.getGivenBookTitle())
+                .givenBookAuthor(bookChallenge.getGivenBookAuthor())
+                .givenBookImage(bookChallenge.getGivenBookImage())
+                .build();
     }
 }

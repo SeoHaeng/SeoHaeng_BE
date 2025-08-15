@@ -17,10 +17,29 @@ public class BookChallengeRequestDTO {
         String presentMessage;
         String proofContent;
 
+        // 선물 받은 책
         String receivedBookTitle;
         String receivedBookAuthor;
         String receivedBookImage;
 
+        // 선물 할 책
+        String givenBookTitle;
+        String givenBookAuthor;
+        String givenBookImage;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class saveBookChallenge{
+        String userNickName;
+
+        // 선물 받은 책
+        String receivedBookTitle;
+        String receivedBookAuthor;
+        String receivedBookImage;
+
+        // 선물 할 책
         String givenBookTitle;
         String givenBookAuthor;
         String givenBookImage;

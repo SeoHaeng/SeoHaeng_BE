@@ -2,13 +2,18 @@ package com.seohaeng.backend.domain.bookChallenge.service;
 
 import com.seohaeng.backend.domain.bookChallenge.converter.BookChallengeConverter;
 import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeResponseDTO;
+import com.seohaeng.backend.domain.bookChallenge.entity.BookChallenge;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProof;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofComment;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofImage;
 import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofCommentRepository;
 import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeProofRepository;
+import com.seohaeng.backend.domain.bookChallenge.repository.BookChallengeRepository;
+import com.seohaeng.backend.domain.user.entity.User;
+import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
 import com.seohaeng.backend.global.apiPayload.exception.handler.BookChallengeHandler;
+import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.seohaeng.backend.domain.bookChallenge.converter.BookChallengeConverter.toSaveBookChallenge;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -26,6 +33,20 @@ public class BookChallengeQueryService {
 
     private final BookChallengeProofRepository bookChallengeProofRepository;
     private final BookChallengeProofCommentRepository bookChallengeProofCommentRepository;
+    private final UserRepository userRepository;
+    private final BookChallengeRepository bookChallengeRepository;
+
+    public BookChallengeResponseDTO.saveBookChallenge getInprogressBookChallengeInfo(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        BookChallenge bookChallenge = bookChallengeRepository.findFirstByUserOrderByCreatedAtDesc(user)
+                .orElseThrow(() -> new BookChallengeHandler(ErrorStatus.BOOK_CHALLENGE_NOT_EXIST));
+        if(bookChallenge.isAccepted()){
+            throw new BookChallengeHandler(ErrorStatus.BOOK_CHALLENGE_ALREADY_DONE);
+        }
+        return (toSaveBookChallenge(bookChallenge,user));
+    }
 
     public BookChallengeResponseDTO.getBookChallenge getBookChallenge(Long bookChallengeProofId) {
         BookChallengeProof bookChallengeProof = bookChallengeProofRepository.findWithImagesById(bookChallengeProofId)
