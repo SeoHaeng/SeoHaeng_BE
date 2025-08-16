@@ -6,6 +6,8 @@ import com.seohaeng.backend.domain.user.dto.UserResponseDTO;
 import com.seohaeng.backend.domain.user.entity.LoginInfo;
 import com.seohaeng.backend.domain.user.entity.Provider;
 import com.seohaeng.backend.domain.user.entity.User;
+import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
+import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 
 public class UserConverter {
 
@@ -50,4 +52,11 @@ public class UserConverter {
                 .build();
     }
 
+    public static UserResponseDTO.GetUserInfoResponseDTO toUserInfoDTO(User user) {
+        return UserResponseDTO.GetUserInfoResponseDTO.builder()
+                .userId(user.getId())
+                .nickName(user.getNickname())
+                .profileImageUrl(user.getImageUrl())
+                .build();
+    }
 }

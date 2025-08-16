@@ -24,15 +24,14 @@ public class BookChallengeProof extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false, length = 225)
+    private String bookStoreName;
+
     @Column(nullable = false, length = 2048)
     private String presentMessage;
 
     @Column(nullable = false, length = 2048)
     private String bookChallengeProofContent;
-
-    @Builder.Default
-    @Column(nullable = false)
-    private Integer bookChallengeProofLikes = 0;
 
     @Column(nullable = false, length = 30)
     private String receivedBookTitle;
@@ -52,9 +51,9 @@ public class BookChallengeProof extends BaseEntity {
     @Column(nullable = false, length = 300)
     private String givenBookImage;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_id", nullable = false)
-    private Place place;
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer bookChallengeProofLikes = 0;
 
     @Builder.Default
     @OneToMany(mappedBy = "bookChallengeProof", cascade = CascadeType.ALL, orphanRemoval = true)

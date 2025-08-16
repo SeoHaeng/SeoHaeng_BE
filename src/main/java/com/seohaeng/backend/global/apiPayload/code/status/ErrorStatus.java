@@ -22,6 +22,7 @@ public enum ErrorStatus implements BaseErrorCode {
     PASSWORD_COMPLEXITY_FAIL(HttpStatus.BAD_REQUEST, "USER4004", "비밀번호는 영문자, 숫자, 특수문자를 모두 포함해야 합니다."),
     LOGIN_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4005", "사용자 로그인 정보가 존재하지 않습니다."),
     DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "USER4006", "이미 사용 중인 nickname입니다."),
+    OWNER_NOT_FOUND(HttpStatus.FORBIDDEN, "OWNER_001", "사장님 계정이 아닙니다. 권한이 없습니다."),
 
     // Auth 관련
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4001", "유효하지 않은 토큰입니다."),
@@ -40,6 +41,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 북챌린지 관련
     BOOK_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK_CHALLENGE_4001", "존재하지 않는 게시글입니다."),
+    BOOK_CHALLENGE_NOT_EXIST(HttpStatus.NOT_FOUND, "BOOK_CHALLENGE_4002", "해당 사용자는 현재 진행중인 북챌린지가 없습니다."),
+    BOOK_CHALLENGE_ALREADY_DONE(HttpStatus.NOT_FOUND, "BOOK_CHALLENGE_4003", "이미 인증글이 작성된 북챌린지 입니다.(이미 끝난 북챌린지)"),
+    BOOK_CHALLENGE_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "BOOK_CHALLENGE_4004", "이미 아직 인증글 작성이 되지않은 북챌린지가 있습니다. 새로운 북챌린지 생성은 불가능합니다."),
 
     // 리뷰 관련
     REVIEW_INVALID_ISSUE(HttpStatus.BAD_REQUEST, "REVIEW_4001", "리뷰 별점은 0.5점 단위로 입력해야합니다."),

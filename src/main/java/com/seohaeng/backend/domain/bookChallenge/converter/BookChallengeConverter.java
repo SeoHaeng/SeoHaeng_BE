@@ -2,9 +2,9 @@ package com.seohaeng.backend.domain.bookChallenge.converter;
 
 import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeRequestDTO;
 import com.seohaeng.backend.domain.bookChallenge.dto.BookChallengeResponseDTO;
+import com.seohaeng.backend.domain.bookChallenge.entity.BookChallenge;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProof;
 import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofComment;
-import com.seohaeng.backend.domain.place.entity.place.Place;
 import com.seohaeng.backend.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,28 +14,30 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookChallengeConverter {
 
-    public static BookChallengeProof toBookChallengeProof(BookChallengeRequestDTO.createBookChallengeProof request,
+    public static BookChallengeProof toBookChallengeProof(BookChallenge bookChallenge,
                                                           User user,
-                                                          Place place) {
+                                                          BookChallengeRequestDTO.createBookChallengeProof request) {
         return BookChallengeProof.builder()
+                .user(user)
                 .bookChallengeProofContent(request.getProofContent())
                 .presentMessage(request.getPresentMessage())
-                .user(user)
-                .place(place)
-                .receivedBookTitle(request.getReceivedBookTitle())
-                .receivedBookAuthor(request.getReceivedBookAuthor())
-                .receivedBookImage(request.getReceivedBookImage())
-                .givenBookTitle(request.getGivenBookTitle())
-                .givenBookAuthor(request.getGivenBookAuthor())
-                .givenBookImage(request.getGivenBookImage())
+                .bookStoreName(bookChallenge.getBookStoreName())
+                .receivedBookTitle(bookChallenge.getReceivedBookTitle())
+                .receivedBookAuthor(bookChallenge.getReceivedBookAuthor())
+                .receivedBookImage(bookChallenge.getReceivedBookImage())
+                .givenBookTitle(bookChallenge.getGivenBookTitle())
+                .givenBookAuthor(bookChallenge.getGivenBookAuthor())
+                .givenBookImage(bookChallenge.getGivenBookImage())
                 .build();
     }
 
-    public static BookChallengeResponseDTO.getBookChallenge toGetBookChallengeDTO(BookChallengeProof proof, List<String> images) {
+    public static BookChallengeResponseDTO.getBookChallenge toGetBookChallengeDTO(BookChallengeProof proof, List<String> images, boolean likedByMe) {
         return BookChallengeResponseDTO.getBookChallenge.builder()
                 .createdAt(proof.getCreatedAt().toLocalDate())
                 .creatorId(proof.getUser().getId())
-                .bookChallengeId(proof.getId())
+                .likedByMe(likedByMe)
+                .bookStoreName(proof.getBookStoreName())
+                .bookChallengeProofId(proof.getId())
                 .presentMessage(proof.getPresentMessage())
                 .proofContent(proof.getBookChallengeProofContent())
                 .likes(proof.getBookChallengeProofLikes())
@@ -98,5 +100,33 @@ public class BookChallengeConverter {
     public static BookChallengeResponseDTO.getBookChallengeLikeInfoDTO togetBookChallengeLikeInfoDTO(Integer count){
         return BookChallengeResponseDTO.getBookChallengeLikeInfoDTO.builder()
                 .nowLikeCount(count).build();
+    }
+
+    public static BookChallenge toBookChallengeBooks (BookChallengeRequestDTO.saveBookChallenge request
+            , User user, String bookStoreName){
+        return BookChallenge.builder()
+                .user(user)
+                .bookStoreName(bookStoreName)
+                .receivedBookTitle(request.getReceivedBookTitle())
+                .receivedBookAuthor(request.getReceivedBookAuthor())
+                .receivedBookImage(request.getReceivedBookImage())
+                .givenBookTitle(request.getGivenBookTitle())
+                .givenBookAuthor(request.getGivenBookAuthor())
+                .givenBookImage(request.getGivenBookImage())
+                .build();
+    }
+
+    public static BookChallengeResponseDTO.saveBookChallenge toSaveBookChallenge(BookChallenge bookChallenge, User user){
+        return BookChallengeResponseDTO.saveBookChallenge.builder()
+                .bookChallengeId(bookChallenge.getId())
+                .userNickName(user.getNickname())
+                .bookStoreName(bookChallenge.getBookStoreName())
+                .receivedBookTitle(bookChallenge.getReceivedBookTitle())
+                .receivedBookAuthor(bookChallenge.getReceivedBookAuthor())
+                .receivedBookImage(bookChallenge.getReceivedBookImage())
+                .givenBookTitle(bookChallenge.getGivenBookTitle())
+                .givenBookAuthor(bookChallenge.getGivenBookAuthor())
+                .givenBookImage(bookChallenge.getGivenBookImage())
+                .build();
     }
 }

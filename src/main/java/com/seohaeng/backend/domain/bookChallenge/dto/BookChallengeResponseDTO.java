@@ -16,11 +16,14 @@ public class BookChallengeResponseDTO {
     public static class getBookChallenge {
         LocalDate createdAt;
         Long creatorId;
-        Long bookChallengeId;
+        String bookStoreName;
+
+        Long bookChallengeProofId;
 
         String presentMessage;
         String proofContent;
         int likes;
+        boolean likedByMe;
 
         String receivedBookTitle;
         String receivedBookAuthor;
@@ -58,6 +61,25 @@ public class BookChallengeResponseDTO {
         String nickname;
         String userProfileImageUrl;
         String comment;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class saveBookChallenge{
+        Long bookChallengeId;
+        String userNickName;
+        String bookStoreName;
+        // 선물 받은 책
+        String receivedBookTitle;
+        String receivedBookAuthor;
+        String receivedBookImage;
+
+        // 선물 할 책
+        String givenBookTitle;
+        String givenBookAuthor;
+        String givenBookImage;
     }
 
     @Getter

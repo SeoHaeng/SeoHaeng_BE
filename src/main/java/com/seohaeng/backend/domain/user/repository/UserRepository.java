@@ -12,4 +12,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @EntityGraph(attributePaths = {"stampList"})
     Optional<User> findWithStampListById(Long userId);
+
+    Optional<User> findByNickname(String nickname);
 }
