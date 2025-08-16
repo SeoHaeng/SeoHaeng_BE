@@ -65,6 +65,8 @@ public class ReadingSpotResponseDTO {
         private int likes;
         private int scraps;
         private boolean opened;
+        private boolean isLiked;
+        private boolean isScraped;
     }
 
     @Getter
@@ -113,5 +115,19 @@ public class ReadingSpotResponseDTO {
         private Boolean isFirst;
         private Boolean isLast;
         private List<GetReadingSpotItemResponseDTO> scrapList;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class GetReadingSpotDetailListResponseDTO{
+        private Integer listSize;
+        private Integer totalPage;
+        private Long totalElements;
+        private Boolean isFirst;
+        private Boolean isLast;
+        private List<GetReadingSpotResponseDTO> readingSpotList;
     }
 }

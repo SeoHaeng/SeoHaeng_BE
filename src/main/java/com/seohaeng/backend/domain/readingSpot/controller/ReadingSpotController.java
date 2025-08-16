@@ -57,8 +57,9 @@ public class ReadingSpotController {
     )
     @GetMapping("/{ReadingSpotId}")
     public ApiResponse<ReadingSpotResponseDTO.GetReadingSpotResponseDTO> getReadingSpot(
+            @AuthUser Long userId,
             @PathVariable("ReadingSpotId") Long readingSpotId) {
-        ReadingSpotResponseDTO.GetReadingSpotResponseDTO result = readingSpotQueryService.getReadingSpot(readingSpotId);
+        ReadingSpotResponseDTO.GetReadingSpotResponseDTO result = readingSpotQueryService.getReadingSpot(readingSpotId, userId);
         return ApiResponse.onSuccess(result);
     }
 
@@ -135,11 +136,11 @@ public class ReadingSpotController {
     """
     )
     @GetMapping("/scraps/my")
-    public ApiResponse<ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO> getMyScrapReadingSpot(
+    public ApiResponse<ReadingSpotResponseDTO.GetReadingSpotDetailListResponseDTO> getMyScrapReadingSpot(
             @AuthUser Long userId,
             @RequestParam(name = "page", defaultValue = "1") @Min(1)Integer page,
             @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size) {
-        ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO result
+        ReadingSpotResponseDTO.GetReadingSpotDetailListResponseDTO result
                 = readingSpotQueryService.getMyScrapReadingSpotListResponseDTO(userId, page, size);
         return ApiResponse.onSuccess(result);
     }
@@ -154,11 +155,11 @@ public class ReadingSpotController {
     """
     )
     @GetMapping("/my")
-    public ApiResponse<ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO> getMyReadingSpot(
+    public ApiResponse<ReadingSpotResponseDTO.GetReadingSpotDetailListResponseDTO> getMyReadingSpot(
             @AuthUser Long userId,
             @RequestParam(name = "page", defaultValue = "1") @Min(1)Integer page,
             @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size) {
-        ReadingSpotResponseDTO.GetReadingSpotItemListResponseDTO result
+        ReadingSpotResponseDTO.GetReadingSpotDetailListResponseDTO result
                 = readingSpotQueryService.getMyReadingSpotListResponseDTO(userId, page, size);
         return ApiResponse.onSuccess(result);
     }

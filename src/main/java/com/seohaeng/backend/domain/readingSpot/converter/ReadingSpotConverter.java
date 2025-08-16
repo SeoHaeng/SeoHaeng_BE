@@ -32,7 +32,7 @@ public class ReadingSpotConverter {
     }
 
     public static ReadingSpotResponseDTO.GetReadingSpotResponseDTO toGetReadingSpotResponseDTO(
-            ReadingSpot readingSpot, List<String> readingSpotImages) {
+            ReadingSpot readingSpot, List<String> readingSpotImages, boolean isLiked, boolean isScraped) {
         return ReadingSpotResponseDTO.GetReadingSpotResponseDTO.builder()
                 .readingSpotId(readingSpot.getId())
                 .address(readingSpot.getAddress())
@@ -49,6 +49,8 @@ public class ReadingSpotConverter {
                 .scraps(readingSpot.getScraps())
                 .opened(readingSpot.isOpened())
                 .readingSpotImages(readingSpotImages)
+                .isLiked(isLiked)
+                .isScraped(isScraped)
                 .build();
     }
 
@@ -117,6 +119,18 @@ public class ReadingSpotConverter {
                 .isFirst(readingSpotScrapPage.isFirst())
                 .isLast(readingSpotScrapPage.isLast())
                 .scrapList(readingSpotItemResponseDTOs)
+                .build();
+    }
+
+    public static ReadingSpotResponseDTO.GetReadingSpotDetailListResponseDTO toGetReadingSpotDetailListResponseDTO(
+            List<ReadingSpotResponseDTO.GetReadingSpotResponseDTO> readingSpotResponseDTOs, Page<?> page) {
+        return ReadingSpotResponseDTO.GetReadingSpotDetailListResponseDTO.builder()
+                .listSize(readingSpotResponseDTOs.size())
+                .totalElements(page.getTotalElements())
+                .totalPage(page.getTotalPages())
+                .isFirst(page.isFirst())
+                .isLast(page.isLast())
+                .readingSpotList(readingSpotResponseDTOs)
                 .build();
     }
 }
