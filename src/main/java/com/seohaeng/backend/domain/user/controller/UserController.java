@@ -68,4 +68,11 @@ public class UserController {
         UserResponseDTO.GetUserInfoResponseDTO result = userQueryService.getUserInfo(userId);
         return ApiResponse.onSuccess(result);
     }
+
+    @Operation(summary = " 내 정보 조회", description = "현재 사용자의 프로필 정보를 조회합니다.")
+    @GetMapping
+    public ApiResponse<UserResponseDTO.GetMyInfoResponseDTO> getMyInfo(@AuthUser Long userId){
+        UserResponseDTO.GetMyInfoResponseDTO result = userQueryService.getMyInfo(userId);
+        return ApiResponse.onSuccess(result);
+    }
 }

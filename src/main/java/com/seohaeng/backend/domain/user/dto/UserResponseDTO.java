@@ -1,5 +1,6 @@
 package com.seohaeng.backend.domain.user.dto;
 
+import com.seohaeng.backend.domain.user.entity.Provider;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,5 +25,16 @@ public class UserResponseDTO {
         Long userId;
         String nickName;
         String profileImageUrl;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetMyInfoResponseDTO {
+        Long userId;
+        String nickName;
+        String profileImageUrl;
+        Provider loginType;
     }
 }
