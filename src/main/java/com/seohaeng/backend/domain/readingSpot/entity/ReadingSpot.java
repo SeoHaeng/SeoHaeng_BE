@@ -1,6 +1,7 @@
 package com.seohaeng.backend.domain.readingSpot.entity;
 
 import com.seohaeng.backend.domain.common.entity.BaseEntity;
+import com.seohaeng.backend.domain.travelCourse.entity.Region;
 import com.seohaeng.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,6 +24,10 @@ public class ReadingSpot extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id", nullable = false)
+    private Region region;
 
     private String address;
     private Double latitude;

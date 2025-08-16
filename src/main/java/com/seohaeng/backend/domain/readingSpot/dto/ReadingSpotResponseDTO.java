@@ -55,6 +55,7 @@ public class ReadingSpotResponseDTO {
         private String userProfilImage;
 
         private Long readingSpotId;
+        private String region;
         private String address;
         private Double latitude;
         private Double longitude;

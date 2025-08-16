@@ -35,6 +35,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 지역 관련
     REGION_NOT_FOUND(HttpStatus.NOT_FOUND, "REGION_4001", "존재하지 않는 지역입니다. 지역 ID를 다시 확인해주세요"),
+    REGION_NOT_GANGWON(HttpStatus.BAD_REQUEST, "REGION_4002", "강원도에 해당하는 지역이 아닙니다. 주소를 다시 확인해주세요"),
 
     // 여행 일정 관련
     TRAVEL_COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "TRAVEL_COURSE_4001", "존재하지 않는 여행 일정입니다. 여행 일정 ID를 다시 확인해주세요"),

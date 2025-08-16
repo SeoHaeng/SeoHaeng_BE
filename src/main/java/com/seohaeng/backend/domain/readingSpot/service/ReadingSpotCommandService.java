@@ -1,13 +1,18 @@
 package com.seohaeng.backend.domain.readingSpot.service;
 
+import com.seohaeng.backend.domain.place.service.AddressUtil;
 import com.seohaeng.backend.domain.readingSpot.repository.*;
 import com.seohaeng.backend.domain.readingSpot.converter.ReadingSpotConverter;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotRequestDTO;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotResponseDTO;
 import com.seohaeng.backend.domain.readingSpot.entity.*;
+import com.seohaeng.backend.domain.travelCourse.entity.Region;
+import com.seohaeng.backend.domain.travelCourse.repository.RegionRepository;
+import com.seohaeng.backend.domain.travelCourse.service.StampCommandService;
 import com.seohaeng.backend.domain.user.entity.User;
 import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
+import com.seohaeng.backend.global.apiPayload.exception.handler.PlaceHandler;
 import com.seohaeng.backend.global.apiPayload.exception.handler.ReadingSpotHandler;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import com.seohaeng.backend.global.aws.s3.AmazonS3Manager;
@@ -33,7 +38,11 @@ public class ReadingSpotCommandService {
     private final ReadingSpotCommentRepository readingSpotCommentRepository;
     private final ReadingSpotLikeRepository readingSpotLikeRepository;
     private final ReadingSpotScrapRepository readingSpotScrapRepository;
+    private final RegionRepository regionRepository;
 
+    private final StampCommandService stampCommandService;
+
+    // 공간책갈피 생성
     @Transactional
     public ReadingSpotResponseDTO.CreateReadingSpotResponseDTO createReadingSpot(
             @AuthUser Long userId, List<MultipartFile> images,
@@ -42,7 +51,12 @@ public class ReadingSpotCommandService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        ReadingSpot newReadingSpot = ReadingSpotConverter.toReadingSpot(request, user);
+        Region findRegion = regionRepository.findById(
+                AddressUtil.getCityCode(request.getAddress())
+        ).orElseThrow(() -> new PlaceHandler(ErrorStatus.REGION_NOT_GANGWON));
+
+        ReadingSpot newReadingSpot = ReadingSpotConverter.toReadingSpot(request, user, findRegion);
+
         readingSpotRepository.save(newReadingSpot);
 
         int mainImageIndex = request.getMainImageIndex();
@@ -63,11 +77,14 @@ public class ReadingSpotCommandService {
 
                 readingSpotImageList.add(newReadingSpotImage);
             }
+            stampCommandService.makeStamp(user, findRegion, newReadingSpot.getCreatedAt().toLocalDate());
             readingSpotImageRepository.saveAll(readingSpotImageList);
         }
+
         return new ReadingSpotResponseDTO.CreateReadingSpotResponseDTO(newReadingSpot.getId());
     }
 
+    // 공간책갈피 댓글 작성
     @Transactional
     public ReadingSpotResponseDTO.CreateReadingSpotCommentResponseDTO createReadingSpotComment(
             @AuthUser Long userId, Long readingSpotId,
@@ -85,6 +102,7 @@ public class ReadingSpotCommandService {
         return new ReadingSpotResponseDTO.CreateReadingSpotCommentResponseDTO(newReadingSpotComment.getId());
     }
 
+    // 공간책갈피 좋아요 토글
     @Transactional
     public ReadingSpotResponseDTO.GetReadingSpotLikeInfoDTO toggleReadingSpotLikes(Long userId, Long readingSpotId) {
 
@@ -111,6 +129,7 @@ public class ReadingSpotCommandService {
         return new ReadingSpotResponseDTO.GetReadingSpotLikeInfoDTO(readingSpot.getLikes());
     }
 
+    // 공간책갈피 스크랩 토글
     @Transactional
     public ReadingSpotResponseDTO.GetReadingSpotScrapInfoDTO toggleReadingSpotScraps(Long userId, Long readingSpotId) {
 

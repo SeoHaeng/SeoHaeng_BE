@@ -20,7 +20,7 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1/reading-sopt")
+@RequestMapping("/api/v1/reading-spot")
 @RequiredArgsConstructor
 public class ReadingSpotController {
 
