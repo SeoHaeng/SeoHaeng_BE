@@ -16,11 +16,14 @@ public class BookChallengeResponseDTO {
     public static class getBookChallenge {
         LocalDate createdAt;
         Long creatorId;
-        Long bookChallengeId;
+        String bookStoreName;
+
+        Long bookChallengeProofId;
 
         String presentMessage;
         String proofContent;
         int likes;
+        boolean likedByMe;
 
         String receivedBookTitle;
         String receivedBookAuthor;

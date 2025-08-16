@@ -32,11 +32,13 @@ public class BookChallengeConverter {
                 .build();
     }
 
-    public static BookChallengeResponseDTO.getBookChallenge toGetBookChallengeDTO(BookChallengeProof proof, List<String> images) {
+    public static BookChallengeResponseDTO.getBookChallenge toGetBookChallengeDTO(BookChallengeProof proof, List<String> images, boolean likedByMe) {
         return BookChallengeResponseDTO.getBookChallenge.builder()
                 .createdAt(proof.getCreatedAt().toLocalDate())
                 .creatorId(proof.getUser().getId())
-                .bookChallengeId(proof.getId())
+                .likedByMe(likedByMe)
+                .bookStoreName(proof.getBookStoreName())
+                .bookChallengeProofId(proof.getId())
                 .presentMessage(proof.getPresentMessage())
                 .proofContent(proof.getBookChallengeProofContent())
                 .likes(proof.getBookChallengeProofLikes())

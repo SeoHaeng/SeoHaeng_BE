@@ -63,8 +63,10 @@ public class BookChallengeController {
             summary = "북챌린지 인증 게시글 개별 조회 API",
             description = "북챌린지 인증 게시글을 개별 상세 조회합니다. 조회하고자 하는 북챌린지 게시글의 ID를 넘겨주세요")
     @GetMapping("/{bookChallengeProofId}")
-    public ApiResponse<BookChallengeResponseDTO.getBookChallenge> getBookChallengeProof (@PathVariable Long bookChallengeProofId){
-        BookChallengeResponseDTO.getBookChallenge result = bookChallengeQueryService.getBookChallenge(bookChallengeProofId);
+    public ApiResponse<BookChallengeResponseDTO.getBookChallenge> getBookChallengeProof (
+            @AuthUser Long userId,
+            @PathVariable Long bookChallengeProofId){
+        BookChallengeResponseDTO.getBookChallenge result = bookChallengeQueryService.getBookChallenge(bookChallengeProofId, userId);
         return ApiResponse.onSuccess(result);
     }
 
@@ -80,11 +82,12 @@ public class BookChallengeController {
     )
     @GetMapping
     public ApiResponse<BookChallengeResponseDTO.getBookChallengeListDTO> getBookChallengeProofs (
+            @AuthUser Long userId,
             @RequestParam(name = "page", defaultValue = "1") @Min(1)Integer page,
             @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size,
             @RequestParam(name = "sort", defaultValue = "latest") String sort
     ){
-        BookChallengeResponseDTO.getBookChallengeListDTO result = bookChallengeQueryService.getBookChallengeList(page, size, sort);
+        BookChallengeResponseDTO.getBookChallengeListDTO result = bookChallengeQueryService.getBookChallengeList(page, size, sort, userId);
         return ApiResponse.onSuccess(result);
     }
 
