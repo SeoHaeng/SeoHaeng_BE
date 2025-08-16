@@ -50,10 +50,16 @@ public class ReadingSpotResponseDTO {
     @Builder
     @Getter
     public static class GetReadingSpotResponseDTO{
+        private Long userId;
+        private String userNickname;
+        private String userProfilImage;
+
         private Long readingSpotId;
         private String address;
         private Double latitude;
         private Double longitude;
+        private LocalDate createdAt;
+
         private int templateId;
         private String title;
         private String content;

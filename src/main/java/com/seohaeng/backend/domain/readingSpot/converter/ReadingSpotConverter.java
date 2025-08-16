@@ -34,10 +34,14 @@ public class ReadingSpotConverter {
     public static ReadingSpotResponseDTO.GetReadingSpotResponseDTO toGetReadingSpotResponseDTO(
             ReadingSpot readingSpot, List<String> readingSpotImages, boolean isLiked, boolean isScraped) {
         return ReadingSpotResponseDTO.GetReadingSpotResponseDTO.builder()
+                .userId(readingSpot.getUser().getId())
+                .userNickname(readingSpot.getUser().getNickname())
+                .userProfilImage(readingSpot.getUser().getImageUrl())
                 .readingSpotId(readingSpot.getId())
                 .address(readingSpot.getAddress())
                 .latitude(readingSpot.getLatitude())
                 .longitude(readingSpot.getLongitude())
+                .createdAt(readingSpot.getCreatedAt().toLocalDate())
                 .templateId(readingSpot.getTemplateId())
                 .title(readingSpot.getTitle())
                 .content(readingSpot.getContent())
