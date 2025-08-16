@@ -41,7 +41,8 @@ public enum ErrorStatus implements BaseErrorCode {
     TRAVEL_COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "TRAVEL_COURSE_4001", "존재하지 않는 여행 일정입니다. 여행 일정 ID를 다시 확인해주세요"),
 
     // 북챌린지 관련
-    BOOK_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK_CHALLENGE_4001", "존재하지 않는 게시글입니다."),
+    BOOK_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK_CHALLENGE_4001", "해당하는 북챌린지가 없습니다."),
+    BOOK_CHALLENGE_PROOF_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOK_CHALLENGE_4001", "해당하는 북챌린지 인증글이 없습니다."),
     BOOK_CHALLENGE_NOT_EXIST(HttpStatus.NOT_FOUND, "BOOK_CHALLENGE_4002", "해당 사용자는 현재 진행중인 북챌린지가 없습니다."),
     BOOK_CHALLENGE_ALREADY_DONE(HttpStatus.NOT_FOUND, "BOOK_CHALLENGE_4003", "이미 인증글이 작성된 북챌린지 입니다.(이미 끝난 북챌린지)"),
     BOOK_CHALLENGE_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "BOOK_CHALLENGE_4004", "이미 아직 인증글 작성이 되지않은 북챌린지가 있습니다. 새로운 북챌린지 생성은 불가능합니다."),
