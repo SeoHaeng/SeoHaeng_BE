@@ -20,7 +20,7 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1/reading-sopt")
+@RequestMapping("/api/v1/reading-spot")
 @RequiredArgsConstructor
 public class ReadingSpotController {
 
@@ -59,7 +59,8 @@ public class ReadingSpotController {
     public ApiResponse<ReadingSpotResponseDTO.GetReadingSpotResponseDTO> getReadingSpot(
             @AuthUser Long userId,
             @PathVariable("ReadingSpotId") Long readingSpotId) {
-        ReadingSpotResponseDTO.GetReadingSpotResponseDTO result = readingSpotQueryService.getReadingSpot(readingSpotId, userId);
+        ReadingSpotResponseDTO.GetReadingSpotResponseDTO result
+                = readingSpotQueryService.getReadingSpot(readingSpotId, userId);
         return ApiResponse.onSuccess(result);
     }
 

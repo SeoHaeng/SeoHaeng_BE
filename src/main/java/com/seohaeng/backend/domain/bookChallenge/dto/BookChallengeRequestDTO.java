@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 public class BookChallengeRequestDTO {
 
     @Getter
@@ -30,11 +32,13 @@ public class BookChallengeRequestDTO {
         String receivedBookTitle;
         String receivedBookAuthor;
         String receivedBookImage;
+        LocalDate receivedBookPubDate;
 
         // 선물 할 책
         String givenBookTitle;
         String givenBookAuthor;
         String givenBookImage;
+        LocalDate givenBookPubDate;
     }
 
     @Getter

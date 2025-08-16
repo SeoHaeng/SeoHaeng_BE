@@ -19,9 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.seohaeng.backend.domain.bookChallenge.converter.BookChallengeConverter.toSaveBookChallenge;
@@ -37,6 +35,7 @@ public class BookChallengeQueryService {
     private final BookChallengeRepository bookChallengeRepository;
     private final BookChallengeProofLikeRepository bookChallengeProofLikeRepository;
 
+    // 참여 중인 북챌린지 정보 조회
     public BookChallengeResponseDTO.saveBookChallenge getInprogressBookChallengeInfo(Long userId){
         User user = findUserById(userId);
         BookChallenge bookChallenge = bookChallengeRepository.findFirstByUserOrderByCreatedAtDesc(user)
@@ -47,13 +46,15 @@ public class BookChallengeQueryService {
         return toSaveBookChallenge(bookChallenge, user);
     }
 
+    // 북챌린지 인증 게시글 개별 조회
     public BookChallengeResponseDTO.getBookChallenge getBookChallenge(Long userId, Long bookChallengeProofId) {
         BookChallengeProof bookChallengeProof = findBookChallengeProofWithImages(bookChallengeProofId);
         User user = findUserById(userId);
         boolean isLikedByUser = isLikedByUser(user, bookChallengeProof);
         return convertToDTO(bookChallengeProof, isLikedByUser);
-    }
+    } // TODO : 예외 메시지 오류
 
+    // 북챌린지 인증 게시글 전체 조회
     public BookChallengeResponseDTO.getBookChallengeListDTO getBookChallengeList(Integer page, Integer size, String sort, Long userId){
         User user = findUserById(userId);
         Sort sortOption = createSortOption(sort);
@@ -68,6 +69,7 @@ public class BookChallengeQueryService {
         return BookChallengeConverter.toGetBookChallengeListDTO(bookChallengeDTOList, bookChallengeProofPage);
     }
 
+    // 북챌린지 인증 게시글 댓글 조회
     public BookChallengeResponseDTO.getBookChallengeCommentListDTO getBookChallengeCommentList(Integer page, Integer size, Long bookChallengeProofId) {
         BookChallengeProof bookChallengeProof = findBookChallengeProofById(bookChallengeProofId);
         PageRequest pageRequest = PageRequest.of(page-1, size);
@@ -88,12 +90,12 @@ public class BookChallengeQueryService {
 
     private BookChallengeProof findBookChallengeProofById(Long bookChallengeProofId) {
         return bookChallengeProofRepository.findById(bookChallengeProofId)
-                .orElseThrow(() -> new BookChallengeHandler(ErrorStatus.BOOK_CHALLENGE_NOT_FOUND));
+                .orElseThrow(() -> new BookChallengeHandler(ErrorStatus.BOOK_CHALLENGE_PROOF_NOT_FOUND));
     }
 
     private BookChallengeProof findBookChallengeProofWithImages(Long bookChallengeProofId) {
         return bookChallengeProofRepository.findWithImagesById(bookChallengeProofId)
-                .orElseThrow(() -> new BookChallengeHandler(ErrorStatus.BOOK_CHALLENGE_NOT_FOUND));
+                .orElseThrow(() -> new BookChallengeHandler(ErrorStatus.BOOK_CHALLENGE_PROOF_NOT_FOUND));
     }
 
     private boolean isLikedByUser(User user, BookChallengeProof bookChallengeProof) {

@@ -25,13 +25,16 @@ public class BookChallengeConverter {
                 .receivedBookTitle(bookChallenge.getReceivedBookTitle())
                 .receivedBookAuthor(bookChallenge.getReceivedBookAuthor())
                 .receivedBookImage(bookChallenge.getReceivedBookImage())
+                .receivedBookPubDate(bookChallenge.getReceivedBookPubDate())
                 .givenBookTitle(bookChallenge.getGivenBookTitle())
                 .givenBookAuthor(bookChallenge.getGivenBookAuthor())
                 .givenBookImage(bookChallenge.getGivenBookImage())
+                .givenBookPubDate(bookChallenge.getGivenBookPubDate())
                 .build();
     }
 
-    public static BookChallengeResponseDTO.getBookChallenge toGetBookChallengeDTO(BookChallengeProof proof, List<String> images, boolean likedByMe) {
+    public static BookChallengeResponseDTO.getBookChallenge toGetBookChallengeDTO(
+            BookChallengeProof proof, List<String> images, boolean likedByMe) {
         return BookChallengeResponseDTO.getBookChallenge.builder()
                 .createdAt(proof.getCreatedAt().toLocalDate())
                 .creatorId(proof.getUser().getId())
@@ -44,9 +47,11 @@ public class BookChallengeConverter {
                 .receivedBookTitle(proof.getReceivedBookTitle())
                 .receivedBookAuthor(proof.getReceivedBookAuthor())
                 .receivedBookImage(proof.getReceivedBookImage())
+                .receivedBookPubDate(proof.getReceivedBookPubDate())
                 .givenBookTitle(proof.getGivenBookTitle())
                 .givenBookAuthor(proof.getGivenBookAuthor())
                 .givenBookImage(proof.getGivenBookImage())
+                .givenBookPubDate(proof.getGivenBookPubDate())
                 .proofImageUrls(images)
                 .build();
     }
@@ -110,9 +115,11 @@ public class BookChallengeConverter {
                 .receivedBookTitle(request.getReceivedBookTitle())
                 .receivedBookAuthor(request.getReceivedBookAuthor())
                 .receivedBookImage(request.getReceivedBookImage())
+                .receivedBookPubDate(request.getReceivedBookPubDate())
                 .givenBookTitle(request.getGivenBookTitle())
                 .givenBookAuthor(request.getGivenBookAuthor())
                 .givenBookImage(request.getGivenBookImage())
+                .givenBookPubDate(request.getGivenBookPubDate())
                 .build();
     }
 

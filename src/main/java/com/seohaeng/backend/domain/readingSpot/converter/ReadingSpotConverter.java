@@ -5,6 +5,7 @@ import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotResponseDTO;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpot;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotComment;
 import com.seohaeng.backend.domain.readingSpot.entity.ReadingSpotScrap;
+import com.seohaeng.backend.domain.travelCourse.entity.Region;
 import com.seohaeng.backend.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 
@@ -14,9 +15,10 @@ public class ReadingSpotConverter {
 
     public static ReadingSpot toReadingSpot (
             ReadingSpotRequestDTO.ReadingSpotCreateRequestDTO request,
-            User user) {
+            User user, Region region) {
         return ReadingSpot.builder()
                 .user(user)
+                .region(region)
                 .address(request.getAddress())
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
@@ -34,10 +36,15 @@ public class ReadingSpotConverter {
     public static ReadingSpotResponseDTO.GetReadingSpotResponseDTO toGetReadingSpotResponseDTO(
             ReadingSpot readingSpot, List<String> readingSpotImages, boolean isLiked, boolean isScraped) {
         return ReadingSpotResponseDTO.GetReadingSpotResponseDTO.builder()
+                .userId(readingSpot.getUser().getId())
+                .userNickname(readingSpot.getUser().getNickname())
+                .userProfilImage(readingSpot.getUser().getImageUrl())
+                .region(readingSpot.getRegion().getRegionName())
                 .readingSpotId(readingSpot.getId())
                 .address(readingSpot.getAddress())
                 .latitude(readingSpot.getLatitude())
                 .longitude(readingSpot.getLongitude())
+                .createdAt(readingSpot.getCreatedAt().toLocalDate())
                 .templateId(readingSpot.getTemplateId())
                 .title(readingSpot.getTitle())
                 .content(readingSpot.getContent())

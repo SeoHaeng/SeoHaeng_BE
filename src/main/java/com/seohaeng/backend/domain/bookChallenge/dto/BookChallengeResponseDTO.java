@@ -25,13 +25,17 @@ public class BookChallengeResponseDTO {
         int likes;
         boolean likedByMe;
 
+        // 사용자로부터 받은 책 정보
         String receivedBookTitle;
         String receivedBookAuthor;
         String receivedBookImage;
+        LocalDate receivedBookPubDate;
 
+        // 사용자가 선물할 책 정보
         String givenBookTitle;
         String givenBookAuthor;
         String givenBookImage;
+        LocalDate givenBookPubDate;
 
         List<String> proofImageUrls;
     }
