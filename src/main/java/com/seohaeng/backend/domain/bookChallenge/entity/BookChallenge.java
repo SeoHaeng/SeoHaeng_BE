@@ -5,6 +5,8 @@ import com.seohaeng.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -26,11 +28,13 @@ public class BookChallenge extends BaseEntity {
     private String receivedBookTitle;
     private String receivedBookAuthor;
     private String receivedBookImage;
+    private LocalDate receivedBookPubDate;
 
     // 선물 할 책
     private String givenBookTitle;
     private String givenBookAuthor;
     private String givenBookImage;
+    private LocalDate givenBookPubDate;
 
     @Builder.Default
     @Setter

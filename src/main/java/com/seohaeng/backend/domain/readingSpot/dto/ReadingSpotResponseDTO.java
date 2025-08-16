@@ -65,6 +65,7 @@ public class ReadingSpotResponseDTO {
         private String title;
         private String content;
         private List<String> readingSpotImages;
+
         private String bookTitle;
         private String bookAuthor;
         private String bookImage;

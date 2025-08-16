@@ -59,7 +59,8 @@ public class BookChallengeCommandService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        BookChallengeProof bookChallengeProof = BookChallengeConverter.toBookChallengeProof(bookChallenge, user, request);
+        BookChallengeProof bookChallengeProof
+                = BookChallengeConverter.toBookChallengeProof(bookChallenge, user, request);
         bookChallengeProofRepository.save(bookChallengeProof);
 
         int mainImageIndex = request.getMainImageIndex();
@@ -85,6 +86,7 @@ public class BookChallengeCommandService {
         }
     }
 
+    // 북 챌린지 인증 글 삭제
     public void deleteBookChallengeProof(Long userId, Long bookChallengeProofId) {
         BookChallengeProof bookChallengeProof = bookChallengeProofRepository.findWithImagesById(bookChallengeProofId)
                 .orElseThrow(() -> new BookChallengeHandler(ErrorStatus.BOOK_CHALLENGE_NOT_FOUND));
@@ -98,6 +100,7 @@ public class BookChallengeCommandService {
         images.forEach(amazonS3Manager::deleteFile);
     }
 
+    // 북 챌린지 인증 글 댓글 생성
     public void createBookChallengeProofComment(Long userId,
                                                 Long bookChallengeProofId,
                                                 BookChallengeRequestDTO.createBookChallengeProofComment request){
@@ -109,6 +112,7 @@ public class BookChallengeCommandService {
         bookChallengeProofCommentRepository.save(bookChallengeProofComment);
     }
 
+    // 북 챌린지 인증 글 좋아요 토글
     public BookChallengeResponseDTO.getBookChallengeLikeInfoDTO toggleBookChallengeProofLike(Long userId, Long bookChallengeProofId) {
 
         BookChallengeProof bookChallengeProof = bookChallengeProofRepository.findById(bookChallengeProofId)
@@ -132,6 +136,7 @@ public class BookChallengeCommandService {
         return BookChallengeConverter.togetBookChallengeLikeInfoDTO(bookChallengeProof.getBookChallengeProofLikes());
     }
 
+    // 북 챌린지 생성
     public void saveNewBookChallenge(Long userId, BookChallengeRequestDTO.saveBookChallenge request) {
 
         // Owner 권한 체크

@@ -6,6 +6,7 @@ import com.seohaeng.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +51,13 @@ public class BookChallengeProof extends BaseEntity {
 
     @Column(nullable = false, length = 300)
     private String givenBookImage;
+
+    @Column(nullable = false)
+    private LocalDate receivedBookPubDate;
+
+    @Column(nullable = false)
+    private LocalDate givenBookPubDate;
+
 
     @Builder.Default
     @Column(nullable = false)
