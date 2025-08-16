@@ -146,13 +146,4 @@ public class UserCommandService {
         }
         return oAuthToken;
     }
-
-    public String checkNickname(String nickname) {
-        boolean exists = userRepository.existsByNickname(nickname);
-        if (!exists) {
-            return "사용 가능한 닉네임입니다.";
-        } else {
-            throw new AuthException(ErrorStatus.DUPLICATE_NICKNAME);
-        }
-    }
 }
