@@ -14,6 +14,7 @@ public class UserConverter {
     public static User toUser(UserRequestDTO.joinDTO request){
         User user = User.builder()
                 .nickname(request.getNickname())
+                .imageUrl("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/profiles/default_profile.png")
                 .build();
         return user;
     }
@@ -33,6 +34,7 @@ public class UserConverter {
 
         return User.builder()
                 .nickname("kakao#" + nickname)
+                .imageUrl("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/profiles/default_profile.png")
                 .build();
     }
 

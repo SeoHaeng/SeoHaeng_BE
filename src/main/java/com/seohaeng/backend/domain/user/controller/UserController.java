@@ -7,6 +7,7 @@ import com.seohaeng.backend.domain.user.service.UserQueryService;
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -87,9 +88,12 @@ public class UserController {
     public ApiResponse<UserResponseDTO.GetUserInfoResponseDTO> updateMyInfo(
             @AuthUser Long userId,
             @Valid @RequestPart("request") UserRequestDTO.updateProfileDTO request,
-            @RequestPart(value = "profileImage", required = false) MultipartFile image
+            @RequestPart(value = "profileImage", required = false) 
+            @Parameter(description = "업로드할 프로필 이미지 파일") MultipartFile image,
+            @RequestParam(value = "useDefault", required = false, defaultValue = "false") 
+            @Parameter(description = "기본 프로필 사진 사용 여부 (true: 기본 프로필로 변경, false: 업로드된 이미지 사용)") Boolean useDefault
     ) {
-        UserResponseDTO.GetUserInfoResponseDTO result = userCommandService.updateUserInfo(userId, request, image);
+        UserResponseDTO.GetUserInfoResponseDTO result = userCommandService.updateUserInfo(userId, request, useDefault, image);
         return ApiResponse.onSuccess(result);
     }
 }

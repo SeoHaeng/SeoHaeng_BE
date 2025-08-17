@@ -103,6 +103,7 @@ public class UserCommandService {
     public UserResponseDTO.GetUserInfoResponseDTO updateUserInfo(
             Long userId,
             UserRequestDTO.updateProfileDTO request,
+            Boolean useDefault,
             MultipartFile image){
 
         User user = userRepository.findUserWithLoginInfoById(userId)
@@ -142,12 +143,15 @@ public class UserCommandService {
             loginInfo.setPassword(encodedPassword);
         } // 비밀번호 변경
 
-        if (image != null && !image.isEmpty()) {
+        // 프로필 이미지 변경
+        if (Boolean.TRUE.equals(useDefault)) {
+            user.setImageUrl("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/profiles/default_profile.png");
+        } else if (Boolean.FALSE.equals(useDefault) && image != null && !image.isEmpty()) {
             final String uuid = UUID.randomUUID().toString();
             final String keyName = amazonS3Manager.generateProfileKeyName(uuid);
             final String imageUrl = amazonS3Manager.uploadFile(keyName, image);
             user.setImageUrl(imageUrl);
-        } // 프로필 이미지 변경
+        }
 
         return toUserInfoDTO(user);
     }
