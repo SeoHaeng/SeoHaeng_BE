@@ -9,7 +9,9 @@ import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -43,8 +45,19 @@ public class UserController {
 
     @Operation(summary = "닉네임 중복확인 API", description = "닉네임 중복확인을 진행하는 API입니다.")
     @GetMapping("/auth/check-nickname")
-    public ApiResponse<String> checkNickname(@RequestParam String nickname) {
-        String result = userCommandService.checkNickname(nickname);
+    public ApiResponse<String> checkNickname(
+            @AuthUser Long userId,
+            @RequestParam String nickname) {
+        String result = userQueryService.checkNickname(userId, nickname);
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(summary = "아이디 중복확인 API", description = "아이디 중복확인을 진행하는 API입니다.")
+    @GetMapping("/auth/check-username")
+    public ApiResponse<String> checkUsername(
+            @AuthUser Long userId,
+            @RequestParam String username) {
+        String result = userQueryService.checkUsername(userId, username);
         return ApiResponse.onSuccess(result);
     }
 
@@ -59,6 +72,24 @@ public class UserController {
     @GetMapping("/{userId}")
     public ApiResponse<UserResponseDTO.GetUserInfoResponseDTO> getUserInfo(@PathVariable("userId") Long userId){
         UserResponseDTO.GetUserInfoResponseDTO result = userQueryService.getUserInfo(userId);
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(summary = " 내 정보 조회", description = "현재 사용자의 프로필 정보를 조회합니다.")
+    @GetMapping
+    public ApiResponse<UserResponseDTO.GetMyInfoResponseDTO> getMyInfo(@AuthUser Long userId){
+        UserResponseDTO.GetMyInfoResponseDTO result = userQueryService.getMyInfo(userId);
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(summary = "내 정보 수정", description = "현재 사용자의 정보를 수정합니다.")
+    @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<UserResponseDTO.GetUserInfoResponseDTO> updateMyInfo(
+            @AuthUser Long userId,
+            @Valid @RequestPart("request") UserRequestDTO.updateProfileDTO request,
+            @RequestPart(value = "profileImage", required = false) MultipartFile image
+    ) {
+        UserResponseDTO.GetUserInfoResponseDTO result = userCommandService.updateUserInfo(userId, request, image);
         return ApiResponse.onSuccess(result);
     }
 }

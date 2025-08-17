@@ -1,5 +1,6 @@
 package com.seohaeng.backend.domain.user.service;
 
+import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofImage;
 import com.seohaeng.backend.domain.travelCourse.converter.TravelCourseConverter;
 import com.seohaeng.backend.domain.travelCourse.entity.Stamp;
 import com.seohaeng.backend.domain.travelCourse.repository.StampRepository;
@@ -9,12 +10,14 @@ import com.seohaeng.backend.domain.user.dto.OAuthToken;
 import com.seohaeng.backend.domain.user.dto.UserRequestDTO;
 import com.seohaeng.backend.domain.user.dto.UserResponseDTO;
 import com.seohaeng.backend.domain.user.entity.LoginInfo;
+import com.seohaeng.backend.domain.user.entity.Provider;
 import com.seohaeng.backend.domain.user.entity.User;
 import com.seohaeng.backend.domain.user.repository.LoginInfoRepository;
 import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
 import com.seohaeng.backend.global.apiPayload.exception.handler.AuthException;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
+import com.seohaeng.backend.global.aws.s3.AmazonS3Manager;
 import com.seohaeng.backend.global.security.KakaoAuthProvider;
 import com.seohaeng.backend.global.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +26,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static com.seohaeng.backend.domain.user.converter.UserConverter.toLocalLoginInfo;
+import static com.seohaeng.backend.domain.user.converter.UserConverter.toUserInfoDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +42,9 @@ public class UserCommandService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final KakaoAuthProvider kakaoAuthProvider;
+    private final AmazonS3Manager amazonS3Manager;
 
+    // 회원가입
     @Transactional
     public LoginInfo joinUser(UserRequestDTO.joinDTO joinDTO) {
 
@@ -68,6 +73,7 @@ public class UserCommandService {
         return loginInfoRepository.save(joinLoginInfo);
     }
 
+    // 로그인
     public UserResponseDTO.LoginResultDTO loginUser(UserRequestDTO.LoginDTO loginDTO) {
 
         LoginInfo loginUserLoginInfo = loginInfoRepository.findByUsernameWithUser(loginDTO.getUsername())
@@ -90,6 +96,60 @@ public class UserCommandService {
                 loginUser.getId(),
                 accessToken
         );
+    }
+
+    // 사용자 정보 변경
+    @Transactional
+    public UserResponseDTO.GetUserInfoResponseDTO updateUserInfo(
+            Long userId,
+            UserRequestDTO.updateProfileDTO request,
+            MultipartFile image){
+
+        User user = userRepository.findUserWithLoginInfoById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        LoginInfo loginInfo = user.getLoginInfo();
+
+        if(loginInfo.getProvider() != Provider.LOCAL){
+            throw new UserHandler(ErrorStatus._FORBIDDEN);
+        }
+
+        if(request.getUsername() != null){
+            if (!Objects.equals(loginInfo.getUsername(), request.getUsername())) {
+                if(loginInfoRepository.existsByUsername(request.getUsername())){
+                    throw new UserHandler(ErrorStatus.DUPLICATE_USERNAME);
+                }
+                loginInfo.setUsername(request.getUsername());
+            }
+        } // 아이디 변경
+
+        if(request.getNickname() != null){
+            if (!Objects.equals(user.getNickname(), request.getNickname())) {
+                boolean exists = userRepository.existsByNickname(request.getNickname());
+                if (exists){
+                    throw new AuthException(ErrorStatus.DUPLICATE_NICKNAME);
+                }
+                user.setNickname(request.getNickname());
+            }
+        } // 닉네임 변경
+
+        if(request.getPassword1() != null){
+            if (!Objects.equals(request.getPassword1(), request.getPassword2())) {
+                throw new UserHandler(ErrorStatus.PASSWORD_MISMATCH);
+            }
+            validatePasswordComplexity(request.getPassword1());
+            String encodedPassword = passwordEncoder.encode(request.getPassword1());
+            loginInfo.setPassword(encodedPassword);
+        } // 비밀번호 변경
+
+        if (image != null && !image.isEmpty()) {
+            final String uuid = UUID.randomUUID().toString();
+            final String keyName = amazonS3Manager.generateProfileKeyName(uuid);
+            final String imageUrl = amazonS3Manager.uploadFile(keyName, image);
+            user.setImageUrl(imageUrl);
+        } // 프로필 이미지 변경
+
+        return toUserInfoDTO(user);
     }
 
     private void validatePasswordComplexity(String password) {
@@ -145,14 +205,5 @@ public class UserCommandService {
             throw new AuthException(ErrorStatus.AUTH_INVALID_CODE);
         }
         return oAuthToken;
-    }
-
-    public String checkNickname(String nickname) {
-        boolean exists = userRepository.existsByNickname(nickname);
-        if (!exists) {
-            return "사용 가능한 닉네임입니다.";
-        } else {
-            throw new AuthException(ErrorStatus.DUPLICATE_NICKNAME);
-        }
     }
 }

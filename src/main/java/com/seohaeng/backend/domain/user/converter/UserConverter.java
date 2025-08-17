@@ -59,4 +59,13 @@ public class UserConverter {
                 .profileImageUrl(user.getImageUrl())
                 .build();
     }
+
+    public static UserResponseDTO.GetMyInfoResponseDTO toMyInfoDTO(User user, LoginInfo loginInfo) {
+        return UserResponseDTO.GetMyInfoResponseDTO.builder()
+                .userId(user.getId())
+                .nickName(user.getNickname())
+                .profileImageUrl(user.getImageUrl())
+                .loginType(loginInfo.getProvider())
+                .build();
+    }
 }

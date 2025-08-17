@@ -49,6 +49,7 @@ cloud:
         bookchallenge: bookchallenges
         review: reviews
         readingspot: readingspots
+        profile: profiles
     region:
       static: ${AWS_REGION}
     stack:

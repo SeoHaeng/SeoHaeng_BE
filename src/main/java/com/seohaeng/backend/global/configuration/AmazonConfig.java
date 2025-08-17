@@ -39,6 +39,9 @@ public class AmazonConfig {
     @Value("${cloud.aws.s3.path.readingspot}")
     private String readingSpotPath;
 
+    @Value("${cloud.aws.s3.path.profile}")
+    private String profilePath;
+
     @PostConstruct
     public void init() {
         this.awsCredentials = new BasicAWSCredentials(accessKey, secretKey);

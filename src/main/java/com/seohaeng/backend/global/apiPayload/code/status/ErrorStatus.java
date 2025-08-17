@@ -22,6 +22,8 @@ public enum ErrorStatus implements BaseErrorCode {
     PASSWORD_COMPLEXITY_FAIL(HttpStatus.BAD_REQUEST, "USER4004", "비밀번호는 영문자, 숫자, 특수문자를 모두 포함해야 합니다."),
     LOGIN_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4005", "사용자 로그인 정보가 존재하지 않습니다."),
     DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "USER4006", "이미 사용 중인 nickname입니다."),
+    CURRENT_USERNAME(HttpStatus.BAD_REQUEST, "USER4007", "현재 사용 중인 아이디입니다."),
+    CURRENT_NICKNAME(HttpStatus.BAD_REQUEST, "USER4008", "현재 사용 중인 닉네임입니다."),
     OWNER_NOT_FOUND(HttpStatus.FORBIDDEN, "OWNER_001", "사장님 계정이 아닙니다. 권한이 없습니다."),
 
     // Auth 관련

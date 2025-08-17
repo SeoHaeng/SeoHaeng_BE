@@ -62,4 +62,8 @@ public class AmazonS3Manager {
     public String generateReadingSpotKeyName(String uuid) {
         return amazonConfig.getReadingSpotPath() + '/' + uuid;
     }
+
+    public String generateProfileKeyName(String uuid) {
+        return amazonConfig.getProfilePath() + '/' + uuid;
+    }
 }

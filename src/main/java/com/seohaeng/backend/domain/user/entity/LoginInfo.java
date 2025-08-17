@@ -20,9 +20,11 @@ public class LoginInfo extends BaseEntity {
     private Provider provider;
 
     @Column(length = 255, unique = true)
+    @Setter
     private String username;
 
     @Column(nullable = false)
+    @Setter
     private String password;
 
     @OneToOne(fetch = FetchType.LAZY)
