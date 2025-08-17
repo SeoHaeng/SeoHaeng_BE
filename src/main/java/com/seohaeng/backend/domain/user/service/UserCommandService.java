@@ -21,6 +21,7 @@ import com.seohaeng.backend.global.aws.s3.AmazonS3Manager;
 import com.seohaeng.backend.global.security.KakaoAuthProvider;
 import com.seohaeng.backend.global.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -97,6 +98,26 @@ public class UserCommandService {
                 accessToken
         );
     }
+
+    // 회원 탈퇴
+    @Transactional
+    public void deleteUser(Long userId, UserRequestDTO.DeleteAccountDTO password){
+
+        User user = userRepository.findUserWithLoginInfoById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        LoginInfo loginInfo = user.getLoginInfo();
+        Provider provider = loginInfo.getProvider();
+
+        if(passwordEncoder.matches(password.getPassword(), loginInfo.getPassword())){
+            if(provider.equals(Provider.LOCAL)){
+                userRepository.delete(user);
+            } // TODO : 각 소셜 로그인 Provider 별로 처리
+        }else{
+            throw new UserHandler(ErrorStatus.PASSWORD_MISMATCH);
+        }
+    }
+
 
     // 사용자 정보 변경
     @Transactional

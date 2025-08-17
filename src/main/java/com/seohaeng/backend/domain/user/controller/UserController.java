@@ -38,6 +38,15 @@ public class UserController {
         return ApiResponse.onSuccess(userCommandService.loginUser(request));
     }
 
+    @Operation(summary = "회원 탈퇴", description = "현재 사용자의 회원 탈퇴를 진행합니다.")
+    @DeleteMapping
+    public ApiResponse<String> deleteAccount(
+            @AuthUser Long userId,
+            @RequestBody  UserRequestDTO.DeleteAccountDTO password){
+        userCommandService.deleteUser(userId, password);
+        return ApiResponse.onSuccess("회원 탈퇴가 완료되었습니다.");
+    }
+
     @Operation(summary = "카카오 로그인 API", description = "카카오 로그인 및 회원 가입을 진행하는 API입니다. 인가코드를 넘겨주세요.")
     @GetMapping("/auth/kakao")
     public ApiResponse<UserResponseDTO.LoginResultDTO> kakaoLogin(@RequestParam("code") String code) {
