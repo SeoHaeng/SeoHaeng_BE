@@ -35,4 +35,19 @@ public class UserRequestDTO {
         @NotBlank(message = "패스워드는 필수입니다.")
         private String password;
     }
+
+    @Getter
+    public static class updateProfileDTO{
+
+        @Size(min = 4, max = 12)
+        private String username;
+
+        private String nickname;
+
+        @Size(min = 8, max = 20)
+        private String password1;
+
+        @Size(min = 8, max = 20)
+        private String password2;
+    }
 }

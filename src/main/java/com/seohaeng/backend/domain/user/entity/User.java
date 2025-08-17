@@ -21,9 +21,11 @@ public class User extends BaseEntity {
     @GeneratedValue
     private Long id;
 
+    @Setter
     @Column(nullable = false)
     private String nickname;
 
+    @Setter
     private String imageUrl;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

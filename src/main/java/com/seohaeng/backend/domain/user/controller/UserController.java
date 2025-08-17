@@ -9,7 +9,9 @@ import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -73,6 +75,17 @@ public class UserController {
     @GetMapping
     public ApiResponse<UserResponseDTO.GetMyInfoResponseDTO> getMyInfo(@AuthUser Long userId){
         UserResponseDTO.GetMyInfoResponseDTO result = userQueryService.getMyInfo(userId);
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(summary = "내 정보 수정", description = "현재 사용자의 정보를 수정합니다.")
+    @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<UserResponseDTO.GetUserInfoResponseDTO> updateMyInfo(
+            @AuthUser Long userId,
+            @Valid @RequestPart("request") UserRequestDTO.updateProfileDTO request,
+            @RequestPart(value = "profileImage", required = false) MultipartFile image
+    ) {
+        UserResponseDTO.GetUserInfoResponseDTO result = userCommandService.updateUserInfo(userId, request, image);
         return ApiResponse.onSuccess(result);
     }
 }
