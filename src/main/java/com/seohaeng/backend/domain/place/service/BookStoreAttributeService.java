@@ -28,4 +28,16 @@ public class BookStoreAttributeService {
                 .toList();
     }
 
+    public List<PlaceMarkerDTO> getBookCafeMarkers() {
+        return repository.findAllBookCafe().stream()
+                .map(attr -> new PlaceMarkerDTO(
+                        attr.getPlace().getId(),
+                        attr.getPlace().getName(),
+                        attr.getPlace().getLatitude(),
+                        attr.getPlace().getLongitude()
+                ))
+                .toList();
+    }
+
+
 }

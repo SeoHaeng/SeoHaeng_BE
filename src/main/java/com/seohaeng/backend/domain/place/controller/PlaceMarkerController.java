@@ -26,4 +26,10 @@ public class PlaceMarkerController {
         return service.getBookStayMarkers();
     }
 
+    @Operation(summary = "지도 위 북카페만 조회 API")
+    @GetMapping("/markers/bookcafes")
+    public List<PlaceMarkerDTO> getBookCafeMarkers() {
+        return service.getBookCafeMarkers();
+    }
+
 }
