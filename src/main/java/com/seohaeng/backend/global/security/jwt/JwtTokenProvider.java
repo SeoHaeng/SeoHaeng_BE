@@ -132,4 +132,14 @@ public class JwtTokenProvider {
         }
         return getAuthentication(accessToken);
     }
+
+    public Long getUserIdFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        
+        return claims.get("id", Long.class);
+    }
 }

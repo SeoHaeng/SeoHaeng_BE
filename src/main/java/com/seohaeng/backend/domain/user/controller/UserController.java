@@ -77,18 +77,18 @@ public class UserController {
     @Operation(summary = "닉네임 중복확인 API", description = "닉네임 중복확인을 진행하는 API입니다.")
     @GetMapping("/auth/check-nickname")
     public ApiResponse<String> checkNickname(
-            @AuthUser Long userId,
+            HttpServletRequest httpServletRequest,
             @RequestParam String nickname) {
-        String result = userQueryService.checkNickname(userId, nickname);
+        String result = userQueryService.checkNickname(httpServletRequest, nickname);
         return ApiResponse.onSuccess(result);
     }
 
     @Operation(summary = "아이디 중복확인 API", description = "아이디 중복확인을 진행하는 API입니다.")
     @GetMapping("/auth/check-username")
     public ApiResponse<String> checkUsername(
-            @AuthUser Long userId,
+            HttpServletRequest request,
             @RequestParam String username) {
-        String result = userQueryService.checkUsername(userId, username);
+        String result = userQueryService.checkUsername(request, username);
         return ApiResponse.onSuccess(result);
     }
 
