@@ -1,14 +1,7 @@
 package com.seohaeng.backend.domain.user.service;
 
-import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofImage;
-import com.seohaeng.backend.domain.travelCourse.converter.TravelCourseConverter;
-import com.seohaeng.backend.domain.travelCourse.entity.Stamp;
-import com.seohaeng.backend.domain.travelCourse.repository.StampRepository;
 import com.seohaeng.backend.domain.user.converter.UserConverter;
-import com.seohaeng.backend.domain.user.dto.KakaoProfile;
-import com.seohaeng.backend.domain.user.dto.OAuthToken;
-import com.seohaeng.backend.domain.user.dto.UserRequestDTO;
-import com.seohaeng.backend.domain.user.dto.UserResponseDTO;
+import com.seohaeng.backend.domain.user.dto.*;
 import com.seohaeng.backend.domain.user.entity.LoginInfo;
 import com.seohaeng.backend.domain.user.entity.Provider;
 import com.seohaeng.backend.domain.user.entity.User;
@@ -18,15 +11,22 @@ import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
 import com.seohaeng.backend.global.apiPayload.exception.handler.AuthException;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import com.seohaeng.backend.global.aws.s3.AmazonS3Manager;
-import com.seohaeng.backend.global.security.KakaoAuthProvider;
+import com.seohaeng.backend.global.security.authProvider.GoogleAuthProvider;
+import com.seohaeng.backend.global.security.authProvider.KakaoAuthProvider;
+import com.seohaeng.backend.global.security.authProvider.NaverAuthProvider;
 import com.seohaeng.backend.global.security.jwt.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.Duration;
 
 import java.util.*;
 
@@ -41,8 +41,49 @@ public class UserCommandService {
     private final LoginInfoRepository loginInfoRepository;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final KakaoAuthProvider kakaoAuthProvider;
+    private final NaverAuthProvider naverAuthProvider;
+    private final GoogleAuthProvider googleAuthProvider;
     private final AmazonS3Manager amazonS3Manager;
+
+    @Value("${jwt.token.expiration.refresh}")
+    private long refreshTokenExpiration;
+
+    // 토큰 재발급
+    public UserResponseDTO.TokenResponse reissueToken(HttpServletRequest request) {
+        String refreshToken = jwtTokenProvider.extractToken(request);
+
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new UserHandler(ErrorStatus.INVALID_TOKEN);
+        }
+
+        Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
+        String username = authentication.getName();
+
+        LoginInfo loginInfo = loginInfoRepository.findByUsernameWithUser(username)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        User user = loginInfo.getUser();
+        Long userId = user.getId();
+
+        String redisKey = "refreshToken:" + userId;
+        String storedRefreshToken = (String) redisTemplate.opsForValue().get(redisKey);
+
+        if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
+            throw new UserHandler(ErrorStatus.INVALID_TOKEN);
+        }
+
+        String newAccessToken = jwtTokenProvider.createAccessToken(authentication);
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(authentication);
+
+        saveRefreshTokenToRedis(userId, newRefreshToken);
+
+        return UserResponseDTO.TokenResponse.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .build();
+    }
 
     // 회원가입
     @Transactional
@@ -73,7 +114,7 @@ public class UserCommandService {
         return loginInfoRepository.save(joinLoginInfo);
     }
 
-    // 로그인
+    // 일반 로그인
     public UserResponseDTO.LoginResultDTO loginUser(UserRequestDTO.LoginDTO loginDTO) {
 
         LoginInfo loginUserLoginInfo = loginInfoRepository.findByUsernameWithUser(loginDTO.getUsername())
@@ -90,12 +131,108 @@ public class UserCommandService {
                 null,
                 Collections.emptyList());
 
-        String accessToken = jwtTokenProvider.generateToken(authentication);
+        String accessToken = jwtTokenProvider.createAccessToken(authentication);
+        String refreshToken = jwtTokenProvider.createRefreshToken(authentication);
+
+        saveRefreshTokenToRedis(loginUser.getId(), refreshToken);
 
         return UserConverter.toLoginResultDTO(
                 loginUser.getId(),
-                accessToken
+                accessToken,
+                refreshToken
         );
+    }
+
+    // 카카오 로그인
+    @Transactional
+    public UserResponseDTO.LoginResultDTO kakaoLogin(String code) {
+        OAuthToken oAuthToken = getKakaoOauthToken(code);
+
+        KakaoProfile kakaoProfile;
+        try {
+            kakaoProfile = kakaoAuthProvider.requestKakaoProfile(oAuthToken.getAccess_token());
+        } catch (Exception e) {
+            throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_KAKAO);
+        }
+
+        Optional<LoginInfo> userLoginInfo = loginInfoRepository.findByUsername(kakaoProfile.getKakaoAccount().getEmail());
+
+        if (userLoginInfo.isPresent()) {
+            LoginInfo logininfo = userLoginInfo.get();
+            return getOauthResponseForUser(logininfo);
+        }
+
+        User user = userRepository.save(UserConverter.kakaoToUser(kakaoProfile));
+        LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toKakaoLoginInfo(kakaoProfile,user));
+
+        return getOauthResponseForUser(loginInfo);
+    }
+
+    // 네이버 로그인
+    @Transactional
+    public UserResponseDTO.LoginResultDTO naverLogin(String code) {
+        OAuthToken oAuthToken = getNaverOauthToken(code);
+
+        NaverProfile naverProfile;
+        try {
+            naverProfile = naverAuthProvider.requestNaverProfile(oAuthToken.getAccess_token());
+        } catch (Exception e) {
+            throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_NAVER);
+        }
+
+        Optional<LoginInfo> userLoginInfo = loginInfoRepository.findByUsername(naverProfile.getNaverAccount().getEmail());
+
+        if (userLoginInfo.isPresent()) {
+            LoginInfo logininfo = userLoginInfo.get();
+            return getOauthResponseForUser(logininfo);
+        }
+
+        User user = userRepository.save(UserConverter.naverToUser(naverProfile));
+        LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toNaverLoginInfo(naverProfile,user));
+
+        return getOauthResponseForUser(loginInfo);
+    }
+
+    // 구글 로그인
+    @Transactional
+    public UserResponseDTO.LoginResultDTO googleLogin(String code) {
+        OAuthToken oAuthToken = getGoogleOauthToken(code);
+
+        GoogleProfile googleProfile;
+        try {
+            googleProfile = googleAuthProvider.requestGooglerofile(oAuthToken.getAccess_token());
+        } catch (Exception e) {
+            throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_GOOGLE);
+        }
+
+        Optional<LoginInfo> userLoginInfo
+                = loginInfoRepository.findByUsername(
+                googleProfile.getEmail());
+
+        if (userLoginInfo.isPresent()) {
+            LoginInfo logininfo = userLoginInfo.get();
+            return getOauthResponseForUser(logininfo);
+        }
+
+        User user = userRepository.save(UserConverter.googleToUser(googleProfile));
+        LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toGoogleLoginInfo(googleProfile,user));
+
+        return getOauthResponseForUser(loginInfo);
+    }
+
+    // 회원 탈퇴
+    @Transactional
+    public void deleteUser(Long userId){
+
+        User user = userRepository.findUserWithLoginInfoById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        LoginInfo loginInfo = user.getLoginInfo();
+        Provider provider = loginInfo.getProvider();
+
+        if(provider.equals(Provider.LOCAL)){
+            userRepository.delete(user);
+        } // TODO : 각 소셜 로그인 Provider 별로 처리
     }
 
     // 사용자 정보 변경
@@ -103,6 +240,7 @@ public class UserCommandService {
     public UserResponseDTO.GetUserInfoResponseDTO updateUserInfo(
             Long userId,
             UserRequestDTO.updateProfileDTO request,
+            Boolean useDefault,
             MultipartFile image){
 
         User user = userRepository.findUserWithLoginInfoById(userId)
@@ -142,7 +280,9 @@ public class UserCommandService {
             loginInfo.setPassword(encodedPassword);
         } // 비밀번호 변경
 
-        if (image != null && !image.isEmpty()) {
+        if (Boolean.TRUE.equals(useDefault)) {
+            user.setImageUrl("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/profiles/default_profile.png");
+        } else if (Boolean.FALSE.equals(useDefault) && image != null && !image.isEmpty()) {
             final String uuid = UUID.randomUUID().toString();
             final String keyName = amazonS3Manager.generateProfileKeyName(uuid);
             final String imageUrl = amazonS3Manager.uploadFile(keyName, image);
@@ -152,36 +292,18 @@ public class UserCommandService {
         return toUserInfoDTO(user);
     }
 
+    // Refresh Token Redis 저장
+    private void saveRefreshTokenToRedis(Long userId, String refreshToken) {
+        String redisKey = "refreshToken:" + userId;
+        redisTemplate.opsForValue().set(redisKey, refreshToken, Duration.ofMillis(refreshTokenExpiration));
+    }
+
     private void validatePasswordComplexity(String password) {
         String pattern = "^(?!.*[가-힣])(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).+$";
 
         if (!password.matches(pattern)) {
             throw new UserHandler(ErrorStatus.PASSWORD_COMPLEXITY_FAIL);
         }
-    }
-
-    @Transactional
-    public UserResponseDTO.LoginResultDTO kakaoLogin(String code) {
-        OAuthToken oAuthToken = getKakaoOauthToken(code);
-
-        KakaoProfile kakaoProfile;
-        try {
-            kakaoProfile = kakaoAuthProvider.requestKakaoProfile(oAuthToken.getAccess_token());
-        } catch (Exception e) {
-            throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_KAKAO);
-        }
-
-        Optional<LoginInfo> userLoginInfo = loginInfoRepository.findByUsername(kakaoProfile.getKakaoAccount().getEmail());
-
-        if (userLoginInfo.isPresent()) {
-            LoginInfo logininfo = userLoginInfo.get();
-            return getOauthResponseForUser(logininfo);
-        }
-
-        User user = userRepository.save(UserConverter.kakaoToUser(kakaoProfile));
-        LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toKakaoLoginInfo(kakaoProfile,user));
-
-        return getOauthResponseForUser(loginInfo);
     }
 
     private UserResponseDTO.LoginResultDTO getOauthResponseForUser(LoginInfo logininfo) {
@@ -193,14 +315,38 @@ public class UserCommandService {
 
         User loginUser = logininfo.getUser();
 
-        String accessToken = jwtTokenProvider.generateToken(authentication);
-        return UserConverter.toLoginResultDTO(loginUser.getId(),accessToken);
+        String accessToken = jwtTokenProvider.createAccessToken(authentication);
+        String refreshToken = jwtTokenProvider.createRefreshToken(authentication);
+
+        saveRefreshTokenToRedis(loginUser.getId(), refreshToken);
+
+        return UserConverter.toLoginResultDTO(loginUser.getId(),accessToken,refreshToken);
     }
 
     private OAuthToken getKakaoOauthToken(String code) {
         OAuthToken oAuthToken;
         try {
             oAuthToken = kakaoAuthProvider.requestToken(code);
+        } catch (Exception e) {
+            throw new AuthException(ErrorStatus.AUTH_INVALID_CODE);
+        }
+        return oAuthToken;
+    }
+
+    private OAuthToken getNaverOauthToken(String code) {
+        OAuthToken oAuthToken;
+        try {
+            oAuthToken = naverAuthProvider.requestToken(code);
+        } catch (Exception e) {
+            throw new AuthException(ErrorStatus.AUTH_INVALID_CODE);
+        }
+        return oAuthToken;
+    }
+
+    private OAuthToken getGoogleOauthToken(String code) {
+        OAuthToken oAuthToken;
+        try {
+            oAuthToken = googleAuthProvider.requestToken(code);
         } catch (Exception e) {
             throw new AuthException(ErrorStatus.AUTH_INVALID_CODE);
         }

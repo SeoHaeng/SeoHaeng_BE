@@ -7,6 +7,8 @@ import com.seohaeng.backend.domain.user.service.UserQueryService;
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -20,6 +22,15 @@ public class UserController {
 
     private final UserCommandService userCommandService;
     private final UserQueryService userQueryService;
+
+    @Operation(
+            summary = "JWT Access Token 재발급 API",
+            description = "Refresh Token 을 검증하고 새로운 Access Token 과 Refresh Token 을 응답합니다.")
+    @PostMapping("/reissue")
+    public ApiResponse<UserResponseDTO.TokenResponse> reissueToken(final HttpServletRequest request) {
+        UserResponseDTO.TokenResponse result = userCommandService.reissueToken(request);
+        return ApiResponse.onSuccess(result);
+    }
 
     @Operation(summary = "일반 회원가입 API",
             description = "아이디는 4~12자이며, 비밀번호는 8~20자이고 영문, 숫자, 특수문자를 반드시 포함해야 합니다." +
@@ -37,27 +48,47 @@ public class UserController {
         return ApiResponse.onSuccess(userCommandService.loginUser(request));
     }
 
+    @Operation(summary = "회원 탈퇴", description = "현재 사용자의 회원 탈퇴를 진행합니다.")
+    @DeleteMapping
+    public ApiResponse<String> deleteAccount(
+            @AuthUser Long userId){
+        userCommandService.deleteUser(userId);
+        return ApiResponse.onSuccess("회원 탈퇴가 완료되었습니다.");
+    }
+
     @Operation(summary = "카카오 로그인 API", description = "카카오 로그인 및 회원 가입을 진행하는 API입니다. 인가코드를 넘겨주세요.")
     @GetMapping("/auth/kakao")
     public ApiResponse<UserResponseDTO.LoginResultDTO> kakaoLogin(@RequestParam("code") String code) {
         return ApiResponse.onSuccess(userCommandService.kakaoLogin(code));
     }
 
+    @Operation(summary = "네이버 로그인 API", description = "네이버 로그인 및 회원 가입을 진행하는 API입니다. 인가코드를 넘겨주세요.")
+    @GetMapping("/auth/naver")
+    public ApiResponse<UserResponseDTO.LoginResultDTO> naverLogin(@RequestParam("code") String code) {
+        return ApiResponse.onSuccess(userCommandService.naverLogin(code));
+    }
+
+    @Operation(summary = "구글 로그인 API", description = "구글 로그인 및 회원 가입을 진행하는 API입니다. 인가코드를 넘겨주세요.")
+    @GetMapping("/auth/google")
+    public ApiResponse<UserResponseDTO.LoginResultDTO> googleLogin(@RequestParam("code") String code) {
+        return ApiResponse.onSuccess(userCommandService.googleLogin(code));
+    }
+
     @Operation(summary = "닉네임 중복확인 API", description = "닉네임 중복확인을 진행하는 API입니다.")
     @GetMapping("/auth/check-nickname")
     public ApiResponse<String> checkNickname(
-            @AuthUser Long userId,
+            HttpServletRequest httpServletRequest,
             @RequestParam String nickname) {
-        String result = userQueryService.checkNickname(userId, nickname);
+        String result = userQueryService.checkNickname(httpServletRequest, nickname);
         return ApiResponse.onSuccess(result);
     }
 
     @Operation(summary = "아이디 중복확인 API", description = "아이디 중복확인을 진행하는 API입니다.")
     @GetMapping("/auth/check-username")
     public ApiResponse<String> checkUsername(
-            @AuthUser Long userId,
+            HttpServletRequest request,
             @RequestParam String username) {
-        String result = userQueryService.checkUsername(userId, username);
+        String result = userQueryService.checkUsername(request, username);
         return ApiResponse.onSuccess(result);
     }
 
@@ -87,9 +118,12 @@ public class UserController {
     public ApiResponse<UserResponseDTO.GetUserInfoResponseDTO> updateMyInfo(
             @AuthUser Long userId,
             @Valid @RequestPart("request") UserRequestDTO.updateProfileDTO request,
-            @RequestPart(value = "profileImage", required = false) MultipartFile image
+            @RequestPart(value = "profileImage", required = false) 
+            @Parameter(description = "업로드할 프로필 이미지 파일") MultipartFile image,
+            @RequestParam(value = "useDefault", required = false, defaultValue = "false") 
+            @Parameter(description = "기본 프로필 사진 사용 여부 (true: 기본 프로필로 변경, false: 업로드된 이미지 사용)") Boolean useDefault
     ) {
-        UserResponseDTO.GetUserInfoResponseDTO result = userCommandService.updateUserInfo(userId, request, image);
+        UserResponseDTO.GetUserInfoResponseDTO result = userCommandService.updateUserInfo(userId, request, useDefault, image);
         return ApiResponse.onSuccess(result);
     }
 }

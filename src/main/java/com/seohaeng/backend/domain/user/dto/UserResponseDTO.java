@@ -1,10 +1,7 @@
 package com.seohaeng.backend.domain.user.dto;
 
 import com.seohaeng.backend.domain.user.entity.Provider;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 public class UserResponseDTO {
 
@@ -15,6 +12,7 @@ public class UserResponseDTO {
     public static class LoginResultDTO {
         Long UserId;
         String accessToken;
+        String refreshToken;
     }
 
     @Builder
@@ -33,8 +31,18 @@ public class UserResponseDTO {
     @AllArgsConstructor
     public static class GetMyInfoResponseDTO {
         Long userId;
+        String userName;
         String nickName;
         String profileImageUrl;
         Provider loginType;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TokenResponse {
+        String accessToken;
+        String refreshToken;
     }
 }

@@ -1,8 +1,8 @@
-package com.seohaeng.backend.global.security;
+package com.seohaeng.backend.global.security.authProvider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.seohaeng.backend.domain.user.dto.KakaoProfile;
+import com.seohaeng.backend.domain.user.dto.GoogleProfile;
 import com.seohaeng.backend.domain.user.dto.OAuthToken;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
 import com.seohaeng.backend.global.apiPayload.exception.handler.AuthException;
@@ -18,16 +18,22 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 @Component
 @RequiredArgsConstructor
 @Getter
-public class KakaoAuthProvider {
+public class GoogleAuthProvider {
 
-    @Value("${KAKAO_CLIENT_ID}")
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String client;
 
-    @Value("${KAKAO_REDIRECT_URI}")
+    @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
     private String redirect;
+
+    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
+    private String secret;
 
     public OAuthToken requestToken(String code) {
         RestTemplate restTemplate = new RestTemplate();
@@ -36,20 +42,23 @@ public class KakaoAuthProvider {
         headers.add("Content-type"
                 ,"application/x-www-form-urlencoded;charset=utf-8");
 
+        String decode = URLDecoder.decode(code, StandardCharsets.UTF_8);
+
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", client);
         params.add("redirect_uri", redirect);
-        params.add("code", code);
+        params.add("client_secret", secret);
+        params.add("code", decode);
 
-        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
+        HttpEntity<MultiValueMap<String, String>> googleTokenRequest =
                 new HttpEntity<>(params, headers);
 
         ResponseEntity<String> response =
                 restTemplate.exchange(
-                        "https://kauth.kakao.com/oauth/token",
+                        "https://oauth2.googleapis.com/token",
                         HttpMethod.POST,
-                        kakaoTokenRequest,
+                        googleTokenRequest,
                         String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -59,35 +68,36 @@ public class KakaoAuthProvider {
         try {
             oAuthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
         } catch (JsonProcessingException e) {
-            throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_KAKAO);
+            throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_GOOGLE);
         }
+
         return oAuthToken;
     }
 
-    public KakaoProfile requestKakaoProfile(String token) {
+    public GoogleProfile requestGooglerofile(String token) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
         headers.add("Authorization", "Bearer " + token);
 
-        HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest = new HttpEntity<>(headers);
+        HttpEntity<MultiValueMap<String, String>> googleProfileRequest = new HttpEntity<>(headers);
 
         ResponseEntity<String> response =
                 restTemplate.exchange(
-                        "https://kapi.kakao.com/v2/user/me",
-                        HttpMethod.POST,
-                        kakaoProfileRequest,
+                        "https://www.googleapis.com/oauth2/v3/userinfo",
+                        HttpMethod.GET,
+                        googleProfileRequest,
                         String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
-        KakaoProfile kakaoProfile = null;
-        System.out.println(response.getBody());
+        GoogleProfile googleProfile = null;
+
         try {
-            kakaoProfile = objectMapper.readValue(response.getBody(), KakaoProfile.class);
+            googleProfile = objectMapper.readValue(response.getBody(), GoogleProfile.class);
         } catch (JsonProcessingException e) {
-            throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_KAKAO);
+            throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_GOOGLE);
         }
-        System.out.println(kakaoProfile.getKakaoAccount().getEmail());
-        return kakaoProfile;
+
+        return googleProfile;
     }
 }

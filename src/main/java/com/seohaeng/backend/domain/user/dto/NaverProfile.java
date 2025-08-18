@@ -6,16 +6,15 @@ import lombok.Getter;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class KakaoProfile {
+public class NaverProfile {
 
-    private Long id;
-
-    @JsonProperty("kakao_account")
-    private KakaoAccount kakaoAccount;
+    @JsonProperty("response")
+    private NaverAccount naverAccount;
 
     @Getter
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class KakaoAccount {
+    public static class NaverAccount {
         private String email;
+        private String id;
     }
 }

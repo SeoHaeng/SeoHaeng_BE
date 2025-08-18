@@ -29,17 +29,23 @@ public class JwtTokenProvider {
 
     private final LoginInfoRepository loginInfoRepository;
 
+    private static final String HEADER_STRING = "Authorization";
+    private static final String HEADER_STRING_PREFIX = "Bearer ";
+
     @Value("${JWT_SECRET_KEY}")
     private String signingKey;
+
+    @Value("${jwt.token.expiration.access}")
+    private long accessTokenExpiration;
+
+    @Value("${jwt.token.expiration.refresh}")
+    private long refreshTokenExpiration;
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(signingKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    @Value("${jwt.token.expiration.access}")
-    private long accessTokenExpiration;
-
-    public String generateToken(Authentication authentication) {
+    public String generateToken(Authentication authentication, long validityMilliseconds) {
         String username = authentication.getName();
 
         LoginInfo loginUserLoginInfo = loginInfoRepository.findByUsernameWithUser(username)
@@ -53,11 +59,30 @@ public class JwtTokenProvider {
                 .setSubject(username)
                 .claim("id",UserId)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
+                .setExpiration(new Date(System.currentTimeMillis() + validityMilliseconds))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
+    public String createAccessToken(Authentication authentication) {
+        return generateToken(authentication, accessTokenExpiration);
+    }
+
+    public String createRefreshToken(Authentication authentication) {
+        return generateToken(authentication, refreshTokenExpiration);
+    }
+
+    // 토큰 추출
+    public String extractToken (final HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(HEADER_STRING);
+
+        if (authorizationHeader != null && authorizationHeader.startsWith(HEADER_STRING_PREFIX)) {
+            return authorizationHeader.substring(7);
+        }
+        throw new UserHandler(ErrorStatus.INVALID_TOKEN);
+    }
+
+    // 토큰 유효성 검증
     public boolean validateToken(String token) {
         try{
             Jwts.parserBuilder()
@@ -106,5 +131,15 @@ public class JwtTokenProvider {
             throw new UserHandler(ErrorStatus.INVALID_TOKEN);
         }
         return getAuthentication(accessToken);
+    }
+
+    public Long getUserIdFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        
+        return claims.get("id", Long.class);
     }
 }
