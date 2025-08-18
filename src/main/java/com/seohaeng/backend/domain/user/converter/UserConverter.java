@@ -1,13 +1,12 @@
 package com.seohaeng.backend.domain.user.converter;
 
 import com.seohaeng.backend.domain.user.dto.KakaoProfile;
+import com.seohaeng.backend.domain.user.dto.NaverProfile;
 import com.seohaeng.backend.domain.user.dto.UserRequestDTO;
 import com.seohaeng.backend.domain.user.dto.UserResponseDTO;
 import com.seohaeng.backend.domain.user.entity.LoginInfo;
 import com.seohaeng.backend.domain.user.entity.Provider;
 import com.seohaeng.backend.domain.user.entity.User;
-import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
-import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 
 public class UserConverter {
 
@@ -43,6 +42,25 @@ public class UserConverter {
                 .username(kakaoProfile.getKakaoAccount().getEmail())
                 .password("SOCIAL_LOGIN")
                 .provider(Provider.KAKAO)
+                .user(user)
+                .build();
+    }
+
+    public static User naverToUser(NaverProfile naverProfile){
+        String email = naverProfile.getNaverAccount().getEmail();
+        String nickname = email.substring(0, email.indexOf('@'));
+
+        return User.builder()
+                .nickname("naver#" + nickname)
+                .imageUrl("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/profiles/default_profile.png")
+                .build();
+    }
+
+    public static LoginInfo toNaverLoginInfo(NaverProfile naverProfile, User user){
+        return LoginInfo.builder()
+                .username(naverProfile.getNaverAccount().getEmail())
+                .password("SOCIAL_LOGIN")
+                .provider(Provider.NAVER)
                 .user(user)
                 .build();
     }

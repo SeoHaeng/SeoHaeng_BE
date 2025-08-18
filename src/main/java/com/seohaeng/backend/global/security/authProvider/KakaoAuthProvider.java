@@ -1,4 +1,4 @@
-package com.seohaeng.backend.global.security;
+package com.seohaeng.backend.global.security.authProvider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

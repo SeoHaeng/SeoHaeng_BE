@@ -1,10 +1,7 @@
 package com.seohaeng.backend.domain.user.service;
 
 import com.seohaeng.backend.domain.user.converter.UserConverter;
-import com.seohaeng.backend.domain.user.dto.KakaoProfile;
-import com.seohaeng.backend.domain.user.dto.OAuthToken;
-import com.seohaeng.backend.domain.user.dto.UserRequestDTO;
-import com.seohaeng.backend.domain.user.dto.UserResponseDTO;
+import com.seohaeng.backend.domain.user.dto.*;
 import com.seohaeng.backend.domain.user.entity.LoginInfo;
 import com.seohaeng.backend.domain.user.entity.Provider;
 import com.seohaeng.backend.domain.user.entity.User;
@@ -14,7 +11,8 @@ import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
 import com.seohaeng.backend.global.apiPayload.exception.handler.AuthException;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import com.seohaeng.backend.global.aws.s3.AmazonS3Manager;
-import com.seohaeng.backend.global.security.KakaoAuthProvider;
+import com.seohaeng.backend.global.security.authProvider.KakaoAuthProvider;
+import com.seohaeng.backend.global.security.authProvider.NaverAuthProvider;
 import com.seohaeng.backend.global.security.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +42,7 @@ public class UserCommandService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, Object> redisTemplate;
     private final KakaoAuthProvider kakaoAuthProvider;
+    private final NaverAuthProvider naverAuthProvider;
     private final AmazonS3Manager amazonS3Manager;
 
     @Value("${jwt.token.expiration.refresh}")
@@ -167,6 +166,31 @@ public class UserCommandService {
         return getOauthResponseForUser(loginInfo);
     }
 
+    // 네이버 로그인
+    @Transactional
+    public UserResponseDTO.LoginResultDTO naverLogin(String code) {
+        OAuthToken oAuthToken = getNaverOauthToken(code);
+
+        NaverProfile naverProfile;
+        try {
+            naverProfile = naverAuthProvider.requestNaverProfile(oAuthToken.getAccess_token());
+        } catch (Exception e) {
+            throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_KAKAO);
+        }
+
+        Optional<LoginInfo> userLoginInfo = loginInfoRepository.findByUsername(naverProfile.getNaverAccount().getEmail());
+
+        if (userLoginInfo.isPresent()) {
+            LoginInfo logininfo = userLoginInfo.get();
+            return getOauthResponseForUser(logininfo);
+        }
+
+        User user = userRepository.save(UserConverter.naverToUser(naverProfile));
+        LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toNaverLoginInfo(naverProfile,user));
+
+        return getOauthResponseForUser(loginInfo);
+    }
+
     // 회원 탈퇴
     @Transactional
     public void deleteUser(Long userId){
@@ -274,6 +298,16 @@ public class UserCommandService {
         OAuthToken oAuthToken;
         try {
             oAuthToken = kakaoAuthProvider.requestToken(code);
+        } catch (Exception e) {
+            throw new AuthException(ErrorStatus.AUTH_INVALID_CODE);
+        }
+        return oAuthToken;
+    }
+
+    private OAuthToken getNaverOauthToken(String code) {
+        OAuthToken oAuthToken;
+        try {
+            oAuthToken = naverAuthProvider.requestToken(code);
         } catch (Exception e) {
             throw new AuthException(ErrorStatus.AUTH_INVALID_CODE);
         }
