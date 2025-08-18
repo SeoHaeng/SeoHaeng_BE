@@ -32,4 +32,10 @@ public class PlaceMarkerController {
         return service.getBookCafeMarkers();
     }
 
+    @Operation(summary = "지도 위 독립서점만 조회 API")
+    @GetMapping("/markers/indie-bookstores")
+    public List<PlaceMarkerDTO> getIndieBookStoreMarkers() {
+        return service.getIndieBookStoreMarkers();
+    }
+
 }
