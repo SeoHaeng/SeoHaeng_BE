@@ -4,6 +4,7 @@ import com.seohaeng.backend.domain.user.dto.*;
 import com.seohaeng.backend.domain.user.entity.LoginInfo;
 import com.seohaeng.backend.domain.user.entity.Provider;
 import com.seohaeng.backend.domain.user.entity.User;
+import java.util.UUID;
 
 public class UserConverter {
 
@@ -27,9 +28,10 @@ public class UserConverter {
     public static User kakaoToUser(KakaoProfile kakaoProfile){
         String email = kakaoProfile.getKakaoAccount().getEmail();
         String nickname = email.substring(0, email.indexOf('@'));
+        String uniqueId = UUID.randomUUID().toString().substring(0, 8);
 
         return User.builder()
-                .nickname("kakao#" + nickname)
+                .nickname("kakao#" + nickname + "_" + uniqueId)
                 .imageUrl("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/profiles/default_profile.png")
                 .build();
     }
@@ -46,9 +48,10 @@ public class UserConverter {
     public static User naverToUser(NaverProfile naverProfile){
         String email = naverProfile.getNaverAccount().getEmail();
         String nickname = email.substring(0, email.indexOf('@'));
+        String uniqueId = UUID.randomUUID().toString().substring(0, 8);
 
         return User.builder()
-                .nickname("naver#" + nickname)
+                .nickname("naver#" + nickname + "_" + uniqueId)
                 .imageUrl("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/profiles/default_profile.png")
                 .build();
     }
@@ -65,9 +68,10 @@ public class UserConverter {
     public static User googleToUser(GoogleProfile googleProfile){
         String email = googleProfile.getEmail();
         String nickname = email.substring(0, email.indexOf('@'));
+        String uniqueId = UUID.randomUUID().toString().substring(0, 8);
 
         return User.builder()
-                .nickname("google#" + nickname)
+                .nickname("google#" + nickname + "_" + uniqueId)
                 .imageUrl("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/profiles/default_profile.png")
                 .build();
     }
