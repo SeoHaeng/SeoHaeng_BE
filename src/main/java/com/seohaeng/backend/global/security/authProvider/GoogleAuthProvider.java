@@ -98,7 +98,6 @@ public class GoogleAuthProvider {
             throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_GOOGLE);
         }
 
-        System.out.println(googleProfile.getEmail());
         return googleProfile;
     }
 }

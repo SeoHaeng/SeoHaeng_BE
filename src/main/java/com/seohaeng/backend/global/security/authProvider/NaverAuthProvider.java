@@ -96,7 +96,6 @@ public class NaverAuthProvider {
         } catch (JsonProcessingException e) {
             throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_NAVER);
         }
-        System.out.println(naverProfile.getNaverAccount().getEmail());
         return naverProfile;
     }
 }

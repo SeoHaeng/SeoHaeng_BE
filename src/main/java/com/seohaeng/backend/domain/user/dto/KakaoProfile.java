@@ -8,6 +8,8 @@ import lombok.Getter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KakaoProfile {
 
+    private Long id;
+
     @JsonProperty("kakao_account")
     private KakaoAccount kakaoAccount;
 

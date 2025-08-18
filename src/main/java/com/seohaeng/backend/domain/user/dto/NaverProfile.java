@@ -15,5 +15,6 @@ public class NaverProfile {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class NaverAccount {
         private String email;
+        private String id;
     }
 }

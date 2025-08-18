@@ -36,7 +36,7 @@ public class UserConverter {
 
     public static LoginInfo toKakaoLoginInfo(KakaoProfile kakaoProfile, User user){
         return LoginInfo.builder()
-                .username(kakaoProfile.getKakaoAccount().getEmail())
+                .username("KAKAO_" + kakaoProfile.getId())
                 .password("SOCIAL_LOGIN")
                 .provider(Provider.KAKAO)
                 .user(user)
@@ -55,7 +55,7 @@ public class UserConverter {
 
     public static LoginInfo toNaverLoginInfo(NaverProfile naverProfile, User user){
         return LoginInfo.builder()
-                .username(naverProfile.getNaverAccount().getEmail())
+                .username("NAVER_" + naverProfile.getNaverAccount().getId())
                 .password("SOCIAL_LOGIN")
                 .provider(Provider.NAVER)
                 .user(user)
@@ -74,7 +74,7 @@ public class UserConverter {
 
     public static LoginInfo toGoogleLoginInfo(GoogleProfile googleProfile, User user){
         return LoginInfo.builder()
-                .username(googleProfile.getEmail())
+                .username("GOOGLE_" + googleProfile.getSub())
                 .password("SOCIAL_LOGIN")
                 .provider(Provider.GOOGLE)
                 .user(user)

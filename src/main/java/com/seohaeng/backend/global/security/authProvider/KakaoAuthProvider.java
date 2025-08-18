@@ -87,7 +87,6 @@ public class KakaoAuthProvider {
         } catch (JsonProcessingException e) {
             throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_KAKAO);
         }
-        System.out.println(kakaoProfile.getKakaoAccount().getEmail());
         return kakaoProfile;
     }
 }

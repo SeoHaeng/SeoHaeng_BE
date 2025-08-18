@@ -7,4 +7,5 @@ import lombok.Getter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GoogleProfile {
     private String email;
+    private String sub;
 }
