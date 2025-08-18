@@ -68,6 +68,12 @@ public class UserController {
         return ApiResponse.onSuccess(userCommandService.naverLogin(code));
     }
 
+    @Operation(summary = "구글 로그인 API", description = "구글 로그인 및 회원 가입을 진행하는 API입니다. 인가코드를 넘겨주세요.")
+    @GetMapping("/auth/google")
+    public ApiResponse<UserResponseDTO.LoginResultDTO> googleLogin(@RequestParam("code") String code) {
+        return ApiResponse.onSuccess(userCommandService.googleLogin(code));
+    }
+
     @Operation(summary = "닉네임 중복확인 API", description = "닉네임 중복확인을 진행하는 API입니다.")
     @GetMapping("/auth/check-nickname")
     public ApiResponse<String> checkNickname(

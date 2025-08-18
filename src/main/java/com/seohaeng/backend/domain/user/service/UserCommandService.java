@@ -11,6 +11,7 @@ import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
 import com.seohaeng.backend.global.apiPayload.exception.handler.AuthException;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import com.seohaeng.backend.global.aws.s3.AmazonS3Manager;
+import com.seohaeng.backend.global.security.authProvider.GoogleAuthProvider;
 import com.seohaeng.backend.global.security.authProvider.KakaoAuthProvider;
 import com.seohaeng.backend.global.security.authProvider.NaverAuthProvider;
 import com.seohaeng.backend.global.security.jwt.JwtTokenProvider;
@@ -43,6 +44,7 @@ public class UserCommandService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final KakaoAuthProvider kakaoAuthProvider;
     private final NaverAuthProvider naverAuthProvider;
+    private final GoogleAuthProvider googleAuthProvider;
     private final AmazonS3Manager amazonS3Manager;
 
     @Value("${jwt.token.expiration.refresh}")
@@ -175,7 +177,7 @@ public class UserCommandService {
         try {
             naverProfile = naverAuthProvider.requestNaverProfile(oAuthToken.getAccess_token());
         } catch (Exception e) {
-            throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_KAKAO);
+            throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_NAVER);
         }
 
         Optional<LoginInfo> userLoginInfo = loginInfoRepository.findByUsername(naverProfile.getNaverAccount().getEmail());
@@ -187,6 +189,33 @@ public class UserCommandService {
 
         User user = userRepository.save(UserConverter.naverToUser(naverProfile));
         LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toNaverLoginInfo(naverProfile,user));
+
+        return getOauthResponseForUser(loginInfo);
+    }
+
+    // 구글 로그인
+    @Transactional
+    public UserResponseDTO.LoginResultDTO googleLogin(String code) {
+        OAuthToken oAuthToken = getGoogleOauthToken(code);
+
+        GoogleProfile googleProfile;
+        try {
+            googleProfile = googleAuthProvider.requestGooglerofile(oAuthToken.getAccess_token());
+        } catch (Exception e) {
+            throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_GOOGLE);
+        }
+
+        Optional<LoginInfo> userLoginInfo
+                = loginInfoRepository.findByUsername(
+                googleProfile.getEmail());
+
+        if (userLoginInfo.isPresent()) {
+            LoginInfo logininfo = userLoginInfo.get();
+            return getOauthResponseForUser(logininfo);
+        }
+
+        User user = userRepository.save(UserConverter.googleToUser(googleProfile));
+        LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toGoogleLoginInfo(googleProfile,user));
 
         return getOauthResponseForUser(loginInfo);
     }
@@ -308,6 +337,16 @@ public class UserCommandService {
         OAuthToken oAuthToken;
         try {
             oAuthToken = naverAuthProvider.requestToken(code);
+        } catch (Exception e) {
+            throw new AuthException(ErrorStatus.AUTH_INVALID_CODE);
+        }
+        return oAuthToken;
+    }
+
+    private OAuthToken getGoogleOauthToken(String code) {
+        OAuthToken oAuthToken;
+        try {
+            oAuthToken = googleAuthProvider.requestToken(code);
         } catch (Exception e) {
             throw new AuthException(ErrorStatus.AUTH_INVALID_CODE);
         }

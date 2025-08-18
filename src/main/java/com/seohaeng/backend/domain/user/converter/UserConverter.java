@@ -1,9 +1,6 @@
 package com.seohaeng.backend.domain.user.converter;
 
-import com.seohaeng.backend.domain.user.dto.KakaoProfile;
-import com.seohaeng.backend.domain.user.dto.NaverProfile;
-import com.seohaeng.backend.domain.user.dto.UserRequestDTO;
-import com.seohaeng.backend.domain.user.dto.UserResponseDTO;
+import com.seohaeng.backend.domain.user.dto.*;
 import com.seohaeng.backend.domain.user.entity.LoginInfo;
 import com.seohaeng.backend.domain.user.entity.Provider;
 import com.seohaeng.backend.domain.user.entity.User;
@@ -61,6 +58,25 @@ public class UserConverter {
                 .username(naverProfile.getNaverAccount().getEmail())
                 .password("SOCIAL_LOGIN")
                 .provider(Provider.NAVER)
+                .user(user)
+                .build();
+    }
+
+    public static User googleToUser(GoogleProfile googleProfile){
+        String email = googleProfile.getEmail();
+        String nickname = email.substring(0, email.indexOf('@'));
+
+        return User.builder()
+                .nickname("google#" + nickname)
+                .imageUrl("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/profiles/default_profile.png")
+                .build();
+    }
+
+    public static LoginInfo toGoogleLoginInfo(GoogleProfile googleProfile, User user){
+        return LoginInfo.builder()
+                .username(googleProfile.getEmail())
+                .password("SOCIAL_LOGIN")
+                .provider(Provider.GOOGLE)
                 .user(user)
                 .build();
     }

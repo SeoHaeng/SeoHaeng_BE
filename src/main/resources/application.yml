@@ -33,13 +33,21 @@ spring:
             client-secret: ${KAKAO_CLIENT_SECRET}
             redirect-uri: ${KAKAO_REDIRECT_URI}
             authorization-grant-type: authorization_code
-            client-name: Kakao
+            client-name: kakao
           naver:
             client-id: ${NAVER_CLIENT_ID}
             client-secret: ${NAVER_CLIENT_SECRET}
             redirect-uri: ${NAVER_REDIRECT_URI}
             authorization-grant-type: authorization_code
             client-name: naver
+            scope:
+              - email
+          google:
+            client-authentication-method: client_secret_post
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
+            client-name: google
             scope:
               - email
         provider:
