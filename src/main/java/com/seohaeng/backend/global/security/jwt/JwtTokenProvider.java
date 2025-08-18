@@ -32,14 +32,17 @@ public class JwtTokenProvider {
     @Value("${JWT_SECRET_KEY}")
     private String signingKey;
 
+    @Value("${jwt.token.expiration.access}")
+    private long accessTokenExpiration;
+
+    @Value("${jwt.token.expiration.refresh}")
+    private long refreshTokenExpiration;
+
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(signingKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    @Value("${jwt.token.expiration.access}")
-    private long accessTokenExpiration;
-
-    public String generateToken(Authentication authentication) {
+    public String generateToken(Authentication authentication, long validityMilliseconds) {
         String username = authentication.getName();
 
         LoginInfo loginUserLoginInfo = loginInfoRepository.findByUsernameWithUser(username)
@@ -53,9 +56,17 @@ public class JwtTokenProvider {
                 .setSubject(username)
                 .claim("id",UserId)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
+                .setExpiration(new Date(System.currentTimeMillis() + validityMilliseconds))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public String createAccessToken(Authentication authentication) {
+        return generateToken(authentication, accessTokenExpiration);
+    }
+
+    public String createRefreshToken(Authentication authentication) {
+        return generateToken(authentication, refreshTokenExpiration);
     }
 
     public boolean validateToken(String token) {

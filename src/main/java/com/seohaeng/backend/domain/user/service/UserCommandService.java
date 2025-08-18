@@ -1,9 +1,5 @@
 package com.seohaeng.backend.domain.user.service;
 
-import com.seohaeng.backend.domain.bookChallenge.entity.BookChallengeProofImage;
-import com.seohaeng.backend.domain.travelCourse.converter.TravelCourseConverter;
-import com.seohaeng.backend.domain.travelCourse.entity.Stamp;
-import com.seohaeng.backend.domain.travelCourse.repository.StampRepository;
 import com.seohaeng.backend.domain.user.converter.UserConverter;
 import com.seohaeng.backend.domain.user.dto.KakaoProfile;
 import com.seohaeng.backend.domain.user.dto.OAuthToken;
@@ -21,7 +17,6 @@ import com.seohaeng.backend.global.aws.s3.AmazonS3Manager;
 import com.seohaeng.backend.global.security.KakaoAuthProvider;
 import com.seohaeng.backend.global.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -74,7 +69,7 @@ public class UserCommandService {
         return loginInfoRepository.save(joinLoginInfo);
     }
 
-    // 로그인
+    // 일반 로그인
     public UserResponseDTO.LoginResultDTO loginUser(UserRequestDTO.LoginDTO loginDTO) {
 
         LoginInfo loginUserLoginInfo = loginInfoRepository.findByUsernameWithUser(loginDTO.getUsername())
@@ -91,12 +86,39 @@ public class UserCommandService {
                 null,
                 Collections.emptyList());
 
-        String accessToken = jwtTokenProvider.generateToken(authentication);
+        String accessToken = jwtTokenProvider.createAccessToken(authentication);
+        String refreshToken = jwtTokenProvider.createRefreshToken(authentication);
 
         return UserConverter.toLoginResultDTO(
                 loginUser.getId(),
-                accessToken
+                accessToken,
+                refreshToken
         );
+    }
+
+    // 카카오 로그인
+    @Transactional
+    public UserResponseDTO.LoginResultDTO kakaoLogin(String code) {
+        OAuthToken oAuthToken = getKakaoOauthToken(code);
+
+        KakaoProfile kakaoProfile;
+        try {
+            kakaoProfile = kakaoAuthProvider.requestKakaoProfile(oAuthToken.getAccess_token());
+        } catch (Exception e) {
+            throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_KAKAO);
+        }
+
+        Optional<LoginInfo> userLoginInfo = loginInfoRepository.findByUsername(kakaoProfile.getKakaoAccount().getEmail());
+
+        if (userLoginInfo.isPresent()) {
+            LoginInfo logininfo = userLoginInfo.get();
+            return getOauthResponseForUser(logininfo);
+        }
+
+        User user = userRepository.save(UserConverter.kakaoToUser(kakaoProfile));
+        LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toKakaoLoginInfo(kakaoProfile,user));
+
+        return getOauthResponseForUser(loginInfo);
     }
 
     // 회원 탈퇴
@@ -164,7 +186,6 @@ public class UserCommandService {
             loginInfo.setPassword(encodedPassword);
         } // 비밀번호 변경
 
-        // 프로필 이미지 변경
         if (Boolean.TRUE.equals(useDefault)) {
             user.setImageUrl("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/profiles/default_profile.png");
         } else if (Boolean.FALSE.equals(useDefault) && image != null && !image.isEmpty()) {
@@ -172,7 +193,7 @@ public class UserCommandService {
             final String keyName = amazonS3Manager.generateProfileKeyName(uuid);
             final String imageUrl = amazonS3Manager.uploadFile(keyName, image);
             user.setImageUrl(imageUrl);
-        }
+        } // 프로필 이미지 변경
 
         return toUserInfoDTO(user);
     }
@@ -185,30 +206,6 @@ public class UserCommandService {
         }
     }
 
-    @Transactional
-    public UserResponseDTO.LoginResultDTO kakaoLogin(String code) {
-        OAuthToken oAuthToken = getKakaoOauthToken(code);
-
-        KakaoProfile kakaoProfile;
-        try {
-            kakaoProfile = kakaoAuthProvider.requestKakaoProfile(oAuthToken.getAccess_token());
-        } catch (Exception e) {
-            throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_KAKAO);
-        }
-
-        Optional<LoginInfo> userLoginInfo = loginInfoRepository.findByUsername(kakaoProfile.getKakaoAccount().getEmail());
-
-        if (userLoginInfo.isPresent()) {
-            LoginInfo logininfo = userLoginInfo.get();
-            return getOauthResponseForUser(logininfo);
-        }
-
-        User user = userRepository.save(UserConverter.kakaoToUser(kakaoProfile));
-        LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toKakaoLoginInfo(kakaoProfile,user));
-
-        return getOauthResponseForUser(loginInfo);
-    }
-
     private UserResponseDTO.LoginResultDTO getOauthResponseForUser(LoginInfo logininfo) {
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -218,8 +215,9 @@ public class UserCommandService {
 
         User loginUser = logininfo.getUser();
 
-        String accessToken = jwtTokenProvider.generateToken(authentication);
-        return UserConverter.toLoginResultDTO(loginUser.getId(),accessToken);
+        String accessToken = jwtTokenProvider.createAccessToken(authentication);
+        String refreshToken = jwtTokenProvider.createRefreshToken(authentication);
+        return UserConverter.toLoginResultDTO(loginUser.getId(),accessToken,refreshToken);
     }
 
     private OAuthToken getKakaoOauthToken(String code) {

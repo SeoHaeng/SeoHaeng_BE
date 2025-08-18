@@ -47,10 +47,12 @@ public class UserConverter {
                 .build();
     }
 
-    public static UserResponseDTO.LoginResultDTO toLoginResultDTO(Long userId,String accessToken){
+    public static UserResponseDTO.LoginResultDTO toLoginResultDTO(
+            Long userId,String accessToken, String refreshToken){
         return UserResponseDTO.LoginResultDTO.builder()
                 .UserId(userId)
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
