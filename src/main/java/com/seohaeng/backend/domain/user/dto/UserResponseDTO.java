@@ -31,6 +31,7 @@ public class UserResponseDTO {
     @AllArgsConstructor
     public static class GetMyInfoResponseDTO {
         Long userId;
+        String userName;
         String nickName;
         String profileImageUrl;
         Provider loginType;

@@ -105,6 +105,7 @@ public class UserConverter {
     public static UserResponseDTO.GetMyInfoResponseDTO toMyInfoDTO(User user, LoginInfo loginInfo) {
         return UserResponseDTO.GetMyInfoResponseDTO.builder()
                 .userId(user.getId())
+                .userName(user.getLoginInfo().getUsername())
                 .nickName(user.getNickname())
                 .profileImageUrl(user.getImageUrl())
                 .loginType(loginInfo.getProvider())
