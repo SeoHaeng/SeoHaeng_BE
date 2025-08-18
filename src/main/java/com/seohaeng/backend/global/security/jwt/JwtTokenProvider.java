@@ -29,6 +29,9 @@ public class JwtTokenProvider {
 
     private final LoginInfoRepository loginInfoRepository;
 
+    private static final String HEADER_STRING = "Authorization";
+    private static final String HEADER_STRING_PREFIX = "Bearer ";
+
     @Value("${JWT_SECRET_KEY}")
     private String signingKey;
 
@@ -69,6 +72,17 @@ public class JwtTokenProvider {
         return generateToken(authentication, refreshTokenExpiration);
     }
 
+    // 토큰 추출
+    public String extractToken (final HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(HEADER_STRING);
+
+        if (authorizationHeader != null && authorizationHeader.startsWith(HEADER_STRING_PREFIX)) {
+            return authorizationHeader.substring(7);
+        }
+        throw new UserHandler(ErrorStatus.INVALID_TOKEN);
+    }
+
+    // 토큰 유효성 검증
     public boolean validateToken(String token) {
         try{
             Jwts.parserBuilder()

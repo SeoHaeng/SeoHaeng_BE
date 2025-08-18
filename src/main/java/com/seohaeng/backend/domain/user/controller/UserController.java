@@ -8,6 +8,7 @@ import com.seohaeng.backend.global.apiPayload.ApiResponse;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -21,6 +22,15 @@ public class UserController {
 
     private final UserCommandService userCommandService;
     private final UserQueryService userQueryService;
+
+    @Operation(
+            summary = "JWT Access Token 재발급 API",
+            description = "Refresh Token 을 검증하고 새로운 Access Token 과 Refresh Token 을 응답합니다.")
+    @PostMapping("/reissue")
+    public ApiResponse<UserResponseDTO.TokenResponse> reissueToken(final HttpServletRequest request) {
+        UserResponseDTO.TokenResponse result = userCommandService.reissueToken(request);
+        return ApiResponse.onSuccess(result);
+    }
 
     @Operation(summary = "일반 회원가입 API",
             description = "아이디는 4~12자이며, 비밀번호는 8~20자이고 영문, 숫자, 특수문자를 반드시 포함해야 합니다." +

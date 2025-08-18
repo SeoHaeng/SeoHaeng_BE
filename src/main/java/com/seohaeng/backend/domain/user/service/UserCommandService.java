@@ -16,13 +16,18 @@ import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import com.seohaeng.backend.global.aws.s3.AmazonS3Manager;
 import com.seohaeng.backend.global.security.KakaoAuthProvider;
 import com.seohaeng.backend.global.security.jwt.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.Duration;
 
 import java.util.*;
 
@@ -37,8 +42,47 @@ public class UserCommandService {
     private final LoginInfoRepository loginInfoRepository;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final KakaoAuthProvider kakaoAuthProvider;
     private final AmazonS3Manager amazonS3Manager;
+
+    @Value("${jwt.token.expiration.refresh}")
+    private long refreshTokenExpiration;
+
+    // 토큰 재발급
+    public UserResponseDTO.TokenResponse reissueToken(HttpServletRequest request) {
+        String refreshToken = jwtTokenProvider.extractToken(request);
+
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new UserHandler(ErrorStatus.INVALID_TOKEN);
+        }
+
+        Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
+        String username = authentication.getName();
+
+        LoginInfo loginInfo = loginInfoRepository.findByUsernameWithUser(username)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        User user = loginInfo.getUser();
+        Long userId = user.getId();
+
+        String redisKey = "refreshToken:" + userId;
+        String storedRefreshToken = (String) redisTemplate.opsForValue().get(redisKey);
+
+        if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
+            throw new UserHandler(ErrorStatus.INVALID_TOKEN);
+        }
+
+        String newAccessToken = jwtTokenProvider.createAccessToken(authentication);
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(authentication);
+
+        saveRefreshTokenToRedis(userId, newRefreshToken);
+
+        return UserResponseDTO.TokenResponse.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .build();
+    }
 
     // 회원가입
     @Transactional
@@ -88,6 +132,8 @@ public class UserCommandService {
 
         String accessToken = jwtTokenProvider.createAccessToken(authentication);
         String refreshToken = jwtTokenProvider.createRefreshToken(authentication);
+
+        saveRefreshTokenToRedis(loginUser.getId(), refreshToken);
 
         return UserConverter.toLoginResultDTO(
                 loginUser.getId(),
@@ -139,7 +185,6 @@ public class UserCommandService {
             throw new UserHandler(ErrorStatus.PASSWORD_MISMATCH);
         }
     }
-
 
     // 사용자 정보 변경
     @Transactional
@@ -198,6 +243,12 @@ public class UserCommandService {
         return toUserInfoDTO(user);
     }
 
+    // Refresh Token Redis 저장
+    private void saveRefreshTokenToRedis(Long userId, String refreshToken) {
+        String redisKey = "refreshToken:" + userId;
+        redisTemplate.opsForValue().set(redisKey, refreshToken, Duration.ofMillis(refreshTokenExpiration));
+    }
+
     private void validatePasswordComplexity(String password) {
         String pattern = "^(?!.*[가-힣])(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).+$";
 
@@ -217,6 +268,9 @@ public class UserCommandService {
 
         String accessToken = jwtTokenProvider.createAccessToken(authentication);
         String refreshToken = jwtTokenProvider.createRefreshToken(authentication);
+
+        saveRefreshTokenToRedis(loginUser.getId(), refreshToken);
+
         return UserConverter.toLoginResultDTO(loginUser.getId(),accessToken,refreshToken);
     }
 
