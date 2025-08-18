@@ -51,9 +51,8 @@ public class UserController {
     @Operation(summary = "회원 탈퇴", description = "현재 사용자의 회원 탈퇴를 진행합니다.")
     @DeleteMapping
     public ApiResponse<String> deleteAccount(
-            @AuthUser Long userId,
-            @RequestBody  UserRequestDTO.DeleteAccountDTO password){
-        userCommandService.deleteUser(userId, password);
+            @AuthUser Long userId){
+        userCommandService.deleteUser(userId);
         return ApiResponse.onSuccess("회원 탈퇴가 완료되었습니다.");
     }
 

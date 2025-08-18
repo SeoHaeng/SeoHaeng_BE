@@ -169,7 +169,7 @@ public class UserCommandService {
 
     // 회원 탈퇴
     @Transactional
-    public void deleteUser(Long userId, UserRequestDTO.DeleteAccountDTO password){
+    public void deleteUser(Long userId){
 
         User user = userRepository.findUserWithLoginInfoById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -177,13 +177,9 @@ public class UserCommandService {
         LoginInfo loginInfo = user.getLoginInfo();
         Provider provider = loginInfo.getProvider();
 
-        if(passwordEncoder.matches(password.getPassword(), loginInfo.getPassword())){
-            if(provider.equals(Provider.LOCAL)){
-                userRepository.delete(user);
-            } // TODO : 각 소셜 로그인 Provider 별로 처리
-        }else{
-            throw new UserHandler(ErrorStatus.PASSWORD_MISMATCH);
-        }
+        if(provider.equals(Provider.LOCAL)){
+            userRepository.delete(user);
+        } // TODO : 각 소셜 로그인 Provider 별로 처리
     }
 
     // 사용자 정보 변경

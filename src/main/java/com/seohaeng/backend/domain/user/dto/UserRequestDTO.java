@@ -50,10 +50,4 @@ public class UserRequestDTO {
         @Size(min = 8, max = 20)
         private String password2;
     }
-
-    @Getter
-    public static class DeleteAccountDTO{
-        @NotBlank(message = "탈퇴를 위해 비밀번호 입력은 필수입니다.")
-        private String password;
-    }
 }
