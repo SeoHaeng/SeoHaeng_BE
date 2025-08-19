@@ -155,7 +155,7 @@ public class UserCommandService {
             throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_KAKAO);
         }
 
-        Optional<LoginInfo> userLoginInfo = loginInfoRepository.findByUsername(kakaoProfile.getKakaoAccount().getEmail());
+        Optional<LoginInfo> userLoginInfo = loginInfoRepository.findByUsername("KAKAO_" + kakaoProfile.getId());
 
         if (userLoginInfo.isPresent()) {
             LoginInfo logininfo = userLoginInfo.get();
@@ -180,7 +180,7 @@ public class UserCommandService {
             throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_NAVER);
         }
 
-        Optional<LoginInfo> userLoginInfo = loginInfoRepository.findByUsername(naverProfile.getNaverAccount().getEmail());
+        Optional<LoginInfo> userLoginInfo = loginInfoRepository.findByUsername("NAVER_" + naverProfile.getNaverAccount().getId());
 
         if (userLoginInfo.isPresent()) {
             LoginInfo logininfo = userLoginInfo.get();
@@ -205,9 +205,7 @@ public class UserCommandService {
             throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_GOOGLE);
         }
 
-        Optional<LoginInfo> userLoginInfo
-                = loginInfoRepository.findByUsername(
-                googleProfile.getEmail());
+        Optional<LoginInfo> userLoginInfo = loginInfoRepository.findByUsername("GOOGLE_" + googleProfile.getSub());
 
         if (userLoginInfo.isPresent()) {
             LoginInfo logininfo = userLoginInfo.get();
