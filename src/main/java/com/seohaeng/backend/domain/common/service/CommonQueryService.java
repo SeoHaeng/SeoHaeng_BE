@@ -19,10 +19,10 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class CommonQueryService {
 
-    @Value("${NAVER_CLIENT_ID}")
+    @Value("${cloud.naver.api.client-id}")
     private String NaverClientId;
 
-    @Value("${NAVER_CLIENT_SECRET}")
+    @Value("${cloud.naver.api.client-secret}")
     private String NaverClientSecret;
 
     private final String NAVER_API_URL = "https://openapi.naver.com/v1/search/book.json";
