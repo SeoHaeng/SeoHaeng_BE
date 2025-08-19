@@ -1,7 +1,6 @@
 package com.seohaeng.backend.global.security.jwt;
 
 import com.seohaeng.backend.domain.user.entity.LoginInfo;
-import com.seohaeng.backend.domain.user.entity.User;
 import com.seohaeng.backend.domain.user.repository.LoginInfoRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
@@ -32,7 +31,7 @@ public class JwtTokenProvider {
     private static final String HEADER_STRING = "Authorization";
     private static final String HEADER_STRING_PREFIX = "Bearer ";
 
-    @Value("${JWT_SECRET_KEY}")
+    @Value("${jwt.token.secretKey}")
     private String signingKey;
 
     @Value("${jwt.token.expiration.access}")
