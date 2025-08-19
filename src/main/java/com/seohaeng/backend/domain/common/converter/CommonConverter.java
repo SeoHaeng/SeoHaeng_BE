@@ -11,6 +11,7 @@ public class CommonConverter {
         return CommonResponseDTO.bookSearchResultDTO.builder()
                 .title(bookItem.getTitle())
                 .author(bookItem.getAuthor())
+                .pubDate(bookItem.getPubdate())
                 .bookImage(bookItem.getImage())
                 .build();
     }
