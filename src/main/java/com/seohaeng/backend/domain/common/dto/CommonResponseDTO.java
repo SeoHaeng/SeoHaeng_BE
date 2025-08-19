@@ -14,6 +14,7 @@ public class CommonResponseDTO {
         private String title;
         private String author;
         private String bookImage;
+        private String pubDate;
     }
 
     @Getter
