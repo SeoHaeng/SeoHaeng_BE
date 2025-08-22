@@ -27,24 +27,30 @@ public class TourApiClient {
                 .baseUrl(AREA_BASED_SEARCH_URL)
                 .build();
 
-        String url = AREA_BASED_SEARCH_URL + "?numOfRows=1000&pageNo=" + pageNo +
+        String url = AREA_BASED_SEARCH_URL + "?numOfRows=100&pageNo=" + pageNo +
                 "&MobileOS=AND&MobileApp=seohaeng&_type=json&contentTypeId=" + contentTypeId + 
                 "&areaCode=32&serviceKey=" + serviceKey;
         
         URI uri = URI.create(url);
 
-        AreaBasedSearchResponseDTO response = webClient.get()
-                .uri(uri)
-                .retrieve()
-                .bodyToMono(AreaBasedSearchResponseDTO.class)
-                .block();
+        try {
+            AreaBasedSearchResponseDTO response = webClient.get()
+                    .uri(uri)
+                    .retrieve()
+                    .bodyToMono(AreaBasedSearchResponseDTO.class)
+                    .block();
 
-        log.info("[TourAPI] 지역 기반 검색 응답 완료");
-        return response;
+            log.info("[TourAPI] 지역 기반 검색 응답 완료");
+            Thread.sleep(500);
+            return response;
+        } catch (Exception e) {
+            log.info("[TourAPI] 더 이상 데이터가 없습니다. pageNo: {}", pageNo);
+            return null;
+        }
     }
 
     // 공통 정보
-    public DetailCommonResponseDTO getDetailCommonInfo(Long contentId){
+    public DetailCommonResponseDTO getDetailCommonInfo(String contentId){
         WebClient webClient = WebClient.builder()
                 .baseUrl(DETAIL_INTRO_URL)
                 .build();
@@ -60,11 +66,12 @@ public class TourApiClient {
                 .bodyToMono(DetailCommonResponseDTO.class)
                 .block();
         log.info("[TourAPI] 공통 정보 응답 완료");
+        try { Thread.sleep(500); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
         return response;
     }
 
     // 반복 정보
-    public DetailRepeatResponseDTO getDetailRepeatInfo(int contentTypeId, Long contentId){
+    public DetailRepeatResponseDTO getDetailRepeatInfo(int contentTypeId, String contentId){
         WebClient webClient = WebClient.builder()
                 .baseUrl(DETAIL_REPEAT_URL)
                 .build();
@@ -80,11 +87,12 @@ public class TourApiClient {
                 .bodyToMono(DetailRepeatResponseDTO.class)
                 .block();
         log.info("[TourAPI] 반복 정보 응답 완료");
+        try { Thread.sleep(500); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
         return response;
     }
 
     // 소개 정보
-    public DetailIntroResponse getDetailIntroInfo(int contentTypeId, Long contentId){
+    public DetailIntroResponse getDetailIntroInfo(int contentTypeId, String contentId){
         WebClient webClient = WebClient.builder()
                 .baseUrl(DETAIL_COMMON_URL)
                 .build();
@@ -102,6 +110,7 @@ public class TourApiClient {
                 .bodyToMono(responseClass)
                 .block();
         log.info("[TourAPI] 소개 정보 응답 완료");
+        try { Thread.sleep(500); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
         return response;
     }
 
