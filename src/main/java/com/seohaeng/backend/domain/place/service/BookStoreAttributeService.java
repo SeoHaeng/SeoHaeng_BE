@@ -39,17 +39,6 @@ public class BookStoreAttributeService {
                 .toList();
     }
 
-//    public List<PlaceMarkerDTO> getIndieBookStoreMarkers() {
-//        return repository.findAllIndiePublication().stream()
-//                .map(attr -> new PlaceMarkerDTO(
-//                        attr.getPlace().getId(),
-//                        attr.getPlace().getName(),
-//                        attr.getPlace().getLatitude(),
-//                        attr.getPlace().getLongitude()
-//                ))
-//                .toList();
-//    }
-
     public List<PlaceMarkerDTO> getBookstoreMarkers() {
         return repository.findAllBookstore().stream()
                 .map(attr -> new PlaceMarkerDTO(

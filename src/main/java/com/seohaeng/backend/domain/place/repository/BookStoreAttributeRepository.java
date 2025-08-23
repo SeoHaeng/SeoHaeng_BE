@@ -14,9 +14,6 @@ public interface BookStoreAttributeRepository extends JpaRepository<BookStoreAtt
     @Query("SELECT b FROM BookStoreAttribute b LEFT JOIN FETCH b.place p WHERE b.bookCafe = true")
     List<BookStoreAttribute> findAllBookCafe();
 
-//    @Query("SELECT b FROM BookStoreAttribute b LEFT JOIN FETCH b.place p WHERE b.indiePublication = true")
-//    List<BookStoreAttribute> findAllIndiePublication();
-
     @Query("SELECT b FROM BookStoreAttribute b LEFT JOIN FETCH b.place p WHERE p.placeType = 'BOOKSTORE'")
     List<BookStoreAttribute> findAllBookstore();
 
