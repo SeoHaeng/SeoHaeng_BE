@@ -1,0 +1,47 @@
+package com.seohaeng.backend.domain.place.controller;
+
+import com.seohaeng.backend.domain.place.dto.PlaceMarkerDTO;
+import com.seohaeng.backend.domain.place.service.BookStoreAttributeService;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@Validated
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/places")
+public class PlaceMarkerController {
+
+    private final BookStoreAttributeService service;
+
+    @Operation(
+            summary = "지도 위 북스테이만 조회 API")
+    @GetMapping("/markers/bookstays")
+    public List<PlaceMarkerDTO> getBookStayMarkers() {
+        return service.getBookStayMarkers();
+    }
+
+    @Operation(summary = "지도 위 북카페만 조회 API")
+    @GetMapping("/markers/bookcafes")
+    public List<PlaceMarkerDTO> getBookCafeMarkers() {
+        return service.getBookCafeMarkers();
+    }
+
+    @Operation(summary = "지도 위 독립서점만 조회 API")
+    @GetMapping("/markers/bookstores")
+    public List<PlaceMarkerDTO> getIndieBookStoreMarkers() {
+        return service.getBookstoreMarkers();
+    }
+
+    @Operation(summary = "지도 위 공간책갈피만 조회 API")
+    @GetMapping("/markers/spacebookmarks")
+    public List<PlaceMarkerDTO> getSpaceBookmarkMarkers() {
+        return service.getSpaceBookmarkMarkers();
+    }
+
+}
