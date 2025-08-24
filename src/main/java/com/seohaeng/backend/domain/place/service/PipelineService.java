@@ -235,6 +235,8 @@ public class PipelineService {
                     place.setWebsiteUrl(newWebsiteUrl);
                 } // 웹사이트
             }
+            restaurantAttributeRepository.save(restaurantAttribute);
+
             place.setModifiedtime(placeItem.getModifiedtime());
             placeRepository.save(place);
             log.info("Place 정보 저장 완료");
@@ -333,6 +335,8 @@ public class PipelineService {
                     festivalAttribute.setPrograms(detailRepeatResponseDTO.getResponse().getBody().getItems().getItem().get(1).getInfotext());
                 }
             }
+
+            festivalAttributeRepository.save(festivalAttribute);
             place.setModifiedtime(placeItem.getModifiedtime());
             placeRepository.save(place);
             log.info("Place 정보 저장 완료");
