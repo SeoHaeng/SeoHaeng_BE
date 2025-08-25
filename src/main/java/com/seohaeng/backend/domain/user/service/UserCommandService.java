@@ -20,7 +20,6 @@ import com.seohaeng.backend.global.security.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.error.Error;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -111,6 +110,14 @@ public class UserCommandService {
         User joinUser = UserConverter.toUser(joinDTO);
         userRepository.save(joinUser);
 
+        agreementRepository.save(
+                Agreement.builder()
+                .user(joinUser)
+                .termsOfServiceAgreed(joinDTO.getTermsOfServiceAgreed())
+                .privacyPolicyAgreed(joinDTO.getPrivacyPolicyAgreed())
+                .build()
+        );
+
         String encodedPassword = passwordEncoder.encode(joinDTO.getPassword1());
         LoginInfo joinLoginInfo = toLocalLoginInfo(joinDTO, joinUser);
         joinLoginInfo.encodePassword(encodedPassword);
@@ -125,6 +132,13 @@ public class UserCommandService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.LOGIN_INFO_NOT_FOUND));
 
         User loginUser = loginUserLoginInfo.getUser();
+
+        Agreement agreement = agreementRepository.findByUser(loginUser)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.AGREEMENT_NOT_FOUND));
+
+        if (!agreement.getTermsOfServiceAgreed() || !agreement.getPrivacyPolicyAgreed()) {
+            throw new UserHandler(ErrorStatus.AGREEMENT_NOT_COMPLETED);
+        }
 
         if(!passwordEncoder.matches(loginDTO.getPassword(), loginUserLoginInfo.getPassword())){
             throw new UserHandler(ErrorStatus.PASSWORD_MISMATCH);
@@ -143,7 +157,8 @@ public class UserCommandService {
         return UserConverter.toLoginResultDTO(
                 loginUser.getId(),
                 accessToken,
-                refreshToken
+                refreshToken,
+                false
         );
     }
 
@@ -163,13 +178,13 @@ public class UserCommandService {
 
         if (userLoginInfo.isPresent()) {
             LoginInfo logininfo = userLoginInfo.get();
-            return getOauthResponseForUser(logininfo);
+            return getOauthResponseForUser(logininfo, false);
         }
 
         User user = userRepository.save(UserConverter.kakaoToUser(kakaoProfile));
         LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toKakaoLoginInfo(kakaoProfile,user));
 
-        return getOauthResponseForUser(loginInfo);
+        return getOauthResponseForUser(loginInfo, true);
     }
 
     // 네이버 로그인
@@ -188,13 +203,13 @@ public class UserCommandService {
 
         if (userLoginInfo.isPresent()) {
             LoginInfo logininfo = userLoginInfo.get();
-            return getOauthResponseForUser(logininfo);
+            return getOauthResponseForUser(logininfo, false);
         }
 
         User user = userRepository.save(UserConverter.naverToUser(naverProfile));
         LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toNaverLoginInfo(naverProfile,user));
 
-        return getOauthResponseForUser(loginInfo);
+        return getOauthResponseForUser(loginInfo, true);
     }
 
     // 구글 로그인
@@ -213,13 +228,13 @@ public class UserCommandService {
 
         if (userLoginInfo.isPresent()) {
             LoginInfo logininfo = userLoginInfo.get();
-            return getOauthResponseForUser(logininfo);
+            return getOauthResponseForUser(logininfo, false);
         }
 
         User user = userRepository.save(UserConverter.googleToUser(googleProfile));
         LoginInfo loginInfo = loginInfoRepository.save(UserConverter.toGoogleLoginInfo(googleProfile,user));
 
-        return getOauthResponseForUser(loginInfo);
+        return getOauthResponseForUser(loginInfo, true);
     }
 
     // 회원 탈퇴
@@ -335,7 +350,7 @@ public class UserCommandService {
         }
     }
 
-    private UserResponseDTO.LoginResultDTO getOauthResponseForUser(LoginInfo logininfo) {
+    private UserResponseDTO.LoginResultDTO getOauthResponseForUser(LoginInfo logininfo, Boolean isNewUser) {
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 logininfo.getUsername(),
@@ -349,7 +364,7 @@ public class UserCommandService {
 
         saveRefreshTokenToRedis(loginUser.getId(), refreshToken);
 
-        return UserConverter.toLoginResultDTO(loginUser.getId(),accessToken,refreshToken);
+        return UserConverter.toLoginResultDTO(loginUser.getId(),accessToken,refreshToken, isNewUser);
     }
 
     private OAuthToken getKakaoOauthToken(String code) {
@@ -380,5 +395,10 @@ public class UserCommandService {
             throw new AuthException(ErrorStatus.AUTH_INVALID_CODE);
         }
         return oAuthToken;
+    }
+
+    public enum UserStatusDTO{
+        NEW_USER,
+        EXISTING_USER
     }
 }

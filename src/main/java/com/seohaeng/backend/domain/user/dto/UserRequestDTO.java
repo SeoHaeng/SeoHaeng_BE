@@ -25,6 +25,14 @@ public class UserRequestDTO {
         @NotBlank
         @Size(min = 8, max = 20)
         String password2;
+
+        // 이용약관 동의
+        @AssertTrue(message = "이용약관에 필수로 동의해야 합니다.")
+        private Boolean termsOfServiceAgreed;
+
+        // 개인정보 처리방침 동의
+        @AssertTrue(message = "개인정보 처리방침에 필수로 동의해야 합니다.")
+        private Boolean privacyPolicyAgreed;
     }
 
     @Getter

@@ -26,6 +26,8 @@ public enum ErrorStatus implements BaseErrorCode {
     CURRENT_NICKNAME(HttpStatus.BAD_REQUEST, "USER4008", "현재 사용 중인 닉네임입니다."),
     OWNER_NOT_FOUND(HttpStatus.FORBIDDEN, "OWNER_001", "사장님 계정이 아닙니다. 권한이 없습니다."),
     AGREEMENT_ALREADY_EXISTS(HttpStatus.FORBIDDEN, "AGREEMENT_001", "이미 모든 약관에 동의를 했습니다."),
+    AGREEMENT_NOT_FOUND(HttpStatus.FORBIDDEN, "AGREEMENT_002", "현재 사용자의 이용 약관 동의 여부를 찾을 수 없습니다."),
+    AGREEMENT_NOT_COMPLETED(HttpStatus.FORBIDDEN, "AGREEMENT_003", "모든 약관에 동의하지 않았습니다."),
 
     // Auth 관련
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4001", "유효하지 않은 토큰입니다."),

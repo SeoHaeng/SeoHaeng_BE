@@ -86,11 +86,12 @@ public class UserConverter {
     }
 
     public static UserResponseDTO.LoginResultDTO toLoginResultDTO(
-            Long userId,String accessToken, String refreshToken){
+            Long userId,String accessToken, String refreshToken, Boolean isNewUser){
         return UserResponseDTO.LoginResultDTO.builder()
                 .UserId(userId)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .isNewUser(isNewUser)
                 .build();
     }
 

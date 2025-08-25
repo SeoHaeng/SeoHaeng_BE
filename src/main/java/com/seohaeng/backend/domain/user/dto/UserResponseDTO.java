@@ -11,6 +11,7 @@ public class UserResponseDTO {
     @AllArgsConstructor
     public static class LoginResultDTO {
         Long UserId;
+        Boolean isNewUser;
         String accessToken;
         String refreshToken;
     }
