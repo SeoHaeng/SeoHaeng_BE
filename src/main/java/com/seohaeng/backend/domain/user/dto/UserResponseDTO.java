@@ -11,6 +11,7 @@ public class UserResponseDTO {
     @AllArgsConstructor
     public static class LoginResultDTO {
         Long UserId;
+        Boolean isNewUser;
         String accessToken;
         String refreshToken;
     }
@@ -44,5 +45,16 @@ public class UserResponseDTO {
     public static class TokenResponse {
         String accessToken;
         String refreshToken;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AgreementResponse {
+        Long agreementId;
+        Long userId;
+        Boolean termsOfServiceAgreed;
+        Boolean privacyPolicyAgreed;
     }
 }

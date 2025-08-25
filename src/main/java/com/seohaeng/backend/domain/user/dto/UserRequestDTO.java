@@ -1,5 +1,6 @@
 package com.seohaeng.backend.domain.user.dto;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -24,6 +25,14 @@ public class UserRequestDTO {
         @NotBlank
         @Size(min = 8, max = 20)
         String password2;
+
+        // 이용약관 동의
+        @AssertTrue(message = "이용약관에 필수로 동의해야 합니다.")
+        private Boolean termsOfServiceAgreed;
+
+        // 개인정보 처리방침 동의
+        @AssertTrue(message = "개인정보 처리방침에 필수로 동의해야 합니다.")
+        private Boolean privacyPolicyAgreed;
     }
 
     @Getter
@@ -49,5 +58,17 @@ public class UserRequestDTO {
 
         @Size(min = 8, max = 20)
         private String password2;
+    }
+
+    @Getter
+    public static class AgreementRequestDTO {
+
+        // 이용약관 동의
+        @AssertTrue(message = "이용약관에 필수로 동의해야 합니다.")
+        private Boolean termsOfServiceAgreed;
+
+        // 개인정보 처리방침 동의
+        @AssertTrue(message = "개인정보 처리방침에 필수로 동의해야 합니다.")
+        private Boolean privacyPolicyAgreed;
     }
 }
