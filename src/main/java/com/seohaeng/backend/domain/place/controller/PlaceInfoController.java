@@ -2,7 +2,6 @@ package com.seohaeng.backend.domain.place.controller;
 
 import com.seohaeng.backend.domain.place.dto.PlaceInfoDTO;
 import com.seohaeng.backend.domain.place.service.PlaceInfoService;
-import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +22,12 @@ public class PlaceInfoController {
         - 장소의 리뷰 정보, 주소를 반환합니다.
         """
     )
-    @GetMapping("/{placeId}")
+    @GetMapping("/{placeId}/info")
     public PlaceInfoDTO getPlaceInfo(
             @PathVariable Long placeId,
             @RequestParam Double currentLat,
             @RequestParam Double currentLng,
-            @RequestParam(required = false) @AuthUser Long userId
+            @RequestParam(required = false) Long userId
     ) {
         return placeInfoService.getPlaceInfo(placeId, userId, currentLat, currentLng);
     }
