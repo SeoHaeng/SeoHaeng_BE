@@ -6,6 +6,7 @@ import com.seohaeng.backend.domain.place.entity.placeAttribute.BookStoreAttribut
 import com.seohaeng.backend.domain.place.entity.placeAttribute.FestivalAttribute;
 import com.seohaeng.backend.domain.place.entity.placeAttribute.RestaurantAttribute;
 import com.seohaeng.backend.domain.place.entity.placeAttribute.TouristSpotAttribute;
+import com.seohaeng.backend.domain.review.entity.Review;
 import com.seohaeng.backend.domain.travelCourse.entity.Region;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -58,4 +59,8 @@ public class Place extends BaseEntity {
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PlaceImage> placeImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
+
 }
