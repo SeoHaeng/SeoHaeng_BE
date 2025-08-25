@@ -33,6 +33,20 @@ public class ReadingSpotQueryService {
     private final ReadingSpotScrapRepository readingSpotScrapRepository;
     private final ReadingSpotLikeRepository readingSpotLikeRepository;
 
+    // 최신순 공간 책갈피 조회
+    public ReadingSpotResponseDTO.GetReadingSpotDetailListResponseDTO getLastestReadingSpot(Long userId, Integer page, Integer size){
+        User user = findUserById(userId);
+        PageRequest pageRequest = createPageRequest(page, size);
+        Page<ReadingSpot> readingSpotPage = readingSpotRepository.findAllByOpenedTrue(pageRequest);
+
+        List<ReadingSpotResponseDTO.GetReadingSpotResponseDTO> readingSpotResponseDTOS = readingSpotPage.getContent()
+                .stream()
+                .map(readingSpot -> convertToDetailResponseDTO(readingSpot, user))
+                .collect(Collectors.toList());
+
+        return ReadingSpotConverter.toGetReadingSpotDetailListResponseDTO(readingSpotResponseDTOS, readingSpotPage);
+    }
+
     // 공간책갈피 상세 조회
     public ReadingSpotResponseDTO.GetReadingSpotResponseDTO getReadingSpot(Long readingSpotId, Long userId) {
         ReadingSpot readingSpot = findReadingSpotWithImages(readingSpotId);

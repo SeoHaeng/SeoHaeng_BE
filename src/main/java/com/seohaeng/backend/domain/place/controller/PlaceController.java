@@ -66,4 +66,16 @@ public class PlaceController {
     public ApiResponse<List<PlaceResponseDTO.TodayPlaceResponse>> getBookChallengePlaces() {
         return ApiResponse.onSuccess(placeQueryService.getTodayPlace());
     }
+
+
+    @Operation(
+            summary = "현재 진행 중인 축제 조회 API",
+            description = """
+        현재 진행 중인 강원도 축제를 조회합니다.
+        """
+    )
+    @GetMapping("/festival")
+    public ApiResponse<List<PlaceResponseDTO.OngoingFestivalResponse>> getOngoingFestival() {
+        return ApiResponse.onSuccess(placeQueryService.getOngoingFestival());
+    }
 }

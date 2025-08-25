@@ -5,6 +5,8 @@ import com.seohaeng.backend.domain.place.entity.place.Place;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 
 @Entity
 @Getter
@@ -27,4 +29,8 @@ public class FestivalAttribute extends BaseEntity {
 
     @Column(length = 1000)
     private String programs;
+
+    private LocalDate startDate;
+
+    private LocalDate endDate;
 }

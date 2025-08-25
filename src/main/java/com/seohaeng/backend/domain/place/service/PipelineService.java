@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -329,6 +331,16 @@ public class PipelineService {
                     festivalAttribute.setOverview(newOverview);
                 }
 
+                LocalDate startDate = parseDate(festivalIntroItem.getEventstartdate());
+                if(!Objects.equals(festivalAttribute.getStartDate(), startDate)){
+                    festivalAttribute.setStartDate(startDate);
+                }
+
+                LocalDate endDate = parseDate(festivalIntroItem.getEventenddate());
+                if(!Objects.equals(festivalAttribute.getEndDate(), endDate)){
+                    festivalAttribute.setEndDate(endDate);
+                }
+
                 DetailRepeatResponseDTO detailRepeatResponseDTO = tourApiClient.getDetailRepeatInfo(15, placeItem.getContentid());
                 if(!Objects.equals(festivalAttribute.getPrograms(),
                         detailRepeatResponseDTO.getResponse().getBody().getItems().getItem().get(1).getInfotext())) {
@@ -418,6 +430,19 @@ public class PipelineService {
                         .build();
                 placeImageRepository.save(secondImage);
             }
+        }
+    }
+
+    private LocalDate parseDate(String dateString) {
+        if (dateString == null || dateString.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+            return LocalDate.parse(dateString, formatter);
+        } catch (Exception e) {
+            log.warn("날짜 파싱 실패: {}", dateString, e);
+            return null;
         }
     }
 }
