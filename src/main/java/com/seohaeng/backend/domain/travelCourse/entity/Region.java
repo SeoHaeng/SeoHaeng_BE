@@ -17,4 +17,6 @@ public class Region extends BaseEntity {
     private Long id;
 
     private String regionName;
+
+    private String regionImage;
 }

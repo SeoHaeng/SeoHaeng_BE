@@ -1,5 +1,6 @@
 package com.seohaeng.backend.domain.readingSpot.controller;
 
+import com.seohaeng.backend.domain.place.dto.PlaceResponseDTO;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotRequestDTO;
 import com.seohaeng.backend.domain.readingSpot.dto.ReadingSpotResponseDTO;
 import com.seohaeng.backend.domain.readingSpot.service.ReadingSpotCommandService;
@@ -26,6 +27,24 @@ public class ReadingSpotController {
 
     private final ReadingSpotCommandService readingSpotCommandService;
     private final ReadingSpotQueryService readingSpotQueryService;
+
+    @Operation(
+            summary = "최신 공간 책갈피 조회 API",
+            description = """
+    최신 순으로 공간 책갈피를 조회합니다.
+    - Parameter:
+      - `page`: 페이지 번호 (1부터 시작)
+      - `size`: 한 페이지당 게시글 개수 (기본값: 10)
+    """
+    )
+    @GetMapping
+    public ApiResponse<ReadingSpotResponseDTO.GetReadingSpotDetailListResponseDTO> getBookChallengePlaces(
+            @AuthUser Long userId,
+            @RequestParam(name = "page", defaultValue = "1") @Min(1)Integer page,
+            @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size
+    ) {
+        return ApiResponse.onSuccess(readingSpotQueryService.getLastestReadingSpot(userId, page, size));
+    }
 
     @Operation(
             summary = "공간책갈피 생성 API",

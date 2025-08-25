@@ -15,4 +15,6 @@ public interface ReadingSpotRepository extends JpaRepository<ReadingSpot, Long> 
     Optional<ReadingSpot> findWithReadingSpotImagesById(Long id);
 
     Page<ReadingSpot> findAllByUser(User user, Pageable pageable);
+    
+    Page<ReadingSpot> findAllByOpenedTrue(Pageable pageable);
 }

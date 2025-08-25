@@ -2,13 +2,14 @@ package com.seohaeng.backend.domain.place.entity.place;
 
 import com.seohaeng.backend.domain.common.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Getter
+@Builder
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class PlaceImage extends BaseEntity {
 
     @Id

@@ -68,6 +68,10 @@ jwt:
       access: ${JWT_ACCESS_TOKEN_TIME}
       refresh: ${JWT_REFRESH_TOKEN_TIME}
 
+tourapi:
+  api:
+    client-id: ${TOUR_API_SERVICE_KEY}
+
 cloud:
   aws:
     s3:

@@ -3,13 +3,14 @@ package com.seohaeng.backend.domain.place.entity.placeAttribute;
 import com.seohaeng.backend.domain.common.entity.BaseEntity;
 import com.seohaeng.backend.domain.place.entity.place.Place;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TouristSpotAttribute extends BaseEntity {
 
     @Id
@@ -20,10 +21,11 @@ public class TouristSpotAttribute extends BaseEntity {
     @JoinColumn(name = "place_id")
     private Place place;
 
+    @Lob
     private String overview;
 
-    private boolean parkingAvailable;
-    private boolean petsAllowed;
-    private boolean strollerAllowed;
-    private boolean guidedTourAvailable;
+    private String parkingAvailable;
+    private String petsAllowed;
+    private String babyCarriageAllowed;
+    private String creditCardAccepted;
 }

@@ -14,6 +14,7 @@ public class StampResponseDTO {
         private Long userId;
         private Integer totalStampCount;
         private GetMyStampListDTO stampList;
+        private RegionImagesDTO regionImageList;
     }
 
     @Builder
@@ -40,5 +41,31 @@ public class StampResponseDTO {
         private LocalDate inje = null;
         private LocalDate goseong = null;
         private LocalDate yangyang = null;
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RegionImagesDTO {
+        private String chuncheon = null;
+        private String wonju = null;
+        private String gangneung = null;
+        private String donghae = null;
+        private String taebaek = null;
+        private String sokcho = null;
+        private String samcheok = null;
+        private String hongcheon = null;
+        private String hoengseong = null;
+        private String yeongwol = null;
+        private String pyeongchang = null;
+        private String jeongseon = null;
+        private String cheorwon = null;
+        private String hwacheon = null;
+        private String yanggu = null;
+        private String inje = null;
+        private String goseong = null;
+        private String yangyang = null;
     }
 }

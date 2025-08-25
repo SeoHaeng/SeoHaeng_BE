@@ -2,6 +2,7 @@ package com.seohaeng.backend.domain.place.converter;
 
 import com.seohaeng.backend.domain.place.dto.PlaceResponseDTO;
 import com.seohaeng.backend.domain.place.entity.place.Place;
+import com.seohaeng.backend.domain.place.entity.placeAttribute.FestivalAttribute;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -29,6 +30,27 @@ public class PlaceConverter {
                 .isFirst(page.isFirst())
                 .isLast(page.isLast())
                 .placeList(placeDtoList)
+                .build();
+    }
+
+    public static PlaceResponseDTO.TodayPlaceResponse toTodayPlaceResponse (Place place, String overview) {
+        return PlaceResponseDTO.TodayPlaceResponse.builder()
+                .placeId(place.getId())
+                .name(place.getName())
+                .overview(overview)
+                .imageUrl(place.getPlaceImages().get(0).getImageUrl())
+                .placeType(place.getPlaceType())
+                .build();
+    }
+
+    public static PlaceResponseDTO.OngoingFestivalResponse toOngoingFestivalResponse(Place place, FestivalAttribute attribute) {
+        return PlaceResponseDTO.OngoingFestivalResponse.builder()
+                .placeId(place.getId())
+                .placeType(place.getPlaceType())
+                .festivalName(place.getName())
+                .startDate(attribute.getStartDate())
+                .endDate(attribute.getEndDate())
+                .imageUrl(place.getPlaceImages().get(0).getImageUrl())
                 .build();
     }
 }

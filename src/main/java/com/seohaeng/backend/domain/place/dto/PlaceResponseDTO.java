@@ -3,6 +3,7 @@ package com.seohaeng.backend.domain.place.dto;
 import com.seohaeng.backend.domain.place.entity.enums.PlaceType;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class PlaceResponseDTO {
@@ -42,5 +43,32 @@ public class PlaceResponseDTO {
     @AllArgsConstructor
     public static class PlaceBookmarkToggleResponse{
         private boolean bookmarked;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class TodayPlaceResponse{
+        private Long placeId;
+        private String name;
+        private PlaceType placeType;
+        private String overview;
+        private String imageUrl;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class OngoingFestivalResponse{
+        private Long placeId;
+        private PlaceType placeType;
+        private String festivalName;
+        private LocalDate startDate;
+        private LocalDate endDate;
+        private String imageUrl;
     }
 }
