@@ -20,6 +20,9 @@ public class BookStoreAttribute extends BaseEntity{
     @JoinColumn(name = "place_id")
     private Place place;
 
+    @Column(length = 1000)
+    private String overview;
+
     // 북카페, 북스테이
     private boolean bookCafe;
     private boolean bookStay;

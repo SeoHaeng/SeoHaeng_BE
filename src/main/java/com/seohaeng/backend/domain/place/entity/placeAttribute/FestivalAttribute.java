@@ -3,13 +3,17 @@ package com.seohaeng.backend.domain.place.entity.placeAttribute;
 import com.seohaeng.backend.domain.common.entity.BaseEntity;
 import com.seohaeng.backend.domain.place.entity.place.Place;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+import java.time.LocalDate;
+
+
 @Entity
 @Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class FestivalAttribute extends BaseEntity {
 
     @Id
@@ -20,7 +24,13 @@ public class FestivalAttribute extends BaseEntity {
     @JoinColumn(name = "place_id")
     private Place place;
 
+    @Column(length = 1000)
     private String overview;
 
+    @Column(length = 1000)
     private String programs;
+
+    private LocalDate startDate;
+
+    private LocalDate endDate;
 }

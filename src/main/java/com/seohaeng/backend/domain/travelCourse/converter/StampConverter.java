@@ -6,11 +6,14 @@ import com.seohaeng.backend.domain.user.entity.User;
 public class StampConverter {
 
     public static StampResponseDTO.GetMyStampResponseDTO toGetMyStampResponseDTO(
-            User user, Integer total, StampResponseDTO.GetMyStampListDTO getMyStampListDTO) {
+            User user, Integer total,
+            StampResponseDTO.GetMyStampListDTO getMyStampListDTO,
+            StampResponseDTO.RegionImagesDTO regionImagesDTO) {
         return StampResponseDTO.GetMyStampResponseDTO.builder()
                 .userId(user.getId())
                 .totalStampCount(total)
                 .stampList(getMyStampListDTO)
+                .regionImageList(regionImagesDTO)
                 .build();
     }
 }

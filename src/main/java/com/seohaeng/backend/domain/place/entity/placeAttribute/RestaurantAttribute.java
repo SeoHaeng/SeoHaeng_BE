@@ -3,13 +3,14 @@ package com.seohaeng.backend.domain.place.entity.placeAttribute;
 import com.seohaeng.backend.domain.common.entity.BaseEntity;
 import com.seohaeng.backend.domain.place.entity.place.Place;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Getter
+@Builder
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RestaurantAttribute extends BaseEntity {
 
     @Id
@@ -20,12 +21,13 @@ public class RestaurantAttribute extends BaseEntity {
     @JoinColumn(name = "place_id")
     private Place place;
 
+
     private String firstmenu;
     private String treatmenu;
 
-    private boolean childFriendly;
-    private boolean isSmokingAllowed;
-    private boolean isTakeoutAvailable;
-    private boolean hasParking;
-    private boolean isReservable;
+    private String kidsfacility;
+    private String isSmokingAllowed;
+    private String isTakeoutAvailable;
+    private String hasParking;
+    private String isReservable;
 }
