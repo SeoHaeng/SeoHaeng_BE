@@ -2,7 +2,9 @@ package com.seohaeng.backend.domain.travelCourse.service;
 
 import com.seohaeng.backend.domain.travelCourse.converter.StampConverter;
 import com.seohaeng.backend.domain.travelCourse.dto.StampResponseDTO;
+import com.seohaeng.backend.domain.travelCourse.entity.Region;
 import com.seohaeng.backend.domain.travelCourse.entity.Stamp;
+import com.seohaeng.backend.domain.travelCourse.repository.RegionRepository;
 import com.seohaeng.backend.domain.user.entity.User;
 import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
@@ -23,32 +25,90 @@ public class StampQueryService {
     public StampResponseDTO.GetMyStampResponseDTO getMyStamp(Long userId) {
         User user = userRepository.findWithStampListById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
         StampResponseDTO.GetMyStampListDTO stampListDTO = new StampResponseDTO.GetMyStampListDTO();
+        StampResponseDTO.RegionImagesDTO regionImagesDTO = new StampResponseDTO.RegionImagesDTO();
 
         List<Stamp> stampList = user.getStampList();
         for (Stamp stamp : stampList) {
             String regionName = stamp.getRegion().getRegionName();
+            String regionImage = stamp.getRegion().getRegionImage();
 
-            if ("춘천".equals(regionName)) stampListDTO.setChuncheon(stamp.getStampedDate());
-            else if ("원주".equals(regionName)) stampListDTO.setWonju(stamp.getStampedDate());
-            else if ("강릉".equals(regionName)) stampListDTO.setGangneung(stamp.getStampedDate());
-            else if ("동해".equals(regionName)) stampListDTO.setDonghae(stamp.getStampedDate());
-            else if ("태백".equals(regionName)) stampListDTO.setTaebaek(stamp.getStampedDate());
-            else if ("속초".equals(regionName)) stampListDTO.setSokcho(stamp.getStampedDate());
-            else if ("삼척".equals(regionName)) stampListDTO.setSamcheok(stamp.getStampedDate());
-            else if ("홍천".equals(regionName)) stampListDTO.setHongcheon(stamp.getStampedDate());
-            else if ("횡성".equals(regionName)) stampListDTO.setHoengseong(stamp.getStampedDate());
-            else if ("영월".equals(regionName)) stampListDTO.setYeongwol(stamp.getStampedDate());
-            else if ("평창".equals(regionName)) stampListDTO.setPyeongchang(stamp.getStampedDate());
-            else if ("정선".equals(regionName)) stampListDTO.setJeongseon(stamp.getStampedDate());
-            else if ("철원".equals(regionName)) stampListDTO.setCheorwon(stamp.getStampedDate());
-            else if ("화천".equals(regionName)) stampListDTO.setHwacheon(stamp.getStampedDate());
-            else if ("양구".equals(regionName)) stampListDTO.setYanggu(stamp.getStampedDate());
-            else if ("인제".equals(regionName)) stampListDTO.setInje(stamp.getStampedDate());
-            else if ("고성".equals(regionName)) stampListDTO.setGoseong(stamp.getStampedDate());
-            else if ("양양".equals(regionName)) stampListDTO.setYangyang(stamp.getStampedDate());
+            switch (regionName) {
+                case "춘천" -> {
+                    stampListDTO.setChuncheon(stamp.getStampedDate());
+                    regionImagesDTO.setChuncheon(regionImage);
+                }
+                case "원주" -> {
+                    stampListDTO.setWonju(stamp.getStampedDate());
+                    regionImagesDTO.setWonju(regionImage);
+                }
+                case "강릉" -> {
+                    stampListDTO.setGangneung(stamp.getStampedDate());
+                    regionImagesDTO.setGangneung(regionImage);
+                }
+                case "동해" -> {
+                    stampListDTO.setDonghae(stamp.getStampedDate());
+                    regionImagesDTO.setDonghae(regionImage);
+                }
+                case "태백" -> {
+                    stampListDTO.setTaebaek(stamp.getStampedDate());
+                    regionImagesDTO.setTaebaek(regionImage);
+                }
+                case "속초" -> {
+                    stampListDTO.setSokcho(stamp.getStampedDate());
+                    regionImagesDTO.setSokcho(regionImage);
+                }
+                case "삼척" -> {
+                    stampListDTO.setSamcheok(stamp.getStampedDate());
+                    regionImagesDTO.setSamcheok(regionImage);
+                }
+                case "홍천" -> {
+                    stampListDTO.setHongcheon(stamp.getStampedDate());
+                    regionImagesDTO.setHongcheon(regionImage);
+                }
+                case "횡성" -> {
+                    stampListDTO.setHoengseong(stamp.getStampedDate());
+                    regionImagesDTO.setHoengseong(regionImage);
+                }
+                case "영월" -> {
+                    stampListDTO.setYeongwol(stamp.getStampedDate());
+                    regionImagesDTO.setYeongwol(regionImage);
+                }
+                case "평창" -> {
+                    stampListDTO.setPyeongchang(stamp.getStampedDate());
+                    regionImagesDTO.setPyeongchang(regionImage);
+                }
+                case "정선" -> {
+                    stampListDTO.setJeongseon(stamp.getStampedDate());
+                    regionImagesDTO.setJeongseon(regionImage);
+                }
+                case "철원" -> {
+                    stampListDTO.setCheorwon(stamp.getStampedDate());
+                    regionImagesDTO.setCheorwon(regionImage);
+                }
+                case "화천" -> {
+                    stampListDTO.setHwacheon(stamp.getStampedDate());
+                    regionImagesDTO.setHwacheon(regionImage);
+                }
+                case "양구" -> {
+                    stampListDTO.setYanggu(stamp.getStampedDate());
+                    regionImagesDTO.setYanggu(regionImage);
+                }
+                case "인제" -> {
+                    stampListDTO.setInje(stamp.getStampedDate());
+                    regionImagesDTO.setInje(regionImage);
+                }
+                case "고성" -> {
+                    stampListDTO.setGoseong(stamp.getStampedDate());
+                    regionImagesDTO.setGoseong(regionImage);
+                }
+                case "양양" -> {
+                    stampListDTO.setYangyang(stamp.getStampedDate());
+                    regionImagesDTO.setYangyang(regionImage);
+                }
+            }
         }
-        return StampConverter.toGetMyStampResponseDTO(user, stampList.size(), stampListDTO);
+
+        return StampConverter.toGetMyStampResponseDTO(user, stampList.size(), stampListDTO, regionImagesDTO);
     }
 }
