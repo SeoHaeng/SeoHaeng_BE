@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -52,5 +54,16 @@ public class PlaceController {
         PlaceResponseDTO.PlaceBookmarkToggleResponse result =
                 placeCommandService.toggleBookMarkPlace(userId, placeId);
         return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(
+            summary = "오늘의 추천 강원도 조회 API",
+            description = """
+        메인 홈에 오늘의 추천 강원도 데이터를 조회합니다. 랜덤으로 독립서점, 축제, 관광지 데이터가 하나씩 조회됩니다.
+    """
+    )
+    @GetMapping("/today")
+    public ApiResponse<List<PlaceResponseDTO.TodayPlaceResponse>> getBookChallengePlaces() {
+        return ApiResponse.onSuccess(placeQueryService.getTodayPlace());
     }
 }

@@ -31,4 +31,14 @@ public class PlaceConverter {
                 .placeList(placeDtoList)
                 .build();
     }
+
+    public static PlaceResponseDTO.TodayPlaceResponse toTodayPlaceResponse (Place place, String overview) {
+        return PlaceResponseDTO.TodayPlaceResponse.builder()
+                .placeId(place.getId())
+                .name(place.getName())
+                .overview(overview)
+                .imageUrl(place.getPlaceImages().get(0).getImageUrl())
+                .placeType(place.getPlaceType())
+                .build();
+    }
 }

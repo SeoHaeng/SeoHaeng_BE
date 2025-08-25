@@ -43,4 +43,17 @@ public class PlaceResponseDTO {
     public static class PlaceBookmarkToggleResponse{
         private boolean bookmarked;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class TodayPlaceResponse{
+        private Long placeId;
+        private String name;
+        private PlaceType placeType;
+        private String overview;
+        private String imageUrl;
+    }
 }

@@ -2,6 +2,7 @@ package com.seohaeng.backend.domain.place.service;
 
 import com.seohaeng.backend.domain.place.converter.PlaceConverter;
 import com.seohaeng.backend.domain.place.dto.PlaceResponseDTO;
+import com.seohaeng.backend.domain.place.entity.enums.PlaceType;
 import com.seohaeng.backend.domain.place.entity.place.BookChallengeEvent;
 import com.seohaeng.backend.domain.place.entity.place.Place;
 import com.seohaeng.backend.domain.place.repository.BookChallengeEventRepository;
@@ -13,7 +14,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,5 +41,26 @@ public class PlaceQueryService {
                 .map(PlaceConverter::toplaceDto).collect(Collectors.toList());
 
         return PlaceConverter.toplaceListDto(bookChallengeEvents, placeDtoList);
+    }
+
+    public List<PlaceResponseDTO.TodayPlaceResponse> getTodayPlace() {
+        return List.of(PlaceType.BOOKSTORE, PlaceType.TOURIST_SPOT, PlaceType.FESTIVAL)
+                .stream()
+                .map(placeType -> placeRepository.findRandomByPlaceType(placeType.name()))
+                .flatMap(Optional::stream)
+                .map(place -> {
+                    String overview = getOverviewByPlaceType(place);
+                    return PlaceConverter.toTodayPlaceResponse(place, overview);
+                })
+                .collect(Collectors.toList());
+    }
+    
+    private String getOverviewByPlaceType(Place place) {
+        return switch (place.getPlaceType()) {
+            case BOOKSTORE -> place.getBookStoreAttribute().getOverview();
+            case TOURIST_SPOT -> place.getTouristSpotAttribute().getOverview();
+            case FESTIVAL -> place.getFestivalAttribute().getOverview();
+            default -> null;
+        };
     }
 }

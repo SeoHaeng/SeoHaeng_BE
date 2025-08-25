@@ -1,7 +1,7 @@
 package com.seohaeng.backend.domain.place.service;
 
 import com.seohaeng.backend.domain.place.dto.PlaceMarkerDTO;
-import com.seohaeng.backend.domain.place.repository.BookStoreAttributeRepository;
+import com.seohaeng.backend.domain.place.repository.attribute.BookStoreAttributeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
