@@ -20,25 +20,48 @@ public class PlaceMarkerController {
     private final BookStoreAttributeService service;
 
     @Operation(
-            summary = "지도 위 북스테이만 조회 API")
+            summary = "북스테이 마커 조회",
+            description = """
+        지도 위의 북스테이 장소를 마커 형태로 조회합니다.
+        - 각 장소의 좌표, 이름을 반환합니다.
+        """
+    )
     @GetMapping("/markers/bookstays")
     public List<PlaceMarkerDTO> getBookStayMarkers() {
         return service.getBookStayMarkers();
     }
 
-    @Operation(summary = "지도 위 북카페만 조회 API")
+    @Operation(
+            summary = "북카페 마커 조회",
+            description = """
+        지도 위의 북카페 장소를 마커 형태로 조회합니다.
+        - 각 장소의 좌표, 이름을 반환합니다.
+        """
+    )
     @GetMapping("/markers/bookcafes")
     public List<PlaceMarkerDTO> getBookCafeMarkers() {
         return service.getBookCafeMarkers();
     }
 
-    @Operation(summary = "지도 위 독립서점만 조회 API")
+    @Operation(
+            summary = "독립서점 마커 조회",
+            description = """
+        지도 위의 독립서점 장소를 마커 형태로 조회합니다.
+        - 각 장소의 좌표, 이름을 반환합니다.
+        """
+    )
     @GetMapping("/markers/bookstores")
     public List<PlaceMarkerDTO> getIndieBookStoreMarkers() {
         return service.getBookstoreMarkers();
     }
 
-    @Operation(summary = "지도 위 공간책갈피만 조회 API")
+    @Operation(
+            summary = "공간책갈피 마커 조회",
+            description = """
+        지도 위의 공간책갈피 장소를 마커 형태로 조회합니다.
+        - 각 장소의 좌표, 이름을 반환합니다.
+        """
+    )
     @GetMapping("/markers/spacebookmarks")
     public List<PlaceMarkerDTO> getSpaceBookmarkMarkers() {
         return service.getSpaceBookmarkMarkers();
