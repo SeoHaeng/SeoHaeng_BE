@@ -2,9 +2,11 @@ package com.seohaeng.backend.domain.user.service;
 
 import com.seohaeng.backend.domain.user.converter.UserConverter;
 import com.seohaeng.backend.domain.user.dto.*;
+import com.seohaeng.backend.domain.user.entity.Agreement;
 import com.seohaeng.backend.domain.user.entity.LoginInfo;
 import com.seohaeng.backend.domain.user.entity.Provider;
 import com.seohaeng.backend.domain.user.entity.User;
+import com.seohaeng.backend.domain.user.repository.AgreementRepository;
 import com.seohaeng.backend.domain.user.repository.LoginInfoRepository;
 import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
@@ -18,6 +20,7 @@ import com.seohaeng.backend.global.security.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.error.Error;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -40,6 +43,7 @@ public class UserCommandService {
     private final PasswordEncoder passwordEncoder;
     private final LoginInfoRepository loginInfoRepository;
     private final UserRepository userRepository;
+    private final AgreementRepository agreementRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, Object> redisTemplate;
     private final KakaoAuthProvider kakaoAuthProvider;
@@ -288,6 +292,33 @@ public class UserCommandService {
         } // 프로필 이미지 변경
 
         return toUserInfoDTO(user);
+    }
+
+    // 약관 동의
+    @Transactional
+    public UserResponseDTO.AgreementResponse saveAgreement(Long userId, UserRequestDTO.AgreementRequestDTO request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        Optional<Agreement> UserAgreement = agreementRepository.findByUser(user);
+        if(UserAgreement.isPresent()){
+            throw new UserHandler(ErrorStatus.AGREEMENT_ALREADY_EXISTS);
+        }
+
+        Agreement agreement = Agreement.builder()
+                .user(user)
+                .termsOfServiceAgreed(request.getTermsOfServiceAgreed())
+                .privacyPolicyAgreed(request.getPrivacyPolicyAgreed())
+                .build();
+
+        Agreement savedAgreement = agreementRepository.save(agreement);
+
+        return UserResponseDTO.AgreementResponse.builder()
+                .agreementId(savedAgreement.getId())
+                .userId(user.getId())
+                .termsOfServiceAgreed(savedAgreement.getTermsOfServiceAgreed())
+                .privacyPolicyAgreed(savedAgreement.getPrivacyPolicyAgreed())
+                .build();
     }
 
     // Refresh Token Redis 저장

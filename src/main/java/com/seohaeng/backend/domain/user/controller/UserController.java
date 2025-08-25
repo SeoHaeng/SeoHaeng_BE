@@ -32,6 +32,18 @@ public class UserController {
         return ApiResponse.onSuccess(result);
     }
 
+    @Operation(
+            summary = "약관 동의 여부 저장 API",
+            description = "최초 가입 시 약관 동의 여부를 저장합니다.")
+    @PostMapping("/auth/agreement")
+    public ApiResponse<UserResponseDTO.AgreementResponse> saveAgreement(
+            @AuthUser Long userId,
+            @RequestBody UserRequestDTO.AgreementRequestDTO request
+    ) {
+        UserResponseDTO.AgreementResponse result = userCommandService.saveAgreement(userId, request);
+        return ApiResponse.onSuccess(result);
+    }
+
     @Operation(summary = "일반 회원가입 API",
             description = "아이디는 4~12자이며, 비밀번호는 8~20자이고 영문, 숫자, 특수문자를 반드시 포함해야 합니다." +
                     "비밀번호 확인란(password2)은 password1과 반드시 일치해야 합니다.")

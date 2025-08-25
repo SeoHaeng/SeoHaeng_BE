@@ -45,4 +45,15 @@ public class UserResponseDTO {
         String accessToken;
         String refreshToken;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AgreementResponse {
+        Long agreementId;
+        Long userId;
+        Boolean termsOfServiceAgreed;
+        Boolean privacyPolicyAgreed;
+    }
 }
