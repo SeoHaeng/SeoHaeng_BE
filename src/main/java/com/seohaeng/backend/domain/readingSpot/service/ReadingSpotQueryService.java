@@ -33,10 +33,12 @@ public class ReadingSpotQueryService {
     private final ReadingSpotScrapRepository readingSpotScrapRepository;
     private final ReadingSpotLikeRepository readingSpotLikeRepository;
 
-    // 최신순 공간 책갈피 조회
-    public ReadingSpotResponseDTO.GetReadingSpotDetailListResponseDTO getLastestReadingSpot(Long userId, Integer page, Integer size){
+    // 등록된 공간 책갈피 목록 조회
+    public ReadingSpotResponseDTO.GetReadingSpotDetailListResponseDTO getLastestReadingSpot(
+            Long userId, Integer page, Integer size, String sort){
         User user = findUserById(userId);
-        PageRequest pageRequest = createPageRequest(page, size);
+        Sort sortOption = createSortOption(sort);
+        PageRequest pageRequest = createPageRequest(page, size, sortOption);
         Page<ReadingSpot> readingSpotPage = readingSpotRepository.findAllByOpenedTrue(pageRequest);
 
         List<ReadingSpotResponseDTO.GetReadingSpotResponseDTO> readingSpotResponseDTOS = readingSpotPage.getContent()
@@ -146,5 +148,13 @@ public class ReadingSpotQueryService {
         boolean isLiked = isLikedByUser(user, readingSpot);
         boolean isScraped = isScrapedByUser(user, readingSpot);
         return ReadingSpotConverter.toGetReadingSpotResponseDTO(readingSpot, imageList, isLiked, isScraped);
+    }
+
+    private Sort createSortOption(String sort) {
+        return switch (sort) {
+            case "popular" -> Sort.by(Sort.Direction.DESC, "likes");
+            case "recent" -> Sort.by(Sort.Direction.DESC, "createdAt");
+            default -> Sort.by(Sort.Direction.DESC, "createdAt");
+        };
     }
 }
