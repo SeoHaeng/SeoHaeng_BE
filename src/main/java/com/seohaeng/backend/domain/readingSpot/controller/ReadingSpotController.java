@@ -29,21 +29,23 @@ public class ReadingSpotController {
     private final ReadingSpotQueryService readingSpotQueryService;
 
     @Operation(
-            summary = "최신 공간 책갈피 조회 API",
+            summary = "서비스에 등록된 공간 책갈피 목록 조회 API",
             description = """
-    최신 순으로 공간 책갈피를 조회합니다.
+    등록된 공간 책갈피들을 조회합니다.
     - Parameter:
       - `page`: 페이지 번호 (1부터 시작)
       - `size`: 한 페이지당 게시글 개수 (기본값: 10)
+      - `sort`: 정렬 기준 (`latest`: 최신순, `popular`: 인기순) 정확히 입력해야합니다.
     """
     )
     @GetMapping
     public ApiResponse<ReadingSpotResponseDTO.GetReadingSpotDetailListResponseDTO> getBookChallengePlaces(
             @AuthUser Long userId,
             @RequestParam(name = "page", defaultValue = "1") @Min(1)Integer page,
-            @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size
+            @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size,
+            @RequestParam(name = "sort", defaultValue = "latest") String sort
     ) {
-        return ApiResponse.onSuccess(readingSpotQueryService.getLastestReadingSpot(userId, page, size));
+        return ApiResponse.onSuccess(readingSpotQueryService.getLastestReadingSpot(userId, page, size, sort));
     }
 
     @Operation(
