@@ -11,6 +11,13 @@ import com.seohaeng.backend.domain.place.repository.BookChallengeEventRepository
 import com.seohaeng.backend.domain.place.repository.PlaceRepository;
 import com.seohaeng.backend.domain.place.repository.attribute.BookStoreAttributeRepository;
 import com.seohaeng.backend.domain.place.repository.attribute.FestivalAttributeRepository;
+import com.seohaeng.backend.domain.place.repository.SavedPlaceRepository;
+import com.seohaeng.backend.domain.review.repository.ReviewRepository;
+import com.seohaeng.backend.domain.user.entity.User;
+import com.seohaeng.backend.domain.user.repository.UserRepository;
+import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
+import com.seohaeng.backend.global.apiPayload.exception.GeneralException;
+import com.seohaeng.backend.global.apiPayload.exception.handler.PlaceHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +38,9 @@ public class PlaceQueryService {
     private final PlaceRepository placeRepository;
     private final BookStoreAttributeRepository bookStoreAttributeRepository;
     private final FestivalAttributeRepository festivalAttributeRepository;
+    private final ReviewRepository reviewRepository;
+    private final SavedPlaceRepository savedPlaceRepository;
+    private final UserRepository userRepository;
 
     // 북챌린지 서점 조회
     public PlaceResponseDTO.BookStoreListDto findBookChallengePlaces(Integer page, Integer size) {
@@ -71,6 +81,29 @@ public class PlaceQueryService {
                 .map(festivalAttribute
                         -> PlaceConverter.toOngoingFestivalResponse(festivalAttribute.getPlace(), festivalAttribute))
                 .collect(Collectors.toList());
+    }
+
+    // 장소 상세 조회
+    public PlaceResponseDTO.PlaceDatail getPlaceDetail(Long placeId, Long userId) {
+        Place place = placeRepository.findWithAttributesAndReviewsById(placeId)
+                .orElseThrow(()-> new PlaceHandler(ErrorStatus.PLACE_NOT_FOUND));
+
+        long reviewCount = reviewRepository.countByPlace(place);
+
+        Double averageRating = reviewRepository.getAverageRatingByPlace(place);
+        if (averageRating == null) {
+            averageRating = 0.0;
+        }
+
+        boolean isBookmarked = false;
+        if (userId != null) {
+            User user = userRepository.findById(userId).orElse(null);
+            if (user != null) {
+                isBookmarked = savedPlaceRepository.findByUserAndPlace(user, place).isPresent();
+            }
+        }
+
+        return PlaceConverter.toPlaceDetail(place, (int) reviewCount, averageRating, isBookmarked);
     }
     
     private String getOverviewByPlaceType(Place place) {

@@ -13,4 +13,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT AVG(r.rating) FROM Review r WHERE r.place = :place")
     Double getAverageRatingByPlace(@Param("place") Place place);
+    
+    long countByPlace(Place place);
 }
