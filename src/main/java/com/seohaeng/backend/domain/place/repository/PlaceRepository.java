@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PlaceRepository extends JpaRepository<Place, Long> {
@@ -17,4 +18,7 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
     @Query(value = "SELECT * FROM place WHERE place_type = :placeType ORDER BY RAND() LIMIT 1", nativeQuery = true)
     Optional<Place> findRandomByPlaceType(@Param("placeType") String placeType);
+
+    List<Place> findByNameContaining(String keyword);
+
 }
