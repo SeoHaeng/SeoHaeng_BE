@@ -5,16 +5,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class PlaceInfoDTO {
+public class PlaceSearchDTO {
     private Long placeId;
     private String name;
     private String placeType;
-    private boolean bookmarked;
-    private double averageRating;
-    private int reviewCount;
-    private double distance;
     private String address;
-    private double latitude;
-    private double longitude;
 
 }

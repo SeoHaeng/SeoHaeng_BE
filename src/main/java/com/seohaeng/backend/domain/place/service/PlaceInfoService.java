@@ -47,10 +47,7 @@ public class PlaceInfoService {
             bookmarked = savedPlaceRepository.findByUserAndPlace(user, place).isPresent();
         }
 
-        double distance = calculateDistance(
-                currentLat, currentLng,
-                place.getLatitude(), place.getLongitude()
-        );
+        double distance = calculateDistance(currentLat, currentLng, place.getLatitude(), place.getLongitude());
 
         return new PlaceInfoDTO(
                 place.getId(),
@@ -60,18 +57,21 @@ public class PlaceInfoService {
                 averageRating,
                 reviewCount,
                 distance,
-                place.getAddress()
+                place.getAddress(),
+                place.getLatitude(),
+                place.getLongitude()
         );
     }
 
-    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        double R = 6371; // km
+    private double calculateDistance(Double lat1, Double lon1, Double lat2, Double lon2) {
+        if(lat1 == null || lon1 == null || lat2 == null || lon2 == null) return 0.0;
+        double R = 6371;
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                 Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                        Math.sin(dLon/2) * Math.sin(dLon/2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return Math.round(R * c * 10) / 10.0;
     }
 
