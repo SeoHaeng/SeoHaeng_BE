@@ -265,11 +265,10 @@ public class UserCommandService {
 
         LoginInfo loginInfo = user.getLoginInfo();
 
-        if(loginInfo.getProvider() != Provider.LOCAL){
-            throw new UserHandler(ErrorStatus._FORBIDDEN);
-        }
-
         if(request.getUsername() != null){
+            if(loginInfo.getProvider() != Provider.LOCAL){
+                throw new UserHandler(ErrorStatus._FORBIDDEN);
+            }
             if (!Objects.equals(loginInfo.getUsername(), request.getUsername())) {
                 if(loginInfoRepository.existsByUsername(request.getUsername())){
                     throw new UserHandler(ErrorStatus.DUPLICATE_USERNAME);
@@ -289,6 +288,9 @@ public class UserCommandService {
         } // 닉네임 변경
 
         if(request.getPassword1() != null){
+            if(loginInfo.getProvider() != Provider.LOCAL){
+                throw new UserHandler(ErrorStatus._FORBIDDEN);
+            }
             if (!Objects.equals(request.getPassword1(), request.getPassword2())) {
                 throw new UserHandler(ErrorStatus.PASSWORD_MISMATCH);
             }
