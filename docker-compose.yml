@@ -7,6 +7,8 @@ services:
       - redis
     env_file:
       - .env
+    environment:
+      - TZ=Asia/Seoul
 
   redis:
     image: redis:latest
