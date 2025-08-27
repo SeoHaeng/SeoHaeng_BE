@@ -52,7 +52,7 @@ public class BookChallengeQueryService {
         User user = findUserById(userId);
         boolean isLikedByUser = isLikedByUser(user, bookChallengeProof);
         return convertToDTO(bookChallengeProof, isLikedByUser);
-    } // TODO : 예외 메시지 오류
+    }
 
     // 북챌린지 인증 게시글 전체 조회
     public BookChallengeResponseDTO.getBookChallengeListDTO getBookChallengeList(Integer page, Integer size, String sort, Long userId){

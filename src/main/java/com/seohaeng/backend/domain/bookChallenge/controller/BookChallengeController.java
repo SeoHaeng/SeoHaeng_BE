@@ -66,7 +66,8 @@ public class BookChallengeController {
     public ApiResponse<BookChallengeResponseDTO.getBookChallenge> getBookChallengeProof (
             @AuthUser Long userId,
             @PathVariable Long bookChallengeProofId){
-        BookChallengeResponseDTO.getBookChallenge result = bookChallengeQueryService.getBookChallenge(bookChallengeProofId, userId);
+        BookChallengeResponseDTO.getBookChallenge result
+                = bookChallengeQueryService.getBookChallenge(userId, bookChallengeProofId);
         return ApiResponse.onSuccess(result);
     }
 
