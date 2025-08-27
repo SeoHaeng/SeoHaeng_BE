@@ -32,7 +32,7 @@ public class PlaceController {
     """
     )
     @GetMapping("/book-challenges")
-    public ApiResponse<PlaceResponseDTO.placeListDto> getBookChallengePlaces(
+    public ApiResponse<PlaceResponseDTO.BookStoreListDto> getBookChallengePlaces(
             @RequestParam(name = "page", defaultValue = "1") @Min(1)Integer page,
             @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size
     ) {
