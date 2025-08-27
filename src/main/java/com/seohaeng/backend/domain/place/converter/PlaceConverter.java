@@ -21,9 +21,25 @@ public class PlaceConverter {
              .build();
     }
 
-    public static PlaceResponseDTO.placeListDto toplaceListDto (Page<?> page,
-                                                                List<PlaceResponseDTO.placeDto> placeDtoList) {
-        return PlaceResponseDTO.placeListDto.builder()
+    public static PlaceResponseDTO.BookStoreDto toBookStoreDto (Place place) {
+        return PlaceResponseDTO.BookStoreDto.builder()
+                .placeId(place.getId())
+                .region(place.getRegion().getRegionName())
+                .name(place.getName())
+                .placeType(place.getPlaceType())
+                .address(place.getAddress())
+                .longitude(place.getLongitude())
+                .latitude(place.getLatitude())
+                .imageUrl(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
+                    ? place.getPlaceImages().get(0).getImageUrl() : null)
+                .build();
+    }
+
+    public static PlaceResponseDTO.BookStoreListDto toBookStoreListDto (
+            Page<?> page,
+            List<PlaceResponseDTO.BookStoreDto> placeDtoList) {
+
+        return PlaceResponseDTO.BookStoreListDto.builder()
                 .listSize(placeDtoList.size())
                 .totalPage(page.getTotalPages())
                 .totalElements(page.getTotalElements())
@@ -38,7 +54,8 @@ public class PlaceConverter {
                 .placeId(place.getId())
                 .name(place.getName())
                 .overview(overview)
-                .imageUrl(place.getPlaceImages().get(0).getImageUrl())
+                .imageUrl(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
+                    ? place.getPlaceImages().get(0).getImageUrl() : null)
                 .placeType(place.getPlaceType())
                 .build();
     }
@@ -50,7 +67,8 @@ public class PlaceConverter {
                 .festivalName(place.getName())
                 .startDate(attribute.getStartDate())
                 .endDate(attribute.getEndDate())
-                .imageUrl(place.getPlaceImages().get(0).getImageUrl())
+                .imageUrl(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
+                    ? place.getPlaceImages().get(0).getImageUrl() : null)
                 .build();
     }
 }

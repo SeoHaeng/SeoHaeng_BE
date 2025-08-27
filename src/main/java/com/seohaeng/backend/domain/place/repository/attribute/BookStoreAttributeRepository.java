@@ -1,6 +1,8 @@
 package com.seohaeng.backend.domain.place.repository.attribute;
 
 import com.seohaeng.backend.domain.place.entity.placeAttribute.BookStoreAttribute;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -20,4 +22,6 @@ public interface BookStoreAttributeRepository extends JpaRepository<BookStoreAtt
     @Query("SELECT b FROM BookStoreAttribute b LEFT JOIN FETCH b.place p WHERE p.placeType = 'SPACE_BOOKMARK'")
     List<BookStoreAttribute> findAllSpaceBookmark();
 
+    @Query("SELECT b FROM BookStoreAttribute b LEFT JOIN FETCH b.place p WHERE b.bookChallengeStatus = true")
+    Page<BookStoreAttribute> findAllByBookChallengeStatusTrue(Pageable pageable);
 }
