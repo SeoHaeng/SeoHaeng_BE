@@ -23,6 +23,21 @@ public class PlaceController {
     private final PlaceCommandService placeCommandService;
 
     @Operation(
+            summary = "장소 상세 조회 API",
+            description = """
+    장소 상세페이지에 표시되는 정보를 조회합니다.
+    - 조회하고자 하는 장소의 Id를 넘겨주세요
+    """
+    )
+    @GetMapping("/{placeId}/details")
+    public ApiResponse<PlaceResponseDTO.PlaceDatail> getPlaceDetail(
+            @AuthUser Long userId,
+            @PathVariable("placeId") Long placeId
+    ) {
+        return ApiResponse.onSuccess(placeQueryService.getPlaceDetail(placeId, userId));
+    }
+
+    @Operation(
             summary = "북챌린지 서점 조회 API",
             description = """
         북챌린지 이벤트가 진행 중인 서점들의 목록을 페이징 처리하여 조회합니다.
