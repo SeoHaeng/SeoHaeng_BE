@@ -41,7 +41,6 @@ public class PlaceResponseDTO {
     @AllArgsConstructor
     @Builder
     public static class BookStoreDetail implements PlaceDetail {
-
         private String overview;
 
         // 북카페, 북스테이
@@ -50,39 +49,12 @@ public class PlaceResponseDTO {
 
         private boolean bookChallengeStatus = false;
 
-        // 북살롱
-        private boolean salonAll;
-        private boolean readingClub;
-        private boolean bookTalk;
-        private boolean lecture;
-        private boolean originalContent;
-        private boolean bookWellage;
-
-        // 편의 정보
-        private boolean convenienceAll;
-        private boolean spaceRental;
+        // UI 표시 정보
         private boolean parking;
         private boolean petFriendly;
-        private boolean bookStorage;
-        private boolean creatorSupport;
-        private boolean bookOrder;
-        private boolean bookDelivery;
-
-        // 컬렉션북
-        private boolean collectionAll;
-        private boolean indiePublication;
-        private boolean usedBooks;
-        private boolean goods;
-        private boolean artBook;
-        private boolean illustrationBook;
-        private boolean giftShop;
-        private boolean souvenirs;
-
-        // 테이스트
-        private boolean tasteAll;
-        private boolean pub;
-        private boolean cafe;
-        private boolean snack;
+        private boolean spaceRental;
+        private boolean reservation;
+        private boolean readingClub;
     }
 
     @Getter
