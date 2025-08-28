@@ -91,11 +91,12 @@ public class PlaceConverter {
         return PlaceResponseDTO.PlaceDatail.builder()
                 .placeId(place.getId())
                 .placeType(place.getPlaceType())
+                .usetime(place.getUseTime())
                 .name(place.getName())
                 .address(place.getAddress())
                 .latitude(place.getLatitude())
                 .longitude(place.getLongitude())
-                .websiteUrl(place.getWebsiteUrl())
+                .websiteUrl(extractHref(place.getWebsiteUrl()))
                 .tel(place.getTel())
                 .reviewCount(reviewCount)
                 .rating(averageRating)
@@ -171,5 +172,10 @@ public class PlaceConverter {
                 .startDate(attribute.getStartDate())
                 .endDate(attribute.getEndDate())
                 .build();
+    }
+
+    public static String extractHref(String html) {
+        if (html == null || html.isBlank()) return null;
+        return html.replaceAll(".*href=\"([^\"]+)\".*", "$1");
     }
 }
