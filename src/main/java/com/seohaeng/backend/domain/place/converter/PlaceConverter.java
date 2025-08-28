@@ -34,7 +34,7 @@ public class PlaceConverter {
                 .longitude(place.getLongitude())
                 .latitude(place.getLatitude())
                 .imageUrl(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
-                    ? place.getPlaceImages().get(0).getImageUrl() : null)
+                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png")
                 .build();
     }
 
@@ -58,7 +58,7 @@ public class PlaceConverter {
                 .name(place.getName())
                 .overview(overview)
                 .imageUrl(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
-                    ? place.getPlaceImages().get(0).getImageUrl() : null)
+                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png")
                 .placeType(place.getPlaceType())
                 .build();
     }
@@ -71,7 +71,7 @@ public class PlaceConverter {
                 .startDate(attribute.getStartDate())
                 .endDate(attribute.getEndDate())
                 .imageUrl(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
-                    ? place.getPlaceImages().get(0).getImageUrl() : null)
+                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png")
                 .build();
     }
 
@@ -102,10 +102,10 @@ public class PlaceConverter {
                 .rating(averageRating)
                 .isBookmarked(isBookmarked)
                 .placeDetail(placeDetail)
-                .placeImageUrls(place.getPlaceImages() != null ? 
+                .placeImageUrls(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() ? 
                     place.getPlaceImages().stream()
                         .map(img -> img.getImageUrl())
-                        .toList() : List.of())
+                        .toList() : List.of("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png"))
                 .build();
     }
     
