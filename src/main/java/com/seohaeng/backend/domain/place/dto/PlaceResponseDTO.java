@@ -19,6 +19,7 @@ public class PlaceResponseDTO {
     public static class PlaceDatail{
         private Long placeId;
         private PlaceType placeType;
+        private String usetime;
         private String name;
         private String address;
         private Double latitude;

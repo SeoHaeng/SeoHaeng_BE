@@ -91,6 +91,7 @@ public class PlaceConverter {
         return PlaceResponseDTO.PlaceDatail.builder()
                 .placeId(place.getId())
                 .placeType(place.getPlaceType())
+                .usetime(place.getUseTime())
                 .name(place.getName())
                 .address(place.getAddress())
                 .latitude(place.getLatitude())
