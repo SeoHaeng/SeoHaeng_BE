@@ -62,9 +62,9 @@ public class PlaceMarkerController {
         - 각 장소의 좌표, 이름을 반환합니다.
         """
     )
-    @GetMapping("/markers/spacebookmarks")
+    @GetMapping("/markers/readingspots")
     public List<PlaceMarkerDTO> getSpaceBookmarkMarkers() {
-        return service.getSpaceBookmarkMarkers();
+        return service.getReadingSpotMarkers();
     }
 
 }
