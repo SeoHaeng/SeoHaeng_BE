@@ -111,6 +111,7 @@ public class PlaceConverter {
     
     public static PlaceResponseDTO.BookStoreDetail toBookStoreDetail(BookStoreAttribute attribute) {
         return PlaceResponseDTO.BookStoreDetail.builder()
+                .overview(attribute.getOverview())
                 .bookCafe(attribute.isBookCafe())
                 .bookStay(attribute.isBookStay())
                 .bookChallengeStatus(attribute.isBookChallengeStatus())

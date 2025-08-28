@@ -41,6 +41,9 @@ public class PlaceResponseDTO {
     @AllArgsConstructor
     @Builder
     public static class BookStoreDetail implements PlaceDetail {
+
+        private String overview;
+
         // 북카페, 북스테이
         private boolean bookCafe;
         private boolean bookStay;
