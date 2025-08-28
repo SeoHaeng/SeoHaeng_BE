@@ -30,9 +30,15 @@ public class BookStoreAttribute extends BaseEntity{
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
     private boolean bookChallengeStatus = false;
 
+    // UI 표시 정보
+    private boolean parking;
+    private boolean petFriendly;
+    private boolean spaceRental;
+    private boolean reservation;
+    private boolean readingClub;
+
     // 북살롱
     private boolean salonAll;
-    private boolean readingClub;
     private boolean bookTalk;
     private boolean lecture;
     private boolean originalContent;
@@ -40,9 +46,6 @@ public class BookStoreAttribute extends BaseEntity{
 
     // 편의 정보
     private boolean convenienceAll;
-    private boolean spaceRental;
-    private boolean parking;
-    private boolean petFriendly;
     private boolean bookStorage;
     private boolean creatorSupport;
     private boolean bookOrder;

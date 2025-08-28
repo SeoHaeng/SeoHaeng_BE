@@ -34,7 +34,7 @@ public class PlaceConverter {
                 .longitude(place.getLongitude())
                 .latitude(place.getLatitude())
                 .imageUrl(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
-                    ? place.getPlaceImages().get(0).getImageUrl() : null)
+                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png")
                 .build();
     }
 
@@ -58,7 +58,7 @@ public class PlaceConverter {
                 .name(place.getName())
                 .overview(overview)
                 .imageUrl(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
-                    ? place.getPlaceImages().get(0).getImageUrl() : null)
+                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png")
                 .placeType(place.getPlaceType())
                 .build();
     }
@@ -71,7 +71,7 @@ public class PlaceConverter {
                 .startDate(attribute.getStartDate())
                 .endDate(attribute.getEndDate())
                 .imageUrl(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
-                    ? place.getPlaceImages().get(0).getImageUrl() : null)
+                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png")
                 .build();
     }
 
@@ -102,44 +102,24 @@ public class PlaceConverter {
                 .rating(averageRating)
                 .isBookmarked(isBookmarked)
                 .placeDetail(placeDetail)
-                .placeImageUrls(place.getPlaceImages() != null ? 
+                .placeImageUrls(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() ? 
                     place.getPlaceImages().stream()
                         .map(img -> img.getImageUrl())
-                        .toList() : List.of())
+                        .toList() : List.of("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png"))
                 .build();
     }
     
     public static PlaceResponseDTO.BookStoreDetail toBookStoreDetail(BookStoreAttribute attribute) {
         return PlaceResponseDTO.BookStoreDetail.builder()
+                .overview(attribute.getOverview())
                 .bookCafe(attribute.isBookCafe())
                 .bookStay(attribute.isBookStay())
-                .bookChallengeStatus(attribute.isBookChallengeStatus())
-                .salonAll(attribute.isSalonAll())
-                .readingClub(attribute.isReadingClub())
-                .bookTalk(attribute.isBookTalk())
-                .lecture(attribute.isLecture())
-                .originalContent(attribute.isOriginalContent())
-                .bookWellage(attribute.isBookWellage())
-                .convenienceAll(attribute.isConvenienceAll())
-                .spaceRental(attribute.isSpaceRental())
                 .parking(attribute.isParking())
                 .petFriendly(attribute.isPetFriendly())
-                .bookStorage(attribute.isBookStorage())
-                .creatorSupport(attribute.isCreatorSupport())
-                .bookOrder(attribute.isBookOrder())
-                .bookDelivery(attribute.isBookDelivery())
-                .collectionAll(attribute.isCollectionAll())
-                .indiePublication(attribute.isIndiePublication())
-                .usedBooks(attribute.isUsedBooks())
-                .goods(attribute.isGoods())
-                .artBook(attribute.isArtBook())
-                .illustrationBook(attribute.isIllustrationBook())
-                .giftShop(attribute.isGiftShop())
-                .souvenirs(attribute.isSouvenirs())
-                .tasteAll(attribute.isTasteAll())
-                .pub(attribute.isPub())
-                .cafe(attribute.isCafe())
-                .snack(attribute.isSnack())
+                .spaceRental(attribute.isSpaceRental())
+                .reservation(attribute.isReservation())
+                .readingClub(attribute.isReadingClub())
+                .bookChallengeStatus(attribute.isBookChallengeStatus())
                 .build();
     }
     
