@@ -16,5 +16,5 @@ public class PlaceInfoDTO {
     private String address;
     private double latitude;
     private double longitude;
-
+    private String imageUrl;
 }
