@@ -28,4 +28,7 @@ public class Agreement extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean privacyPolicyAgreed;
+
+    @Column(nullable = false)
+    private Boolean locationServiceAgreed;
 }

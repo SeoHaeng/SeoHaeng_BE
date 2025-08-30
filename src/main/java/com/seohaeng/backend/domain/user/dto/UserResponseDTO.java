@@ -56,5 +56,6 @@ public class UserResponseDTO {
         Long userId;
         Boolean termsOfServiceAgreed;
         Boolean privacyPolicyAgreed;
+        Boolean locationServiceAgreed;
     }
 }

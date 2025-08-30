@@ -33,6 +33,10 @@ public class UserRequestDTO {
         // 개인정보 처리방침 동의
         @AssertTrue(message = "개인정보 처리방침에 필수로 동의해야 합니다.")
         private Boolean privacyPolicyAgreed;
+
+        // 위치 기반 서비스 이용약관 동의
+        @AssertTrue(message = "위치 기반 서비스 이용약관에 필수로 동의해야 합니다.")
+        private Boolean locationServiceAgreed;
     }
 
     @Getter
@@ -70,5 +74,9 @@ public class UserRequestDTO {
         // 개인정보 처리방침 동의
         @AssertTrue(message = "개인정보 처리방침에 필수로 동의해야 합니다.")
         private Boolean privacyPolicyAgreed;
+
+        // 위치 기반 서비스 이용약관 동의
+        @AssertTrue(message = "위치 기반 서비스 이용약관에 필수로 동의해야 합니다.")
+        private Boolean locationServiceAgreed;
     }
 }
