@@ -115,6 +115,7 @@ public class UserCommandService {
                 .user(joinUser)
                 .termsOfServiceAgreed(joinDTO.getTermsOfServiceAgreed())
                 .privacyPolicyAgreed(joinDTO.getPrivacyPolicyAgreed())
+                .locationServiceAgreed(joinDTO.getLocationServiceAgreed())
                 .build()
         );
 
@@ -136,7 +137,7 @@ public class UserCommandService {
         Agreement agreement = agreementRepository.findByUser(loginUser)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.AGREEMENT_NOT_FOUND));
 
-        if (!agreement.getTermsOfServiceAgreed() || !agreement.getPrivacyPolicyAgreed()) {
+        if (!agreement.getTermsOfServiceAgreed() || !agreement.getPrivacyPolicyAgreed() || !agreement.getLocationServiceAgreed()) {
             throw new UserHandler(ErrorStatus.AGREEMENT_NOT_COMPLETED);
         }
 
@@ -326,6 +327,7 @@ public class UserCommandService {
                 .user(user)
                 .termsOfServiceAgreed(request.getTermsOfServiceAgreed())
                 .privacyPolicyAgreed(request.getPrivacyPolicyAgreed())
+                .locationServiceAgreed(request.getLocationServiceAgreed())
                 .build();
 
         Agreement savedAgreement = agreementRepository.save(agreement);
@@ -335,6 +337,7 @@ public class UserCommandService {
                 .userId(user.getId())
                 .termsOfServiceAgreed(savedAgreement.getTermsOfServiceAgreed())
                 .privacyPolicyAgreed(savedAgreement.getPrivacyPolicyAgreed())
+                .locationServiceAgreed(savedAgreement.getLocationServiceAgreed())
                 .build();
     }
 
