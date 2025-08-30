@@ -59,7 +59,9 @@ public class PlaceInfoService {
                 distance,
                 place.getAddress(),
                 place.getLatitude(),
-                place.getLongitude()
+                place.getLongitude(),
+                place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
+                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png"
         );
     }
 

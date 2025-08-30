@@ -1,7 +1,8 @@
 package com.seohaeng.backend.domain.place.converter;
 
-import com.seohaeng.backend.domain.place.dto.PlaceInfoDTO;
 import com.seohaeng.backend.domain.place.dto.PlaceResponseDTO;
+import com.seohaeng.backend.domain.place.entity.place.BookChallengeEvent;
+import com.seohaeng.backend.domain.place.entity.place.BookChallengeEventImage;
 import com.seohaeng.backend.domain.place.entity.place.Place;
 import com.seohaeng.backend.domain.place.entity.placeAttribute.BookStoreAttribute;
 import com.seohaeng.backend.domain.place.entity.placeAttribute.FestivalAttribute;
@@ -10,8 +11,40 @@ import com.seohaeng.backend.domain.place.entity.placeAttribute.TouristSpotAttrib
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlaceConverter {
+
+    public static PlaceResponseDTO.BookChallengeEventDto toBookChallengeEventDto(
+            BookChallengeEvent bookChallengeEvent,
+            List<BookChallengeEventImage> bookChallengeEventImages){
+        return PlaceResponseDTO.BookChallengeEventDto.builder()
+                .eventDescription(bookChallengeEvent.getEventDescription())
+                .rewardDescription(bookChallengeEvent.getRewardDescription())
+                .ownerMessage(bookChallengeEvent.getOwnerMessage())
+                .rewardImageUrls(bookChallengeEventImages.stream()
+                        .map(image -> image.getImageUrl())
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+    public static PlaceResponseDTO.SavedPlaceInfoDTO toSavedPlaceInfoDTO(
+            Place place, boolean bookmarked, double averageRating, int reviewCount, double distance) {
+        return PlaceResponseDTO.SavedPlaceInfoDTO.builder()
+                .placeId(place.getId())
+                .name(place.getName())
+                .placeType(place.getPlaceType().name())
+                .bookmarked(bookmarked)
+                .averageRating(averageRating)
+                .reviewCount(reviewCount)
+                .distance(distance)
+                .address(place.getAddress())
+                .latitude(place.getLatitude())
+                .longitude(place.getLongitude())
+                .imageUrl(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
+                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png")
+                .build();
+    }
 
     public static PlaceResponseDTO.placeDto toplaceDto (Place place) {
      return PlaceResponseDTO.placeDto.builder()
@@ -153,21 +186,6 @@ public class PlaceConverter {
                 .startDate(attribute.getStartDate())
                 .endDate(attribute.getEndDate())
                 .build();
-    }
-
-    public static PlaceInfoDTO toPlaceInfoDTO(Place place, boolean bookmarked, double averageRating, int reviewCount, double distance) {
-        return new PlaceInfoDTO(
-                place.getId(),
-                place.getName(),
-                place.getPlaceType().name(),
-                bookmarked,
-                averageRating,
-                reviewCount,
-                distance,
-                place.getAddress(),
-                place.getLatitude(),
-                place.getLongitude()
-        );
     }
 
     public static String extractHref(String html) {
