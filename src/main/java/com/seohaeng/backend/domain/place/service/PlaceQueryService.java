@@ -4,10 +4,12 @@ import com.seohaeng.backend.domain.place.converter.PlaceConverter;
 import com.seohaeng.backend.domain.place.dto.PlaceInfoDTO;
 import com.seohaeng.backend.domain.place.dto.PlaceResponseDTO;
 import com.seohaeng.backend.domain.place.entity.enums.PlaceType;
+import com.seohaeng.backend.domain.place.entity.place.BookChallengeEvent;
 import com.seohaeng.backend.domain.place.entity.place.Place;
 import com.seohaeng.backend.domain.place.entity.place.SavedPlace;
 import com.seohaeng.backend.domain.place.entity.placeAttribute.BookStoreAttribute;
 import com.seohaeng.backend.domain.place.entity.placeAttribute.FestivalAttribute;
+import com.seohaeng.backend.domain.place.repository.BookChallengeEventRepository;
 import com.seohaeng.backend.domain.place.repository.PlaceRepository;
 import com.seohaeng.backend.domain.place.repository.attribute.BookStoreAttributeRepository;
 import com.seohaeng.backend.domain.place.repository.attribute.FestivalAttributeRepository;
@@ -33,6 +35,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.seohaeng.backend.domain.place.converter.PlaceConverter.toBookChallengeEventDto;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -44,6 +48,7 @@ public class PlaceQueryService {
     private final ReviewRepository reviewRepository;
     private final SavedPlaceRepository savedPlaceRepository;
     private final UserRepository userRepository;
+    private final BookChallengeEventRepository bookChallengeEventRepository;
 
     // 북챌린지 서점 조회
     public PlaceResponseDTO.BookStoreListDto findBookChallengePlaces(Integer page, Integer size) {
@@ -61,6 +66,25 @@ public class PlaceQueryService {
                 .map(PlaceConverter::toBookStoreDto).collect(Collectors.toList());
 
         return PlaceConverter.toBookStoreListDto(bookStoreAttributes, placeDtoList);
+    }
+
+    // 북챌린지 서점 이벤트 조회
+    public PlaceResponseDTO.BookChallengeEventDto findBookChallengeEvents(Long placeId){
+
+        Place place = placeRepository.findWithAttributesById(placeId)
+                .orElseThrow(()-> new PlaceHandler(ErrorStatus.PLACE_NOT_FOUND));
+        BookStoreAttribute bookStoreAttribute = place.getBookStoreAttribute();
+        if (bookStoreAttribute == null) {
+            throw new PlaceHandler(ErrorStatus.NOT_INDEPENDENT_BOOKSTORE);
+        }
+        if (!bookStoreAttribute.isBookChallengeStatus()) {
+            throw new PlaceHandler(ErrorStatus.BOOK_CHALLENGE_NOT_IN_PROGRESS);
+        }
+        BookChallengeEvent bookChallengeEvent = bookChallengeEventRepository.findByPlace(place);
+        if (bookChallengeEvent == null) {
+            throw new PlaceHandler(ErrorStatus.BOOK_CHALLENGE_NOT_IN_PROGRESS);
+        }
+        return toBookChallengeEventDto(bookChallengeEvent, bookChallengeEvent.getBookChallengeEventImages());
     }
 
     // 오늘의 추천 강원도 조회

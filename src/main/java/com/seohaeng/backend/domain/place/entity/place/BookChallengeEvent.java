@@ -22,10 +22,13 @@ public class BookChallengeEvent extends BaseEntity {
     @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 
+    @Column(columnDefinition = "TEXT")
     private String eventDescription;
 
+    @Column(columnDefinition = "TEXT")
     private String rewardDescription;
 
+    @Column(columnDefinition = "TEXT")
     private String ownerMessage;
 
     @OneToMany(mappedBy = "bookChallengeEvent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

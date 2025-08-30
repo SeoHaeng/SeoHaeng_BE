@@ -2,6 +2,8 @@ package com.seohaeng.backend.domain.place.converter;
 
 import com.seohaeng.backend.domain.place.dto.PlaceInfoDTO;
 import com.seohaeng.backend.domain.place.dto.PlaceResponseDTO;
+import com.seohaeng.backend.domain.place.entity.place.BookChallengeEvent;
+import com.seohaeng.backend.domain.place.entity.place.BookChallengeEventImage;
 import com.seohaeng.backend.domain.place.entity.place.Place;
 import com.seohaeng.backend.domain.place.entity.placeAttribute.BookStoreAttribute;
 import com.seohaeng.backend.domain.place.entity.placeAttribute.FestivalAttribute;
@@ -10,8 +12,22 @@ import com.seohaeng.backend.domain.place.entity.placeAttribute.TouristSpotAttrib
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlaceConverter {
+
+    public static PlaceResponseDTO.BookChallengeEventDto toBookChallengeEventDto(
+            BookChallengeEvent bookChallengeEvent,
+            List<BookChallengeEventImage> bookChallengeEventImages){
+        return PlaceResponseDTO.BookChallengeEventDto.builder()
+                .eventDescription(bookChallengeEvent.getEventDescription())
+                .rewardDescription(bookChallengeEvent.getRewardDescription())
+                .ownerMessage(bookChallengeEvent.getOwnerMessage())
+                .rewardImageUrls(bookChallengeEventImages.stream()
+                        .map(image -> image.getImageUrl())
+                        .collect(Collectors.toList()))
+                .build();
+    }
 
     public static PlaceResponseDTO.placeDto toplaceDto (Place place) {
      return PlaceResponseDTO.placeDto.builder()

@@ -191,4 +191,16 @@ public class PlaceResponseDTO {
         private LocalDate endDate;
         private String imageUrl;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class BookChallengeEventDto{
+        private String eventDescription;
+        private String rewardDescription;
+        private String ownerMessage;
+        private List<String> rewardImageUrls;
+    }
 }

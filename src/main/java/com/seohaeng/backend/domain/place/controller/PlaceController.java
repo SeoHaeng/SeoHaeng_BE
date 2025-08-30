@@ -56,6 +56,23 @@ public class PlaceController {
     }
 
     @Operation(
+            summary = "북챌린지 서점 이벤트 조회 API",
+            description = """
+    북챌린지가 진행 중인 서점의 북챌린지 이벤트 정보를 조회합니다.
+    북챌린지가 진행 중이지 않은 서점이거나, 장소의 유형이 서점이 아니라면 조회되지 않습니다. 
+    - 북챌린지 이벤트 설명
+    - 챌린지 리워드 설명, 이미지 리스트
+    - 사장님 한 마디
+    """
+    )
+    @GetMapping("/{placeId}/book-challenge-events")
+    public ApiResponse<PlaceResponseDTO.BookChallengeEventDto> getBookChallengeEvents(
+            @PathVariable("placeId") Long placeId
+    ) {
+        return ApiResponse.onSuccess(placeQueryService.findBookChallengeEvents(placeId));
+    }
+
+    @Operation(
             summary = "장소 찜하기 토글 API",
             description = """
         특정 공간책갈피에 대해 장소 찜하기 상태를 토글하고, 현재 찜 수를 반환합니다.

@@ -39,6 +39,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 장소 관련
     PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "PLACE_4001", "존재하지 않는 시설입니다."),
+    NOT_INDEPENDENT_BOOKSTORE(HttpStatus.BAD_REQUEST, "PLACE_4002", "독립서점이 아닙니다."),
+    BOOK_CHALLENGE_NOT_IN_PROGRESS(HttpStatus.BAD_REQUEST, "PLACE_4003", "북챌린지가 진행중인 서점이 아닙니다."),
 
     // 지역 관련
     REGION_NOT_FOUND(HttpStatus.NOT_FOUND, "REGION_4001", "존재하지 않는 지역입니다. 지역 ID를 다시 확인해주세요"),
