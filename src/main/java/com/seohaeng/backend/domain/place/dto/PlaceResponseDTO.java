@@ -203,4 +203,23 @@ public class PlaceResponseDTO {
         private String ownerMessage;
         private List<String> rewardImageUrls;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class SavedPlaceInfoDTO{
+        private Long placeId;
+        private String name;
+        private String placeType;
+        private boolean bookmarked;
+        private double averageRating;
+        private int reviewCount;
+        private double distance;
+        private String address;
+        private double latitude;
+        private double longitude;
+        private String imageUrl;
+    }
 }

@@ -134,7 +134,7 @@ public class PlaceQueryService {
     }
 
     // 찜한 장소 조회
-    public List<PlaceInfoDTO> getBookMarkPlace(
+    public List<PlaceResponseDTO.SavedPlaceInfoDTO> getBookMarkPlace(
             Long userId, Double currentLat, Double currentLng) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
@@ -159,7 +159,8 @@ public class PlaceQueryService {
 
                     double distance = calculateDistance(currentLat, currentLng, place.getLatitude(), place.getLongitude());
 
-                    return PlaceConverter.toPlaceInfoDTO(place, true, averageRating, reviewCount, distance);
+                    return PlaceConverter.toSavedPlaceInfoDTO(
+                            place, true, averageRating, reviewCount, distance);
                 })
                 .collect(Collectors.toList());
     }

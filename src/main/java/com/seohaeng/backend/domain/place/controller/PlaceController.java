@@ -99,12 +99,13 @@ public class PlaceController {
         """
     )
     @GetMapping("/book-marks")
-    public ApiResponse<List<PlaceInfoDTO>> getBookMarkPlace(
+    public ApiResponse<List<PlaceResponseDTO.SavedPlaceInfoDTO>> getBookMarkPlace(
             @AuthUser Long userId,
             @RequestParam Double currentLat,
             @RequestParam Double currentLng
     ) {
-        return ApiResponse.onSuccess(placeQueryService.getBookMarkPlace(userId, currentLat, currentLng));
+        return ApiResponse.onSuccess(
+                placeQueryService.getBookMarkPlace(userId, currentLat, currentLng));
     }
 
     @Operation(

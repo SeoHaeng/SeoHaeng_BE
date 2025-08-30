@@ -29,6 +29,24 @@ public class PlaceConverter {
                 .build();
     }
 
+    public static PlaceResponseDTO.SavedPlaceInfoDTO toSavedPlaceInfoDTO(
+            Place place, boolean bookmarked, double averageRating, int reviewCount, double distance) {
+        return PlaceResponseDTO.SavedPlaceInfoDTO.builder()
+                .placeId(place.getId())
+                .name(place.getName())
+                .placeType(place.getPlaceType().name())
+                .bookmarked(bookmarked)
+                .averageRating(averageRating)
+                .reviewCount(reviewCount)
+                .distance(distance)
+                .address(place.getAddress())
+                .latitude(place.getLatitude())
+                .longitude(place.getLongitude())
+                .imageUrl(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
+                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png")
+                .build();
+    }
+
     public static PlaceResponseDTO.placeDto toplaceDto (Place place) {
      return PlaceResponseDTO.placeDto.builder()
              .id(place.getId())
