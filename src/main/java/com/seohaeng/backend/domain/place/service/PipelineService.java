@@ -405,10 +405,10 @@ public class PipelineService {
         // 위경도 업데이트
         if (placeItem.getMapx() != null && placeItem.getMapy() != null &&
                 (place.getLatitude() == null || place.getLongitude() == null ||
-                        !Objects.equals(place.getLatitude().toString(), placeItem.getMapx())
-                        || !Objects.equals(place.getLongitude().toString(), placeItem.getMapy()))) {
-            place.setLatitude(Double.valueOf(placeItem.getMapx()));
-            place.setLongitude(Double.valueOf(placeItem.getMapy()));
+                        !Objects.equals(place.getLatitude().toString(), placeItem.getMapy())
+                        || !Objects.equals(place.getLongitude().toString(), placeItem.getMapx()))) {
+            place.setLatitude(Double.valueOf(placeItem.getMapy()));
+            place.setLongitude(Double.valueOf(placeItem.getMapx()));
         }
     }
 
