@@ -1,5 +1,6 @@
 package com.seohaeng.backend.domain.place.controller;
 
+import com.seohaeng.backend.domain.place.dto.PlaceInfoDTO;
 import com.seohaeng.backend.domain.place.dto.PlaceResponseDTO;
 import com.seohaeng.backend.domain.place.service.PlaceCommandService;
 import com.seohaeng.backend.domain.place.service.PlaceQueryService;
@@ -67,8 +68,26 @@ public class PlaceController {
     public ApiResponse<PlaceResponseDTO.PlaceBookmarkToggleResponse> toggleBookMarkPlace(
             @AuthUser Long userId, @PathVariable("placeId") Long placeId) {
         PlaceResponseDTO.PlaceBookmarkToggleResponse result =
-                placeCommandService.toggleBookMarkPlace(userId, placeId);
+                placeCommandService.toggleBookMarkPlace(placeId, userId);
         return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(
+            summary = "찜한 장소 조회 API",
+            description = """
+        찜한 장소 리스트에 포함되는 상세 정보를 조회합니다.
+        - 현 위치 좌표를 전달해 주세요.
+        - 현 위치와 장소 간 거리, 찜한 장소 여부,
+        - 장소의 리뷰 정보, 주소 등을 반환합니다.
+        """
+    )
+    @GetMapping("/book-marks")
+    public ApiResponse<List<PlaceInfoDTO>> getBookMarkPlace(
+            @AuthUser Long userId,
+            @RequestParam Double currentLat,
+            @RequestParam Double currentLng
+    ) {
+        return ApiResponse.onSuccess(placeQueryService.getBookMarkPlace(userId, currentLat, currentLng));
     }
 
     @Operation(

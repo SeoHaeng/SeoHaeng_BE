@@ -1,5 +1,6 @@
 package com.seohaeng.backend.domain.place.converter;
 
+import com.seohaeng.backend.domain.place.dto.PlaceInfoDTO;
 import com.seohaeng.backend.domain.place.dto.PlaceResponseDTO;
 import com.seohaeng.backend.domain.place.entity.place.Place;
 import com.seohaeng.backend.domain.place.entity.placeAttribute.BookStoreAttribute;
@@ -152,6 +153,21 @@ public class PlaceConverter {
                 .startDate(attribute.getStartDate())
                 .endDate(attribute.getEndDate())
                 .build();
+    }
+
+    public static PlaceInfoDTO toPlaceInfoDTO(Place place, boolean bookmarked, double averageRating, int reviewCount, double distance) {
+        return new PlaceInfoDTO(
+                place.getId(),
+                place.getName(),
+                place.getPlaceType().name(),
+                bookmarked,
+                averageRating,
+                reviewCount,
+                distance,
+                place.getAddress(),
+                place.getLatitude(),
+                place.getLongitude()
+        );
     }
 
     public static String extractHref(String html) {
