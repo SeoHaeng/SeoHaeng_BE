@@ -91,8 +91,7 @@ public class TravelCourseQueryService {
                 travelCourse.getTravelCourseEndDate());
         String duration = days + "박 " + (days + 1) + "일";
 
-        // TODO: 외부 이미지 API 연동 시 교체 필요 (현재는 임시 이미지 URL 하드코딩)
-        String imageUrl = "https://example";
+        String imageUrl = getFirstPlaceImageOrDefault(travelCourse);
 
         List<String> regionNames = travelCourse.getTravelCourseRegionList()
                 .stream()
@@ -100,6 +99,18 @@ public class TravelCourseQueryService {
                 .collect(Collectors.toList());
 
         return TravelCourseConverter.toGetTravelCourseListItemDTO(travelCourse, imageUrl, duration, regionNames);
+    }
+
+    private String getFirstPlaceImageOrDefault(TravelCourse travelCourse) {
+        return travelCourse.getTravelCourseScheduleList()
+                .stream()
+                .filter(schedule -> schedule.getDay().equals(travelCourse.getTravelCourseStartDate()))
+                .min(Comparator.comparing(s -> s.getOrderInDay()))
+                .map(schedule -> schedule.getPlace())
+                .map(place -> place.getPlaceImages().isEmpty() ?
+                    "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png" :
+                    place.getPlaceImages().get(0).getImageUrl())
+                .orElse("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png");
     }
 
     private List<TravelCourseResponseDTO.GetTravelCourseScheduleResponseDayDTO> groupAndConvertSchedules(
