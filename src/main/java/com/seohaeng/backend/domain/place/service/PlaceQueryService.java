@@ -16,6 +16,9 @@ import com.seohaeng.backend.domain.place.repository.attribute.FestivalAttributeR
 import com.seohaeng.backend.domain.place.repository.SavedPlaceRepository;
 import com.seohaeng.backend.domain.review.entity.Review;
 import com.seohaeng.backend.domain.review.repository.ReviewRepository;
+import com.seohaeng.backend.domain.travelCourse.dto.StampResponseDTO;
+import com.seohaeng.backend.domain.travelCourse.entity.Region;
+import com.seohaeng.backend.domain.travelCourse.repository.RegionRepository;
 import com.seohaeng.backend.domain.user.entity.User;
 import com.seohaeng.backend.domain.user.repository.UserRepository;
 import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
@@ -49,6 +52,7 @@ public class PlaceQueryService {
     private final SavedPlaceRepository savedPlaceRepository;
     private final UserRepository userRepository;
     private final BookChallengeEventRepository bookChallengeEventRepository;
+    private final RegionRepository regionRepository;
 
     // 북챌린지 서점 조회
     public PlaceResponseDTO.BookStoreListDto findBookChallengePlaces(Integer page, Integer size) {
@@ -163,6 +167,40 @@ public class PlaceQueryService {
                             place, true, averageRating, reviewCount, distance);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public StampResponseDTO.RegionImagesDTO getRegionImages() {
+        StampResponseDTO.RegionImagesDTO regionImagesDTO = new StampResponseDTO.RegionImagesDTO();
+        
+        List<Region> regions = regionRepository.findAll();
+        
+        for (Region region : regions) {
+            String regionName = region.getRegionName();
+            String regionImage = region.getRegionImage();
+            
+            switch (regionName) {
+                case "춘천" -> regionImagesDTO.setChuncheon(regionImage);
+                case "원주" -> regionImagesDTO.setWonju(regionImage);
+                case "강릉" -> regionImagesDTO.setGangneung(regionImage);
+                case "동해" -> regionImagesDTO.setDonghae(regionImage);
+                case "태백" -> regionImagesDTO.setTaebaek(regionImage);
+                case "속초" -> regionImagesDTO.setSokcho(regionImage);
+                case "삼척" -> regionImagesDTO.setSamcheok(regionImage);
+                case "홍천" -> regionImagesDTO.setHongcheon(regionImage);
+                case "횡성" -> regionImagesDTO.setHoengseong(regionImage);
+                case "영월" -> regionImagesDTO.setYeongwol(regionImage);
+                case "평창" -> regionImagesDTO.setPyeongchang(regionImage);
+                case "정선" -> regionImagesDTO.setJeongseon(regionImage);
+                case "철원" -> regionImagesDTO.setCheorwon(regionImage);
+                case "화천" -> regionImagesDTO.setHwacheon(regionImage);
+                case "양구" -> regionImagesDTO.setYanggu(regionImage);
+                case "인제" -> regionImagesDTO.setInje(regionImage);
+                case "고성" -> regionImagesDTO.setGoseong(regionImage);
+                case "양양" -> regionImagesDTO.setYangyang(regionImage);
+            }
+        }
+        
+        return regionImagesDTO;
     }
 
     private double calculateDistance(Double lat1, Double lon1, Double lat2, Double lon2) {
