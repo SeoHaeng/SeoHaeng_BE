@@ -245,12 +245,7 @@ public class UserCommandService {
         User user = userRepository.findUserWithLoginInfoById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        LoginInfo loginInfo = user.getLoginInfo();
-        Provider provider = loginInfo.getProvider();
-
-        if(provider.equals(Provider.LOCAL)){
-            userRepository.delete(user);
-        } // TODO : 각 소셜 로그인 Provider 별로 처리
+        userRepository.delete(user);
     }
 
     // 사용자 정보 변경
