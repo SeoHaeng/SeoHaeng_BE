@@ -19,6 +19,7 @@ public class TravelCourseConverter {
                 .travelCourseTitle(travelCourseDTO.getTravelCourseTitle())
                 .travelCourseStartDate(travelCourseDTO.getStartDate())
                 .travelCourseEndDate(travelCourseDTO.getEndDate())
+                .isPublic(travelCourseDTO.getIsPublic())
                 .user(user)
                 .build();
     }

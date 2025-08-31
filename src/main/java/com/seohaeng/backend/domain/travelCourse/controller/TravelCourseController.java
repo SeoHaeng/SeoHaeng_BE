@@ -7,6 +7,7 @@ import com.seohaeng.backend.domain.travelCourse.service.TravelCourseQueryService
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +33,7 @@ public class TravelCourseController {
     - `travelCourseTitle` (문자열): 여행 제목 (예: "강릉 1박 2일")
     - `regionIdList` (숫자 배열): 여행 경로에 포함된 지역 ID 목록 (예: [1, 2])
     - `travelCourseScheduleList` (객체 배열): 날짜별 방문할 장소와 순서 목록
+    - 'isPublic' (true/false): 공개 여부
 
     `travelCourseScheduleList` 내부 필드:
     - `day` (날짜, 문자열): 방문 날짜 (예: "2025-07-24")
@@ -56,6 +58,26 @@ public class TravelCourseController {
             @PathVariable Long TravelCourseId) {
         TravelCourseResponseDTO.GetTravelCourseResponseDTO result
                 = travelCourseQueryService.getTravelCourse(TravelCourseId);
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(
+            summary = "다른 유저의 여행 일정 조회 API",
+            description = """
+    다른 유저의 여행 일정을 조회하는 API입니다. 기본 최신순 조회되며 공개여부가 true인 일정만 조회됩니다.
+    - Parameter:
+      - `page`: 페이지 번호 (1부터 시작)
+      - `size`: 한 페이지당 게시글 개수 (기본값: 10)
+    """
+    )
+    @GetMapping
+    public ApiResponse<List<TravelCourseResponseDTO.GetTravelCourseListItemDTO>> getTravelCourses (
+            @AuthUser Long userId,
+            @RequestParam(name = "page", defaultValue = "1") @Min(1)Integer page,
+            @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size
+    ) {
+        List<TravelCourseResponseDTO.GetTravelCourseListItemDTO> result
+                = travelCourseQueryService.getPublicTravelCourseList(userId, page, size);
         return ApiResponse.onSuccess(result);
     }
 
