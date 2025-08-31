@@ -14,6 +14,7 @@ public class TravelCourseRequestDTO {
         private String travelCourseTitle;
         private List<Long> regionIdList;
         private List<travelCourseScheduleDTO> travelCourseScheduleList;
+        private Boolean isPublic;
     }
 
     @Getter

@@ -32,6 +32,7 @@ public class TravelCourseController {
     - `travelCourseTitle` (문자열): 여행 제목 (예: "강릉 1박 2일")
     - `regionIdList` (숫자 배열): 여행 경로에 포함된 지역 ID 목록 (예: [1, 2])
     - `travelCourseScheduleList` (객체 배열): 날짜별 방문할 장소와 순서 목록
+    - 'isPublic' (true/false): 공개 여부
 
     `travelCourseScheduleList` 내부 필드:
     - `day` (날짜, 문자열): 방문 날짜 (예: "2025-07-24")

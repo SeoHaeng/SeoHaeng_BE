@@ -28,6 +28,9 @@ public class TravelCourse extends BaseEntity {
     @Column(nullable = false, length = 20)
     private LocalDate travelCourseEndDate;
 
+    @Column(nullable = false)
+    private Boolean isPublic;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
