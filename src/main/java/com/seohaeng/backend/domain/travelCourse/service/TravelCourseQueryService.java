@@ -11,6 +11,9 @@ import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
 import com.seohaeng.backend.global.apiPayload.exception.handler.TravelCourseHandler;
 import com.seohaeng.backend.global.apiPayload.exception.handler.UserHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,6 +65,16 @@ public class TravelCourseQueryService {
         List<TravelCourse> travelCourses = travelCourseRepository.findAllByUser(user);
 
         return travelCourses.stream()
+                .map(this::getTravelCourseListItem)
+                .collect(Collectors.toList());
+    }
+
+    public List<TravelCourseResponseDTO.GetTravelCourseListItemDTO> getPublicTravelCourseList(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<TravelCourse> travelCoursePage
+                = travelCourseRepository.findAllByIsPublicTrueAndUserIdNotOrderByCreatedAtDesc(userId, pageable);
+
+        return travelCoursePage.getContent().stream()
                 .map(this::getTravelCourseListItem)
                 .collect(Collectors.toList());
     }

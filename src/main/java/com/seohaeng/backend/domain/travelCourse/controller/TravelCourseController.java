@@ -7,6 +7,7 @@ import com.seohaeng.backend.domain.travelCourse.service.TravelCourseQueryService
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,6 +58,26 @@ public class TravelCourseController {
             @PathVariable Long TravelCourseId) {
         TravelCourseResponseDTO.GetTravelCourseResponseDTO result
                 = travelCourseQueryService.getTravelCourse(TravelCourseId);
+        return ApiResponse.onSuccess(result);
+    }
+
+    @Operation(
+            summary = "다른 유저의 여행 일정 조회 API",
+            description = """
+    다른 유저의 여행 일정을 조회하는 API입니다. 기본 최신순 조회되며 공개여부가 true인 일정만 조회됩니다.
+    - Parameter:
+      - `page`: 페이지 번호 (1부터 시작)
+      - `size`: 한 페이지당 게시글 개수 (기본값: 10)
+    """
+    )
+    @GetMapping
+    public ApiResponse<List<TravelCourseResponseDTO.GetTravelCourseListItemDTO>> getTravelCourses (
+            @AuthUser Long userId,
+            @RequestParam(name = "page", defaultValue = "1") @Min(1)Integer page,
+            @RequestParam(name = "size", defaultValue = "10") @Min(1)Integer size
+    ) {
+        List<TravelCourseResponseDTO.GetTravelCourseListItemDTO> result
+                = travelCourseQueryService.getPublicTravelCourseList(userId, page, size);
         return ApiResponse.onSuccess(result);
     }
 

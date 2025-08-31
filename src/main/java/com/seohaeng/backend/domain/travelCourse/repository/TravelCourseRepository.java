@@ -2,6 +2,8 @@ package com.seohaeng.backend.domain.travelCourse.repository;
 
 import com.seohaeng.backend.domain.travelCourse.entity.TravelCourse;
 import com.seohaeng.backend.domain.user.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -21,4 +23,6 @@ public interface TravelCourseRepository extends JpaRepository<TravelCourse, Long
 
     Optional<TravelCourse> findTopByUserAndTravelCourseStartDateLessThanEqualOrderByTravelCourseStartDateDesc
             (User user, LocalDate now);
+
+    Page<TravelCourse> findAllByIsPublicTrueAndUserIdNotOrderByCreatedAtDesc(Long userId, Pageable pageable);
 }
