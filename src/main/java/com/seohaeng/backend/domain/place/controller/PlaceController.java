@@ -4,6 +4,7 @@ import com.seohaeng.backend.domain.place.dto.PlaceInfoDTO;
 import com.seohaeng.backend.domain.place.dto.PlaceResponseDTO;
 import com.seohaeng.backend.domain.place.service.PlaceCommandService;
 import com.seohaeng.backend.domain.place.service.PlaceQueryService;
+import com.seohaeng.backend.domain.travelCourse.dto.StampResponseDTO;
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
@@ -129,5 +130,16 @@ public class PlaceController {
     @GetMapping("/festival")
     public ApiResponse<List<PlaceResponseDTO.OngoingFestivalResponse>> getOngoingFestival() {
         return ApiResponse.onSuccess(placeQueryService.getOngoingFestival());
+    }
+
+    @Operation(
+            summary = "강원도 18 지역 이미지 조회 API",
+            description = """
+        강원도 18개 지역의 이미지를 조회합니다.
+        """
+    )
+    @GetMapping("/regions")
+    public ApiResponse<StampResponseDTO.RegionImagesDTO> getRegionImages() {
+        return ApiResponse.onSuccess(placeQueryService.getRegionImages());
     }
 }
