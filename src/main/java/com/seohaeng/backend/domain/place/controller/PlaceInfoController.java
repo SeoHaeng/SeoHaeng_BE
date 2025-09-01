@@ -2,6 +2,7 @@ package com.seohaeng.backend.domain.place.controller;
 
 import com.seohaeng.backend.domain.place.dto.PlaceInfoDTO;
 import com.seohaeng.backend.domain.place.service.PlaceInfoService;
+import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class PlaceInfoController {
             @PathVariable Long placeId,
             @RequestParam Double currentLat,
             @RequestParam Double currentLng,
-            @RequestParam(required = false) Long userId
+            @AuthUser Long userId
     ) {
         return placeInfoService.getPlaceInfo(placeId, userId, currentLat, currentLng);
     }
