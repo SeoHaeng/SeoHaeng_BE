@@ -118,11 +118,11 @@ public class TravelCourseQueryService {
         return travelCourse.getTravelCourseScheduleList()
                 .stream()
                 .filter(schedule -> schedule.getDay().equals(travelCourse.getTravelCourseStartDate()))
-                .min(Comparator.comparing(s -> s.getOrderInDay()))
+                .sorted(Comparator.comparing(TravelCourseSchedule::getOrderInDay))
                 .map(schedule -> schedule.getPlace())
-                .map(place -> place.getPlaceImages().isEmpty() ?
-                    "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png" :
-                    place.getPlaceImages().get(0).getImageUrl())
+                .filter(place -> !place.getPlaceImages().isEmpty())
+                .map(place -> place.getPlaceImages().get(0).getImageUrl())
+                .findFirst()
                 .orElse("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png");
     }
 
