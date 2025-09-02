@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/places")
-public class PlaceMarkerController {
+public class BookStoreAttributeController {
 
     private final BookStoreAttributeService service;
 
@@ -27,8 +28,13 @@ public class PlaceMarkerController {
         """
     )
     @GetMapping("/markers/bookstays")
-    public List<PlaceMarkerDTO> getBookStayMarkers() {
-        return service.getBookStayMarkers();
+    public List<PlaceMarkerDTO> getBookStayMarkers(
+            @RequestParam double minLat,
+            @RequestParam double minLng,
+            @RequestParam double maxLat,
+            @RequestParam double maxLng
+    ) {
+        return service.getBookStayMarkers(minLat, minLng, maxLat, maxLng);
     }
 
     @Operation(
@@ -39,8 +45,13 @@ public class PlaceMarkerController {
         """
     )
     @GetMapping("/markers/bookcafes")
-    public List<PlaceMarkerDTO> getBookCafeMarkers() {
-        return service.getBookCafeMarkers();
+    public List<PlaceMarkerDTO> getBookCafeMarkers(
+            @RequestParam double minLat,
+            @RequestParam double minLng,
+            @RequestParam double maxLat,
+            @RequestParam double maxLng
+    ) {
+        return service.getBookCafeMarkers(minLat, minLng, maxLat, maxLng);
     }
 
     @Operation(
@@ -51,8 +62,13 @@ public class PlaceMarkerController {
         """
     )
     @GetMapping("/markers/bookstores")
-    public List<PlaceMarkerDTO> getIndieBookStoreMarkers() {
-        return service.getBookstoreMarkers();
+    public List<PlaceMarkerDTO> getIndieBookStoreMarkers(
+            @RequestParam double minLat,
+            @RequestParam double minLng,
+            @RequestParam double maxLat,
+            @RequestParam double maxLng
+    ) {
+        return service.getBookstoreMarkers(minLat, minLng, maxLat, maxLng);
     }
 
     @Operation(
@@ -63,8 +79,13 @@ public class PlaceMarkerController {
         """
     )
     @GetMapping("/markers/readingspots")
-    public List<PlaceMarkerDTO> getSpaceBookmarkMarkers() {
-        return service.getReadingSpotMarkers();
+    public List<PlaceMarkerDTO> getSpaceBookmarkMarkers(
+            @RequestParam double minLat,
+            @RequestParam double minLng,
+            @RequestParam double maxLat,
+            @RequestParam double maxLng
+    ) {
+        return service.getReadingSpotMarkers(minLat, minLng, maxLat, maxLng);
     }
 
 }

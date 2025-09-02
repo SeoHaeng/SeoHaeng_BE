@@ -1,7 +1,7 @@
 package com.seohaeng.backend.domain.place.controller;
 
 import com.seohaeng.backend.domain.place.dto.PlaceMarkerDTO;
-import com.seohaeng.backend.domain.place.service.PlaceMarkerService;
+import com.seohaeng.backend.domain.place.service.TourismMarkerService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/api/v1/places")
 public class TourismMarkerController {
 
-    private final PlaceMarkerService placeMarkerService;
+    private final TourismMarkerService tourismMarkerService;
 
     @Operation(
             summary = "관광지 마커 조회",
@@ -34,7 +34,7 @@ public class TourismMarkerController {
             @RequestParam double maxLat,
             @RequestParam double maxLng
     ) {
-        return placeMarkerService.getTouristSpotMarkers(minLat, minLng, maxLat, maxLng);
+        return tourismMarkerService.getTouristSpotMarkers(minLat, minLng, maxLat, maxLng);
     }
 
     @Operation(
@@ -51,7 +51,7 @@ public class TourismMarkerController {
             @RequestParam double maxLat,
             @RequestParam double maxLng
     ) {
-        return placeMarkerService.getFestivalMarkers(minLat, minLng, maxLat, maxLng);
+        return tourismMarkerService.getFestivalMarkers(minLat, minLng, maxLat, maxLng);
     }
 
     @Operation(
@@ -68,7 +68,7 @@ public class TourismMarkerController {
             @RequestParam double maxLat,
             @RequestParam double maxLng
     ) {
-        return placeMarkerService.getRestaurantMarkers(minLat, minLng, maxLat, maxLng);
+        return tourismMarkerService.getRestaurantMarkers(minLat, minLng, maxLat, maxLng);
     }
 
 }
