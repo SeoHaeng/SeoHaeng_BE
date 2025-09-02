@@ -3,6 +3,7 @@ package com.seohaeng.backend.domain.place.service;
 import com.seohaeng.backend.domain.place.dto.PlaceMarkerDTO;
 import com.seohaeng.backend.domain.place.repository.attribute.BookStoreAttributeRepository;
 import com.seohaeng.backend.domain.readingSpot.repository.ReadingSpotRepository;
+import com.seohaeng.backend.domain.place.util.MarkerUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,48 +22,54 @@ public class BookStoreAttributeService {
         this.readingSpotRepository = readingSpotRepository;
     }
 
-    public List<PlaceMarkerDTO> getBookStayMarkers() {
-        return repository.findAllBookStay().stream()
-                .map(attr -> new PlaceMarkerDTO(
-                        attr.getPlace().getId(),
-                        attr.getPlace().getName(),
-                        attr.getPlace().getLatitude(),
-                        attr.getPlace().getLongitude()
-                ))
-                .toList();
+    public List<PlaceMarkerDTO> getBookStayMarkers(double minLat, double minLng, double maxLat, double maxLng) {
+        return MarkerUtils.filterAndConvert(
+                repository.findAllBookStay(),
+                attr -> attr.getPlace().getLatitude(),
+                attr -> attr.getPlace().getLongitude(),
+                attr -> new PlaceMarkerDTO(attr.getPlace().getId(), attr.getPlace().getName(),
+                        attr.getPlace().getLatitude(), attr.getPlace().getLongitude()),
+                minLat, minLng, maxLat, maxLng,
+                5
+        );
     }
 
-    public List<PlaceMarkerDTO> getBookCafeMarkers() {
-        return repository.findAllBookCafe().stream()
-                .map(attr -> new PlaceMarkerDTO(
-                        attr.getPlace().getId(),
-                        attr.getPlace().getName(),
-                        attr.getPlace().getLatitude(),
-                        attr.getPlace().getLongitude()
-                ))
-                .toList();
+    public List<PlaceMarkerDTO> getBookCafeMarkers(double minLat, double minLng, double maxLat, double maxLng) {
+        return MarkerUtils.filterAndConvert(
+                repository.findAllBookCafe(),
+                attr -> attr.getPlace().getLatitude(),
+                attr -> attr.getPlace().getLongitude(),
+                attr -> new PlaceMarkerDTO(attr.getPlace().getId(), attr.getPlace().getName(),
+                        attr.getPlace().getLatitude(), attr.getPlace().getLongitude()),
+                minLat, minLng, maxLat, maxLng,
+                5
+        );
     }
 
-    public List<PlaceMarkerDTO> getBookstoreMarkers() {
-        return repository.findAllBookstore().stream()
-                .map(attr -> new PlaceMarkerDTO(
-                        attr.getPlace().getId(),
-                        attr.getPlace().getName(),
-                        attr.getPlace().getLatitude(),
-                        attr.getPlace().getLongitude()
-                ))
-                .toList();
+    public List<PlaceMarkerDTO> getBookstoreMarkers(double minLat, double minLng, double maxLat, double maxLng) {
+        return MarkerUtils.filterAndConvert(
+                repository.findAllBookstore(),
+                attr -> attr.getPlace().getLatitude(),
+                attr -> attr.getPlace().getLongitude(),
+                attr -> new PlaceMarkerDTO(attr.getPlace().getId(), attr.getPlace().getName(),
+                        attr.getPlace().getLatitude(), attr.getPlace().getLongitude()),
+                minLat, minLng, maxLat, maxLng,
+                5
+        );
     }
 
-    public List<PlaceMarkerDTO> getReadingSpotMarkers() {
-        return readingSpotRepository.findAllByOpenedTrue(Pageable.unpaged())
-                .stream()
+    public List<PlaceMarkerDTO> getReadingSpotMarkers(double minLat, double minLng, double maxLat, double maxLng) {
+        return readingSpotRepository.findAllByOpenedTrue(Pageable.unpaged()).stream()
+                .filter(r -> r.getLatitude() != null && r.getLongitude() != null)
+                .filter(r -> r.getLatitude() >= minLat && r.getLatitude() <= maxLat
+                        && r.getLongitude() >= minLng && r.getLongitude() <= maxLng)
                 .map(r -> new PlaceMarkerDTO(
                         r.getId(),
                         r.getTitle(),
                         r.getLatitude(),
                         r.getLongitude()
                 ))
+                .limit(5)
                 .toList();
     }
 
