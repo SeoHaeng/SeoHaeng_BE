@@ -51,7 +51,7 @@ public class Place extends BaseEntity {
 
     private String modifiedtime;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", nullable = true)
     private Region region;
 
