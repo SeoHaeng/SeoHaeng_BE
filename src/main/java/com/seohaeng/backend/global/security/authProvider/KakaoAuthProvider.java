@@ -8,6 +8,7 @@ import com.seohaeng.backend.global.apiPayload.code.status.ErrorStatus;
 import com.seohaeng.backend.global.apiPayload.exception.handler.AuthException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @RequiredArgsConstructor
 @Getter
+@Slf4j
 public class KakaoAuthProvider {
 
     @Value("${KAKAO_CLIENT_ID}")
@@ -52,13 +54,15 @@ public class KakaoAuthProvider {
                         kakaoTokenRequest,
                         String.class);
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        log.info("[KAKAO TOKEN RESPONSE] status={}, body={}", response.getStatusCode(), response.getBody());
 
+        ObjectMapper objectMapper = new ObjectMapper();
         OAuthToken oAuthToken = null;
 
         try {
             oAuthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
         } catch (JsonProcessingException e) {
+            log.error("[KAKAO TOKEN PARSE ERROR] body={}", response.getBody(), e);
             throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_KAKAO);
         }
         return oAuthToken;
