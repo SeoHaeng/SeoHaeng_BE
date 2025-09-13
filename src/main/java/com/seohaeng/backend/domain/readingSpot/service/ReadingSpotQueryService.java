@@ -52,12 +52,12 @@ public class ReadingSpotQueryService {
     // 공간책갈피 상세 조회
     public ReadingSpotResponseDTO.GetReadingSpotResponseDTO getReadingSpot(Long readingSpotId, Long userId) {
         ReadingSpot readingSpot = findReadingSpotWithImages(readingSpotId);
-        
-        if (!readingSpot.isOpened()) {
-            throw new ReadingSpotHandler(ErrorStatus.READING_SPOT_NOT_FOUND);
-        }
-        
         User user = findUserById(userId);
+
+        if (!readingSpot.isOpened() && !readingSpot.getUser().equals(user)) {
+            throw new ReadingSpotHandler(ErrorStatus.READING_SPOT_NOT_OPENED);
+        }
+
         List<String> imageList = getSortedImageUrls(readingSpot);
         boolean isLiked = isLikedByUser(user, readingSpot);
         boolean isScraped = isScrapedByUser(user, readingSpot);
