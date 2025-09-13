@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -35,8 +37,7 @@ public class KakaoAuthProvider {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
 
-        headers.add("Content-type"
-                ,"application/x-www-form-urlencoded;charset=utf-8");
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
@@ -47,24 +48,38 @@ public class KakaoAuthProvider {
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(params, headers);
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(
-                        "https://kauth.kakao.com/oauth/token",
-                        HttpMethod.POST,
-                        kakaoTokenRequest,
-                        String.class);
-
-        log.info("[KAKAO TOKEN RESPONSE] status={}, body={}", response.getStatusCode(), response.getBody());
-
-        ObjectMapper objectMapper = new ObjectMapper();
         OAuthToken oAuthToken = null;
 
         try {
+            log.info("[KAKAO TOKEN] 토큰 요청 시작: code={}", code);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    "https://kauth.kakao.com/oauth/token",
+                    HttpMethod.POST,
+                    kakaoTokenRequest,
+                    String.class
+            );
+
+            log.info("[KAKAO TOKEN] HTTP 응답 수신: status={}, headers={}", response.getStatusCode(), response.getHeaders());
+            log.info("[KAKAO TOKEN] 토큰 요청 성공: body={}", response.getBody());
+
+            ObjectMapper objectMapper = new ObjectMapper();
             oAuthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
+
+            log.info("[KAKAO TOKEN] 토큰 파싱 성공: accessToken={}", oAuthToken.getAccess_token());
+
         } catch (JsonProcessingException e) {
-            log.error("[KAKAO TOKEN PARSE ERROR] body={}", response.getBody(), e);
+            log.error("[KAKAO TOKEN] 토큰 파싱 실패: code={}, error={}", code, e.getMessage(), e);
             throw new AuthException(ErrorStatus.INVALID_REQUEST_INFO_KAKAO);
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            log.error("[KAKAO TOKEN] HTTP 요청 실패: status={}, body={}, error={}",
+                    e.getStatusCode(), e.getResponseBodyAsString(), e.getMessage(), e);
+            throw new AuthException(ErrorStatus.AUTH_INVALID_CODE);
+        } catch (Exception e) {
+            log.error("[KAKAO TOKEN] 토큰 요청 실패: code={}, error={}", code, e.getMessage(), e);
+            throw new AuthException(ErrorStatus.AUTH_INVALID_CODE);
         }
+
         return oAuthToken;
     }
 
