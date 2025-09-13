@@ -67,6 +67,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 로그인/토큰발급 등등
                 || path.startsWith("/api/v1/users/auth/**")
                 || path.startsWith("/test")
+                || path.startsWith("/api/v1/common/health/**")
 
                 // 필요하다면 다른 permitAll 경로들도 추가
                 // ...

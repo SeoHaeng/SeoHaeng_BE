@@ -23,6 +23,7 @@ public class SecurityConfig {
     private static final String[] SECURITY_ALLOW_ARRAY = { //인증 없이 접근 가능한 엔드 포인트
             ALLOW_AUTH_URL,
             //등등 추가 및 수정해주세요
+            "/api/v1/common/health/**",
             "/swagger-ui/**",
             "/swagger-resources/**",
             "/v3/api-docs/**",
