@@ -27,10 +27,10 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class KakaoAuthProvider {
 
-    @Value("${KAKAO_CLIENT_ID}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String client;
 
-    @Value("${KAKAO_REDIRECT_URI}")
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private String redirect;
 
     public OAuthToken requestToken(String code) {

@@ -38,4 +38,11 @@ public class CommonController {
         CommonResponseDTO.bookSearchResultListDTO result = commonQueryService.bookSearch(query, display, start, sort);
         return ApiResponse.onSuccess(result);
     }
+
+
+    @Operation(summary = "Server Health Check API")
+    @GetMapping("/health")
+    public ApiResponse<String> healthCheck() {
+        return ApiResponse.onSuccess("OK");
+    }
 }
