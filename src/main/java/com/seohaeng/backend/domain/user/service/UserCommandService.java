@@ -19,6 +19,7 @@ import com.seohaeng.backend.global.security.authProvider.NaverAuthProvider;
 import com.seohaeng.backend.global.security.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,6 +36,7 @@ import java.util.*;
 import static com.seohaeng.backend.domain.user.converter.UserConverter.toLocalLoginInfo;
 import static com.seohaeng.backend.domain.user.converter.UserConverter.toUserInfoDTO;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserCommandService {
@@ -370,8 +372,11 @@ public class UserCommandService {
     private OAuthToken getKakaoOauthToken(String code) {
         OAuthToken oAuthToken;
         try {
+            log.info("[KAKAO LOGIN] 인가코드로 토큰 요청 시작: code={}", code);
             oAuthToken = kakaoAuthProvider.requestToken(code);
+            log.info("[KAKAO LOGIN] 토큰 요청 성공");
         } catch (Exception e) {
+            log.error("[KAKAO LOGIN] 토큰 요청 실패: code={}, error={}", code, e.getMessage(), e);
             throw new AuthException(ErrorStatus.AUTH_INVALID_CODE);
         }
         return oAuthToken;

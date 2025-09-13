@@ -35,7 +35,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_REQUEST_INFO_KAKAO(HttpStatus.UNAUTHORIZED, "AUTH_007", "카카오 정보 불러오기에 실패하였습니다."),
     INVALID_REQUEST_INFO_NAVER(HttpStatus.UNAUTHORIZED, "AUTH_008", "네이버 정보 불러오기에 실패하였습니다."),
     INVALID_REQUEST_INFO_GOOGLE(HttpStatus.UNAUTHORIZED, "AUTH_009", "구글 정보 불러오기에 실패하였습니다."),
-    AUTH_INVALID_CODE(HttpStatus.UNAUTHORIZED, "", "코드가 유효하지 않습니다."),
+    AUTH_INVALID_CODE(HttpStatus.UNAUTHORIZED, "AUTH_010", "코드가 유효하지 않습니다."),
 
     // 장소 관련
     PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "PLACE_4001", "존재하지 않는 시설입니다."),
