@@ -61,6 +61,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 공간 책갈피 관련
     READING_SPOT_NOT_FOUND(HttpStatus.NOT_FOUND, "READING_SPOT_4001", "공간 책갈피가 존재하지 않습니다."),
+    READING_SPOT_NOT_OPENED(HttpStatus.FORBIDDEN, "READING_SPOT_4002", "비공개 공간 책갈피입니다."),
     ;
 
     private final HttpStatus httpStatus;
