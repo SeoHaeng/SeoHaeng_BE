@@ -123,7 +123,7 @@ public class TravelCourseQueryService {
                 .filter(place -> !place.getPlaceImages().isEmpty())
                 .map(place -> place.getPlaceImages().get(0).getImageUrl())
                 .findFirst()
-                .orElse("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png");
+                .orElse("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default2.png");
     }
 
     private List<TravelCourseResponseDTO.GetTravelCourseScheduleResponseDayDTO> groupAndConvertSchedules(

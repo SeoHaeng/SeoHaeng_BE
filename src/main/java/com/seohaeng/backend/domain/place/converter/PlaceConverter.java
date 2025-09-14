@@ -42,7 +42,7 @@ public class PlaceConverter {
                 .latitude(place.getLatitude())
                 .longitude(place.getLongitude())
                 .imageUrl(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
-                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png")
+                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default2.png")
                 .build();
     }
 
@@ -68,7 +68,7 @@ public class PlaceConverter {
                 .longitude(place.getLongitude())
                 .latitude(place.getLatitude())
                 .imageUrl(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
-                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png")
+                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default2.png")
                 .build();
     }
 
@@ -92,7 +92,7 @@ public class PlaceConverter {
                 .name(place.getName())
                 .overview(overview)
                 .imageUrl(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
-                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png")
+                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default2.png")
                 .placeType(place.getPlaceType())
                 .build();
     }
@@ -105,7 +105,7 @@ public class PlaceConverter {
                 .startDate(attribute.getStartDate())
                 .endDate(attribute.getEndDate())
                 .imageUrl(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() 
-                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png")
+                    ? place.getPlaceImages().get(0).getImageUrl() : "https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default2.png")
                 .build();
     }
 
@@ -139,7 +139,7 @@ public class PlaceConverter {
                 .placeImageUrls(place.getPlaceImages() != null && !place.getPlaceImages().isEmpty() ? 
                     place.getPlaceImages().stream()
                         .map(img -> img.getImageUrl())
-                        .toList() : List.of("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default.png"))
+                        .toList() : List.of("https://seohaeng-bucket.s3.ap-northeast-2.amazonaws.com/places/default2.png"))
                 .build();
     }
     
