@@ -60,6 +60,18 @@ public class UserController {
         return ApiResponse.onSuccess(userCommandService.loginUser(request));
     }
 
+    @Operation(
+            summary = "로그아웃 API",
+            description = """
+        현재 로그인된 사용자의 Refresh Token을 서버에서 삭제하여 무효화합니다.
+        이후 클라이언트에서도 저장된 Access Token 및 Refresh Token을 모두 삭제해야 합니다.
+        """)
+    @PostMapping("/auth/logout")
+    public ApiResponse<String> logout() {
+        // TODO : RefreshToken 삭제 로직 추가
+        return ApiResponse.onSuccess("로그아웃이 완료되었습니다.");
+    }
+
     @Operation(summary = "회원 탈퇴", description = "현재 사용자의 회원 탈퇴를 진행합니다.")
     @DeleteMapping
     public ApiResponse<String> deleteAccount(
