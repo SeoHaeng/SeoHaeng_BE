@@ -24,6 +24,17 @@ jobs:
           mkdir -p deploy
           echo "${{ secrets.APPLICATION_YML }}" > deploy/application.yml
 
+      # Gradle 캐싱
+      - name: Gradle Caching
+        uses: action/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Run MySQL image for test
         run: docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=seohaeng_db mysql:8.0.31
 
