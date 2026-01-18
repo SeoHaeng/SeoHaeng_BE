@@ -13,6 +13,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,7 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private final LoginInfoRepository loginInfoRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     private static final String HEADER_STRING = "Authorization";
     private static final String HEADER_STRING_PREFIX = "Bearer ";
@@ -92,6 +94,12 @@ public class JwtTokenProvider {
         }catch(JwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+
+    public boolean isBlacklisted(String token){
+        return Boolean.TRUE.equals(
+                redisTemplate.hasKey("blacklist:access-token:" + token)
+        );
     }
 
     public Authentication getAuthentication(String token) {
