@@ -5,9 +5,11 @@ import com.seohaeng.backend.domain.user.dto.UserResponseDTO;
 import com.seohaeng.backend.domain.user.service.UserCommandService;
 import com.seohaeng.backend.domain.user.service.UserQueryService;
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
+import com.seohaeng.backend.global.security.handler.AccessToken;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.persistence.Access;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -68,9 +70,11 @@ public class UserController {
         """)
     @PostMapping("/auth/logout")
     public ApiResponse<String> logout(
-            @AuthUser Long userId
+            @AuthUser Long userId,
+            @AccessToken String accessToken
     ) {
-        userCommandService.logout(userId);
+        System.out.println(accessToken);
+        userCommandService.logout(userId, accessToken);
         return ApiResponse.onSuccess("로그아웃이 완료되었습니다.");
     }
 

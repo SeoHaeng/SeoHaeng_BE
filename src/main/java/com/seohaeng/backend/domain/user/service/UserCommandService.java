@@ -252,11 +252,12 @@ public class UserCommandService {
 
     // 로그아웃
     @Transactional
-    public void logout(Long userId){
+    public void logout(Long userId, String token){
 
         User user = userRepository.findUserWithLoginInfoById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
+        blackListAccessToken(token);
         deleteRefreshTokenToRedis(userId);
     }
 
@@ -356,6 +357,12 @@ public class UserCommandService {
     private void deleteRefreshTokenToRedis(Long userId) {
         String redisKey = "refreshToken:" + userId;
         redisTemplate.delete(redisKey);
+    }
+
+    private void blackListAccessToken(String token) {
+        long remainMillis = jwtTokenProvider.getRemainingTimeFromToken(token);
+        String redisKey = "blacklist:access-token:" + token;
+        redisTemplate.opsForValue().set(redisKey, token, Duration.ofMillis(remainMillis));
     }
 
     private void validatePasswordComplexity(String password) {
