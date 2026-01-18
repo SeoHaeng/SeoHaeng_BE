@@ -250,6 +250,16 @@ public class UserCommandService {
         userRepository.delete(user);
     }
 
+    // 로그아웃
+    @Transactional
+    public void logout(Long userId){
+
+        User user = userRepository.findUserWithLoginInfoById(userId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
+
+        deleteRefreshTokenToRedis(userId);
+    }
+
     // 사용자 정보 변경
     @Transactional
     public UserResponseDTO.GetUserInfoResponseDTO updateUserInfo(
@@ -338,10 +348,14 @@ public class UserCommandService {
                 .build();
     }
 
-    // Refresh Token Redis 저장
     private void saveRefreshTokenToRedis(Long userId, String refreshToken) {
         String redisKey = "refreshToken:" + userId;
         redisTemplate.opsForValue().set(redisKey, refreshToken, Duration.ofMillis(refreshTokenExpiration));
+    }
+
+    private void deleteRefreshTokenToRedis(Long userId) {
+        String redisKey = "refreshToken:" + userId;
+        redisTemplate.delete(redisKey);
     }
 
     private void validatePasswordComplexity(String password) {
