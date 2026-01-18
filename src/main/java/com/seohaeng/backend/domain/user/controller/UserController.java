@@ -67,8 +67,10 @@ public class UserController {
         이후 클라이언트에서도 저장된 Access Token 및 Refresh Token을 모두 삭제해야 합니다.
         """)
     @PostMapping("/auth/logout")
-    public ApiResponse<String> logout() {
-        // TODO : RefreshToken 삭제 로직 추가
+    public ApiResponse<String> logout(
+            @AuthUser Long userId
+    ) {
+        userCommandService.logout(userId);
         return ApiResponse.onSuccess("로그아웃이 완료되었습니다.");
     }
 
