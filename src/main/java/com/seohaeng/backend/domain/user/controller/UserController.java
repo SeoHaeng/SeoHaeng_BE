@@ -5,6 +5,7 @@ import com.seohaeng.backend.domain.user.dto.UserResponseDTO;
 import com.seohaeng.backend.domain.user.service.UserCommandService;
 import com.seohaeng.backend.domain.user.service.UserQueryService;
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
+import com.seohaeng.backend.global.security.handler.AccessToken;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -71,6 +72,7 @@ public class UserController {
     @PostMapping("/auth/logout")
     public ApiResponse<String> logout(
             @AuthUser Long userId,
+            @AccessToken String accessToken,
             @RequestBody UserRequestDTO.LogoutDTO request
             ) {
         userCommandService.logout(userId);
@@ -81,6 +83,7 @@ public class UserController {
     @DeleteMapping
     public ApiResponse<String> deleteAccount(
             @AuthUser Long userId,
+            @AccessToken String accessToken,
             @RequestBody UserRequestDTO.AccountDeleteDTO request
     ){
         userCommandService.deleteUser(userId);
