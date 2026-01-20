@@ -236,22 +236,24 @@ public class UserCommandService {
 
     // 회원 탈퇴
     @Transactional
-    public void deleteUser(Long userId, String refreshToken){
+    public void deleteUser(Long userId, String refreshToken, String accessToken){
 
         User user = userRepository.findUserWithLoginInfoById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
+        blacklistAccessToken(accessToken);
         deleteRefreshTokenToRedis(refreshToken);
         userRepository.delete(user);
     }
 
     // 로그아웃
     @Transactional
-    public void logout(Long userId, String refreshToken){
+    public void logout(Long userId, String refreshToken, String accessToken){
 
         User user = userRepository.findUserWithLoginInfoById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
+        blacklistAccessToken(accessToken);
         deleteRefreshTokenToRedis(refreshToken);
     }
 
@@ -351,6 +353,12 @@ public class UserCommandService {
     private void deleteRefreshTokenToRedis(String refreshToken) {
         String redisKey = "refreshToken:" + refreshToken;
         redisTemplate.delete(redisKey);
+    }
+
+    private void blacklistAccessToken(String accessToken) {
+        String redisKey = "blacklist:" + "accessToken:" + accessToken;
+        long remainingTime  = jwtTokenProvider.getRemainingValidity(accessToken);
+        redisTemplate.opsForValue().set(redisKey, accessToken, Duration.ofMillis(remainingTime ));
     }
 
     private void validatePasswordComplexity(String password) {

@@ -75,7 +75,7 @@ public class UserController {
             @AccessToken String accessToken,
             @RequestBody UserRequestDTO.LogoutDTO request
             ) {
-        userCommandService.logout(userId, request.getRefreshToken());
+        userCommandService.logout(userId, request.getRefreshToken(), accessToken);
         return ApiResponse.onSuccess("로그아웃이 완료되었습니다.");
     }
 
@@ -86,7 +86,7 @@ public class UserController {
             @AccessToken String accessToken,
             @RequestBody UserRequestDTO.AccountDeleteDTO request
     ){
-        userCommandService.deleteUser(userId, request.getRefreshToken());
+        userCommandService.deleteUser(userId, request.getRefreshToken(), accessToken);
         return ApiResponse.onSuccess("회원 탈퇴가 완료되었습니다.");
     }
 

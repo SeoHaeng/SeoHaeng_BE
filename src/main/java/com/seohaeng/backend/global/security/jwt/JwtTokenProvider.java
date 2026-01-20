@@ -13,6 +13,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,7 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private final LoginInfoRepository loginInfoRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     private static final String HEADER_STRING = "Authorization";
     private static final String HEADER_STRING_PREFIX = "Bearer ";
@@ -94,6 +96,11 @@ public class JwtTokenProvider {
         }
     }
 
+    public boolean isBlacklisted(String token) {
+        String redisKey = "blacklist:accessToken:" + token;
+        return Boolean.TRUE.equals(redisTemplate.hasKey(redisKey));
+    }
+
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -140,5 +147,23 @@ public class JwtTokenProvider {
                 .getBody();
         
         return claims.get("id", Long.class);
+    }
+
+    public long getRemainingValidity(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            long expirationTime = claims.getExpiration().getTime();
+            long currentTime = System.currentTimeMillis();
+
+            long remainingTime = expirationTime - currentTime;
+            return Math.max(remainingTime, 0);
+        } catch (JwtException | IllegalArgumentException e) {
+            return 0;
+        }
     }
 }
