@@ -79,4 +79,14 @@ public class UserRequestDTO {
         @AssertTrue(message = "위치 기반 서비스 이용약관에 필수로 동의해야 합니다.")
         private Boolean locationServiceAgreed;
     }
+
+    @Getter
+    public static class LogoutDTO {
+        private String refreshToken;
+    }
+
+    @Getter
+    public static class AccountDeleteDTO {
+        private String refreshToken;
+    }
 }

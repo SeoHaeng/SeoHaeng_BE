@@ -5,16 +5,19 @@ import com.seohaeng.backend.domain.user.dto.UserResponseDTO;
 import com.seohaeng.backend.domain.user.service.UserCommandService;
 import com.seohaeng.backend.domain.user.service.UserQueryService;
 import com.seohaeng.backend.global.apiPayload.ApiResponse;
+import com.seohaeng.backend.global.security.handler.AccessToken;
 import com.seohaeng.backend.global.security.handler.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
@@ -68,17 +71,22 @@ public class UserController {
         """)
     @PostMapping("/auth/logout")
     public ApiResponse<String> logout(
-            @AuthUser Long userId
-    ) {
-        userCommandService.logout(userId);
+            @AuthUser Long userId,
+            @AccessToken String accessToken,
+            @RequestBody UserRequestDTO.LogoutDTO request
+            ) {
+        userCommandService.logout(userId, request.getRefreshToken(), accessToken);
         return ApiResponse.onSuccess("로그아웃이 완료되었습니다.");
     }
 
     @Operation(summary = "회원 탈퇴", description = "현재 사용자의 회원 탈퇴를 진행합니다.")
     @DeleteMapping
     public ApiResponse<String> deleteAccount(
-            @AuthUser Long userId){
-        userCommandService.deleteUser(userId);
+            @AuthUser Long userId,
+            @AccessToken String accessToken,
+            @RequestBody UserRequestDTO.AccountDeleteDTO request
+    ){
+        userCommandService.deleteUser(userId, request.getRefreshToken(), accessToken);
         return ApiResponse.onSuccess("회원 탈퇴가 완료되었습니다.");
     }
 

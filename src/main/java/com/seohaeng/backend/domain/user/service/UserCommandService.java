@@ -64,15 +64,8 @@ public class UserCommandService {
         }
 
         Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
-        String username = authentication.getName();
 
-        LoginInfo loginInfo = loginInfoRepository.findByUsernameWithUser(username)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
-
-        User user = loginInfo.getUser();
-        Long userId = user.getId();
-
-        String redisKey = "refreshToken:" + userId;
+        String redisKey = "refreshToken:" + refreshToken;
         String storedRefreshToken = (String) redisTemplate.opsForValue().get(redisKey);
 
         if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
@@ -82,7 +75,8 @@ public class UserCommandService {
         String newAccessToken = jwtTokenProvider.createAccessToken(authentication);
         String newRefreshToken = jwtTokenProvider.createRefreshToken(authentication);
 
-        saveRefreshTokenToRedis(userId, newRefreshToken);
+        saveRefreshTokenToRedis(newRefreshToken);
+        deleteRefreshTokenToRedis(refreshToken);
 
         return UserResponseDTO.TokenResponse.builder()
                 .accessToken(newAccessToken)
@@ -155,7 +149,7 @@ public class UserCommandService {
         String accessToken = jwtTokenProvider.createAccessToken(authentication);
         String refreshToken = jwtTokenProvider.createRefreshToken(authentication);
 
-        saveRefreshTokenToRedis(loginUser.getId(), refreshToken);
+        saveRefreshTokenToRedis(refreshToken);
 
         return UserConverter.toLoginResultDTO(
                 loginUser.getId(),
@@ -242,22 +236,25 @@ public class UserCommandService {
 
     // 회원 탈퇴
     @Transactional
-    public void deleteUser(Long userId){
+    public void deleteUser(Long userId, String refreshToken, String accessToken){
 
         User user = userRepository.findUserWithLoginInfoById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
+        blacklistAccessToken(accessToken);
+        deleteRefreshTokenToRedis(refreshToken);
         userRepository.delete(user);
     }
 
     // 로그아웃
     @Transactional
-    public void logout(Long userId){
+    public void logout(Long userId, String refreshToken, String accessToken){
 
         User user = userRepository.findUserWithLoginInfoById(userId)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.USER_NOT_FOUND));
 
-        deleteRefreshTokenToRedis(userId);
+        blacklistAccessToken(accessToken);
+        deleteRefreshTokenToRedis(refreshToken);
     }
 
     // 사용자 정보 변경
@@ -348,14 +345,20 @@ public class UserCommandService {
                 .build();
     }
 
-    private void saveRefreshTokenToRedis(Long userId, String refreshToken) {
-        String redisKey = "refreshToken:" + userId;
+    private void saveRefreshTokenToRedis(String refreshToken) {
+        String redisKey = "refreshToken:" + refreshToken;
         redisTemplate.opsForValue().set(redisKey, refreshToken, Duration.ofMillis(refreshTokenExpiration));
     }
 
-    private void deleteRefreshTokenToRedis(Long userId) {
-        String redisKey = "refreshToken:" + userId;
+    private void deleteRefreshTokenToRedis(String refreshToken) {
+        String redisKey = "refreshToken:" + refreshToken;
         redisTemplate.delete(redisKey);
+    }
+
+    private void blacklistAccessToken(String accessToken) {
+        String redisKey = "blacklist:" + "accessToken:" + accessToken;
+        long remainingTime  = jwtTokenProvider.getRemainingValidity(accessToken);
+        redisTemplate.opsForValue().set(redisKey, accessToken, Duration.ofMillis(remainingTime ));
     }
 
     private void validatePasswordComplexity(String password) {
@@ -378,7 +381,7 @@ public class UserCommandService {
         String accessToken = jwtTokenProvider.createAccessToken(authentication);
         String refreshToken = jwtTokenProvider.createRefreshToken(authentication);
 
-        saveRefreshTokenToRedis(loginUser.getId(), refreshToken);
+        saveRefreshTokenToRedis(refreshToken);
 
         return UserConverter.toLoginResultDTO(loginUser.getId(),accessToken,refreshToken, isNewUser);
     }
