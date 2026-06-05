@@ -1,9 +1,8 @@
 package com.seohaeng.backend.domain.place.service;
 
 import com.seohaeng.backend.domain.place.dto.PlaceMarkerDTO;
-import com.seohaeng.backend.domain.place.repository.attribute.FestivalAttributeRepository;
-import com.seohaeng.backend.domain.place.repository.attribute.RestaurantAttributeRepository;
-import com.seohaeng.backend.domain.place.repository.attribute.TouristSpotAttributeRepository;
+import com.seohaeng.backend.domain.place.entity.enums.PlaceType;
+import com.seohaeng.backend.domain.place.repository.PlaceRepository;
 import com.seohaeng.backend.domain.place.util.MarkerUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,17 +16,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TourismMarkerService {
 
-    private final FestivalAttributeRepository festivalRepository;
-    private final RestaurantAttributeRepository restaurantRepository;
-    private final TouristSpotAttributeRepository touristSpotRepository;
+    private final PlaceRepository placeRepository;
 
     public List<PlaceMarkerDTO> getTouristSpotMarkers(double minLat, double minLng, double maxLat, double maxLng) {
         return MarkerUtils.filterAndConvert(
-                touristSpotRepository.findAll(),
-                attr -> attr.getPlace().getLatitude(),
-                attr -> attr.getPlace().getLongitude(),
-                attr -> new PlaceMarkerDTO(attr.getPlace().getId(), attr.getPlace().getName(),
-                        attr.getPlace().getLatitude(), attr.getPlace().getLongitude()),
+                placeRepository.findByPlaceType(PlaceType.TOURIST_SPOT),
+                place -> place.getLatitude(),
+                place -> place.getLongitude(),
+                place -> new PlaceMarkerDTO(place.getId(), place.getName(), place.getLatitude(), place.getLongitude()),
                 minLat, minLng, maxLat, maxLng,
                 5
         );
@@ -35,11 +31,10 @@ public class TourismMarkerService {
 
     public List<PlaceMarkerDTO> getFestivalMarkers(double minLat, double minLng, double maxLat, double maxLng) {
         return MarkerUtils.filterAndConvert(
-                festivalRepository.findOngoingFestivals(LocalDate.now()),
-                attr -> attr.getPlace().getLatitude(),
-                attr -> attr.getPlace().getLongitude(),
-                attr -> new PlaceMarkerDTO(attr.getPlace().getId(), attr.getPlace().getName(),
-                        attr.getPlace().getLatitude(), attr.getPlace().getLongitude()),
+                placeRepository.findOngoingFestivals(LocalDate.now()),
+                place -> place.getLatitude(),
+                place -> place.getLongitude(),
+                place -> new PlaceMarkerDTO(place.getId(), place.getName(), place.getLatitude(), place.getLongitude()),
                 minLat, minLng, maxLat, maxLng,
                 5
         );
@@ -47,11 +42,10 @@ public class TourismMarkerService {
 
     public List<PlaceMarkerDTO> getRestaurantMarkers(double minLat, double minLng, double maxLat, double maxLng) {
         return MarkerUtils.filterAndConvert(
-                restaurantRepository.findAll(),
-                attr -> attr.getPlace().getLatitude(),
-                attr -> attr.getPlace().getLongitude(),
-                attr -> new PlaceMarkerDTO(attr.getPlace().getId(), attr.getPlace().getName(),
-                        attr.getPlace().getLatitude(), attr.getPlace().getLongitude()),
+                placeRepository.findByPlaceType(PlaceType.RESTAURANT),
+                place -> place.getLatitude(),
+                place -> place.getLongitude(),
+                place -> new PlaceMarkerDTO(place.getId(), place.getName(), place.getLatitude(), place.getLongitude()),
                 minLat, minLng, maxLat, maxLng,
                 5
         );
