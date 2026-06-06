@@ -20,6 +20,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(indexes = @Index(name = "idx_place_type_lat_lng", columnList = "place_type, latitude, longitude"))
 public class Place extends BaseEntity {
 
     @Id
