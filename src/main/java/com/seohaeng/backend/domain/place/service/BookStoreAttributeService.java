@@ -4,7 +4,7 @@ import com.seohaeng.backend.domain.place.dto.PlaceMarkerDTO;
 import com.seohaeng.backend.domain.place.repository.attribute.BookStoreAttributeRepository;
 import com.seohaeng.backend.domain.readingSpot.repository.ReadingSpotRepository;
 import com.seohaeng.backend.domain.place.util.MarkerUtils;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,18 +59,7 @@ public class BookStoreAttributeService {
     }
 
     public List<PlaceMarkerDTO> getReadingSpotMarkers(double minLat, double minLng, double maxLat, double maxLng) {
-        return readingSpotRepository.findAllByOpenedTrue(Pageable.unpaged()).stream()
-                .filter(r -> r.getLatitude() != null && r.getLongitude() != null)
-                .filter(r -> r.getLatitude() >= minLat && r.getLatitude() <= maxLat
-                        && r.getLongitude() >= minLng && r.getLongitude() <= maxLng)
-                .map(r -> new PlaceMarkerDTO(
-                        r.getId(),
-                        r.getTitle(),
-                        r.getLatitude(),
-                        r.getLongitude()
-                ))
-                .limit(5)
-                .toList();
+        return readingSpotRepository.findMarkerDTOsByBounds(minLat, maxLat, minLng, maxLng, PageRequest.of(0, 5));
     }
 
 }
