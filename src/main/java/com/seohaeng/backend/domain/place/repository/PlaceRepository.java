@@ -3,6 +3,7 @@ package com.seohaeng.backend.domain.place.repository;
 import com.seohaeng.backend.domain.place.dto.PlaceMarkerDTO;
 import com.seohaeng.backend.domain.place.entity.enums.PlaceType;
 import com.seohaeng.backend.domain.place.entity.place.Place;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -38,7 +39,8 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
             @Param("minLat") double minLat,
             @Param("maxLat") double maxLat,
             @Param("minLng") double minLng,
-            @Param("maxLng") double maxLng
+            @Param("maxLng") double maxLng,
+            Pageable pageable
     );
 
     @Query("SELECT new com.seohaeng.backend.domain.place.dto.PlaceMarkerDTO(p.id, p.name, p.latitude, p.longitude) " +
