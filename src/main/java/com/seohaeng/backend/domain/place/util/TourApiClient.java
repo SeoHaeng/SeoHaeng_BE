@@ -27,9 +27,9 @@ public class TourApiClient {
                 .baseUrl(AREA_BASED_SEARCH_URL)
                 .build();
 
-        String url = AREA_BASED_SEARCH_URL + "?numOfRows=350&pageNo=" + pageNo +
+        String url = AREA_BASED_SEARCH_URL + "?numOfRows=2000&pageNo=" + pageNo +
                 "&MobileOS=AND&MobileApp=seohaeng&_type=json&contentTypeId=" + contentTypeId + 
-                "&areaCode=32&serviceKey=" + serviceKey;
+                "&lDongRegnCd=51&serviceKey=" + serviceKey;
         
         URI uri = URI.create(url);
 
