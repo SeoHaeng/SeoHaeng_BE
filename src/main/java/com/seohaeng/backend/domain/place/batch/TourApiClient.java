@@ -99,7 +99,10 @@ public class TourApiClient {
                  "SERVICE_KEY_IS_NOT_REGISTERED_ERROR",
                  "UNREGISTERED_IP_ERROR",
                  "SERVICE_ACCESS_DENIED_ERROR",
-                 "NO_OPENAPI_SERVICE_ERROR" -> throw new TourApiFatalException(code);
+                 "NO_OPENAPI_SERVICE_ERROR" -> {
+                log.error("[Fatal Exception] Tour API 재시도 불가 사유: {}", code);
+                throw new TourApiFatalException(code);
+            }
             default -> throw new TourApiRetryableException(code);
         }
     }
