@@ -13,7 +13,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     defer-datasource-initialization: true
     properties:
       hibernate:
@@ -22,6 +22,12 @@ spring:
         use_sql_comments: true
         jdbc:
           batch_size: 1000
+
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
 
   security:
     oauth2:
@@ -71,6 +77,10 @@ jwt:
 tourapi:
   api:
     client-id: ${TOUR_API_SERVICE_KEY}
+
+batch:
+  webhook:
+    url: ${BATCH_WEBHOOK_URL:}
 
 cloud:
   aws:
