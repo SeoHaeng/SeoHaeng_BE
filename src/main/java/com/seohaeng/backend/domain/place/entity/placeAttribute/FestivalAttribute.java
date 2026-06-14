@@ -24,10 +24,10 @@ public class FestivalAttribute extends BaseEntity {
     @JoinColumn(name = "place_id")
     private Place place;
 
-    @Column(length = 1000)
+    @Column(columnDefinition = "TEXT")
     private String overview;
 
-    @Column(length = 1000)
+    @Column(columnDefinition = "TEXT")
     private String programs;
 
     private LocalDate startDate;
