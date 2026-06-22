@@ -1,5 +1,6 @@
 package com.seohaeng.backend.domain.place.dto.tourapiResponseDTO;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
@@ -26,6 +27,7 @@ public class AreaBasedSearchResponseDTO {
     @Getter
     @Setter
     public static class Body {
+        @JsonDeserialize(using = ItemsDeserializer.class)
         private Items items;
         private Integer numOfRows;
         private Integer pageNo;

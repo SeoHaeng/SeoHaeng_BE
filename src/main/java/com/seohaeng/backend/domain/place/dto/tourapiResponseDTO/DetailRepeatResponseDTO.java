@@ -1,7 +1,13 @@
 package com.seohaeng.backend.domain.place.dto.tourapiResponseDTO;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.Setter;
+import java.io.IOException;
 import java.util.List;
 
 @Getter
@@ -26,10 +32,21 @@ public class DetailRepeatResponseDTO {
     @Getter
     @Setter
     public static class Body {
+        @JsonDeserialize(using = ItemsDeserializer.class)
         private Items items;
         private Integer numOfRows;
         private Integer pageNo;
         private Integer totalCount;
+    }
+
+    public static class ItemsDeserializer extends JsonDeserializer<Items> {
+        @Override
+        public Items deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+            if (p.currentToken() == JsonToken.VALUE_STRING) {
+                return null;
+            }
+            return ctxt.readValue(p, Items.class);
+        }
     }
 
     @Getter

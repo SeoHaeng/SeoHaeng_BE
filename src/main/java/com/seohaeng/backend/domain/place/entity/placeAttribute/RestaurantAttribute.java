@@ -22,7 +22,10 @@ public class RestaurantAttribute extends BaseEntity {
     private Place place;
 
 
+    @Column(columnDefinition = "TEXT")
     private String firstmenu;
+
+    @Column(columnDefinition = "TEXT")
     private String treatmenu;
 
     private String kidsfacility;
