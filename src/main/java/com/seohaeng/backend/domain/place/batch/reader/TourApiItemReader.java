@@ -20,8 +20,10 @@ public class TourApiItemReader implements ItemReader<AreaBasedSearchResponseDTO.
     private final TourApiClient tourApiClient;
     private final int contentTypeId;
 
-    private List<AreaBasedSearchResponseDTO.PlaceItem> items;
+    private List<AreaBasedSearchResponseDTO.PlaceItem> items = Collections.emptyList();
     private int index = 0;
+    private int pageNo = 1;
+    private boolean done = false;
 
     private final RetryTemplate retryTemplate = RetryTemplate.builder()
             .maxAttempts(3)
@@ -32,23 +34,41 @@ public class TourApiItemReader implements ItemReader<AreaBasedSearchResponseDTO.
     @Override
     public void beforeStep(StepExecution stepExecution) {
         index = 0;
+        pageNo = 1;
+        done = false;
+        items = Collections.emptyList();
+    }
+
+    @Override
+    public AreaBasedSearchResponseDTO.PlaceItem read() {
+        if (done) return null;
+
+        if (index >= items.size()) {
+            fetchNextPage();
+            if (items.isEmpty()) {
+                done = true;
+                return null;
+            }
+            index = 0;
+        }
+
+        return items.get(index++);
+    }
+
+    private void fetchNextPage() {
+        int currentPage = pageNo++;
         AreaBasedSearchResponseDTO response = retryTemplate.execute(
-                ctx -> tourApiClient.searchAreaBasedPlaces(contentTypeId, 1)
+                ctx -> tourApiClient.searchAreaBasedPlaces(contentTypeId, currentPage)
         );
         if (response == null
                 || response.getResponse().getBody().getItems() == null
                 || response.getResponse().getBody().getItems().getItem() == null
                 || response.getResponse().getBody().getItems().getItem().isEmpty()) {
-            log.warn("[Reader] contentTypeId={} 데이터 없음", contentTypeId);
+            log.info("[Reader] contentTypeId={} pageNo={} 데이터 소진", contentTypeId, currentPage);
             items = Collections.emptyList();
             return;
         }
         items = response.getResponse().getBody().getItems().getItem();
-        log.info("[Reader] contentTypeId={} 아이템 {}개 로드 완료", contentTypeId, items.size());
-    }
-
-    @Override
-    public AreaBasedSearchResponseDTO.PlaceItem read() {
-        return index < items.size() ? items.get(index++) : null;
+        log.info("[Reader] contentTypeId={} pageNo={} 아이템 {}개 로드", contentTypeId, currentPage, items.size());
     }
 }

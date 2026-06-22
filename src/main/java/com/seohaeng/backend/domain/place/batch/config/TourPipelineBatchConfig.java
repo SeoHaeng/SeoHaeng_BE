@@ -47,6 +47,8 @@ public class TourPipelineBatchConfig {
     private final FestivalAttributeRepository festivalAttributeRepository;
     private final BatchAlertListener batchAlertListener;
 
+    private static final int CHUNK_SIZE = 100;
+
     @Bean
     public Job tourPipelineBatchJob() {
         return new JobBuilder("TourPipelineBatchJob", jobRepository)
@@ -61,7 +63,7 @@ public class TourPipelineBatchConfig {
     public Step touristSpotSyncStep() {
         TourApiItemReader reader = new TourApiItemReader(tourApiClient, 12);
         return new StepBuilder("touristSpotSyncStep", jobRepository)
-                .<AreaBasedSearchResponseDTO.PlaceItem, TouristSpotSyncResult>chunk(10, platformTransactionManager)
+                .<AreaBasedSearchResponseDTO.PlaceItem, TouristSpotSyncResult>chunk(CHUNK_SIZE, platformTransactionManager)
                 .reader(reader)
                 .processor(new TouristSpotItemProcessor(tourApiClient, placeRepository, placeImageRepository, touristSpotAttributeRepository))
                 .writer(new TouristSpotItemWriter(placeRepository, touristSpotAttributeRepository, placeImageRepository))
@@ -83,7 +85,7 @@ public class TourPipelineBatchConfig {
     public Step restaurantSyncStep() {
         TourApiItemReader reader = new TourApiItemReader(tourApiClient, 39);
         return new StepBuilder("restaurantSyncStep", jobRepository)
-                .<AreaBasedSearchResponseDTO.PlaceItem, RestaurantSyncResult>chunk(10, platformTransactionManager)
+                .<AreaBasedSearchResponseDTO.PlaceItem, RestaurantSyncResult>chunk(CHUNK_SIZE, platformTransactionManager)
                 .reader(reader)
                 .processor(new RestaurantItemProcessor(tourApiClient, placeRepository, placeImageRepository, restaurantAttributeRepository))
                 .writer(new RestaurantItemWriter(placeRepository, restaurantAttributeRepository, placeImageRepository))
@@ -105,7 +107,7 @@ public class TourPipelineBatchConfig {
     public Step festivalSyncStep() {
         TourApiItemReader reader = new TourApiItemReader(tourApiClient, 15);
         return new StepBuilder("festivalSyncStep", jobRepository)
-                .<AreaBasedSearchResponseDTO.PlaceItem, FestivalSyncResult>chunk(10, platformTransactionManager)
+                .<AreaBasedSearchResponseDTO.PlaceItem, FestivalSyncResult>chunk(CHUNK_SIZE, platformTransactionManager)
                 .reader(reader)
                 .processor(new FestivalItemProcessor(tourApiClient, placeRepository, placeImageRepository, festivalAttributeRepository))
                 .writer(new FestivalItemWriter(placeRepository, festivalAttributeRepository, placeImageRepository))

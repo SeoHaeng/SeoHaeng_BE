@@ -32,7 +32,7 @@ public class TourApiClient {
     }
 
     public AreaBasedSearchResponseDTO searchAreaBasedPlaces(int contentTypeId, int pageNo) {
-        String url = AREA_BASED_SEARCH_URL + "?numOfRows=2000&pageNo=" + pageNo +
+        String url = AREA_BASED_SEARCH_URL + "?numOfRows=100&pageNo=" + pageNo +
                 "&MobileOS=AND&MobileApp=seohaeng&_type=json&contentTypeId=" + contentTypeId +
                 "&lDongRegnCd=51&serviceKey=" + serviceKey;
         try {
