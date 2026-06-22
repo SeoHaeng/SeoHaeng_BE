@@ -31,10 +31,8 @@ public class RestaurantItemProcessor implements ItemProcessor<AreaBasedSearchRes
     @Override
     public RestaurantSyncResult process(AreaBasedSearchResponseDTO.PlaceItem item) throws Exception {
         Place place = findOrCreatePlace(item.getContentid());
-        log.info("[Item Start] 장소 명 : " + item.getTitle() + " / contentId = " + item.getContentid());
 
         if (place.getModifiedtime().equals(item.getModifiedtime())) {
-            log.info("변경일 같음, 스킵");
             return null;
         }
 
