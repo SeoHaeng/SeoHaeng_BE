@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Builder
-@Table(indexes = @Index(name = "idx_reading_spot_lat_lng", columnList = "latitude, longitude"))
+@Table(indexes = @Index(name = "idx_reading_spot_lat_lng", columnList = "opened, latitude, longitude"))
 public class ReadingSpot extends BaseEntity {
 
     @Id
